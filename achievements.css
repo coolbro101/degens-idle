@@ -1,0 +1,127 @@
+.achievements-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 3;
+    overflow: hidden; /* Prevent scrolling on both axes */
+}
+
+.achievements-overlay-content {
+    background-color: #1e1e1e;
+    padding: 20px; /* Adjust padding */
+    border: 1px solid #333;
+    border-radius: 10px;
+    text-align: center;
+    color: #e0e0e0;
+    max-width: 1000px;
+    width: 100%;
+    max-height: 90%; /* Ensure content fits within the screen */
+    overflow-y: auto; /* Enable vertical scrolling */
+    overflow-x: hidden; /* Disable horizontal scrolling */
+    box-sizing: border-box; /* Include padding in width calculation */
+}
+
+#achievements-grid {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr); /* 10 columns */
+    gap: 5px;
+    width: 100%; /* Set width to 100% to prevent overflow */
+    margin: 0 auto; /* Center the grid */
+    margin-top: 20px;
+    box-sizing: border-box; /* Ensure padding doesn't cause overflow */
+}
+
+.achievement {
+    width: 80px;
+    height: 80px;
+    position: relative;
+}
+
+.achievement img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.1); /* Dim the image */
+    transition: filter 0.3s ease;
+}
+
+.achievement.unlocked img {
+    filter: brightness(1); /* Full brightness when unlocked */
+}
+
+.achievement:hover img {
+    filter: brightness(1); /* Brighten on hover */
+}
+
+.achievement .hover-text {
+    visibility: hidden;
+    width: 150px;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    text-align: center;
+    padding: 5px;
+    border-radius: 5px;
+    position: absolute;
+    z-index: 1;
+    bottom: 105%; /* Position above the achievement */
+    left: 50%; /* Default centered */
+    transform: translateX(-50%); /* Default centered */
+    opacity: 0;
+    transition: opacity 0.3s, left 0.3s, right 0.3s, transform 0.3s; /* Allow transitions */
+}
+
+
+.achievement:hover .hover-text {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Achievements info at the top */
+#achievements-info {
+    font-size: 18px;
+    font-weight: bold;
+    color: white;
+}
+
+/* Achievements Button Styling */
+
+#achievementsButton {
+    background-color: #1B4D3E;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    white-space: nowrap; /* Prevent text wrapping */
+    width: 100%; /* Take up the full width of the container */
+}
+
+#achievementsButton:hover {
+    background-color: #2980b9; /* Darker blue on hover */
+    transform: translateY(-2px); /* Slight lift on hover */
+}
+
+#achievementsButton:active {
+    background-color: #1f6391; /* Even darker blue when clicked */
+    transform: translateY(1px); /* Slight press down on click */
+}
+
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 768px) {
+    #achievements-grid {
+        grid-template-columns: repeat(4, 1fr); /* 5 columns for mobile screens */
+    }
+
+    .achievement {
+        width: 70px; /* Slightly smaller images on mobile */
+        height: 70px;
+    }
+}
