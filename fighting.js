@@ -309,6 +309,10 @@ function startFightGame(enemyName, enemyImg) {
         playerCritChance = sebosLuck ? playerCritChance + 0.05 : playerCritChance;
         playerCritDamage = 1 + Math.min(Math.ceil(trollPoints ** (1/25)) / 100, 99);
 
+        if (playerCritChance >= 0.95){
+            unlockAchievement('Guaranteed-ish');
+        }
+
         playerCurrentAttackSpeed = playerAttackSpeed;
 
         playerMinDamage = Math.floor(power * playerMinDamageMult);
@@ -450,7 +454,7 @@ function startFightGame(enemyName, enemyImg) {
             }, 5000); // 250 milliseconds = 0.25 seconds
         } else{
             // Start the fight loop
-            if (currEnemyName === "Chuck Norris" || currEnemyName === "Kaguya" || currEnemyName === "Training Dummy"){
+            if (currEnemyName === "Chuck Norris" || currEnemyName === "Kaguya" || (currEnemyName === "Training Dummy" && !achievementsMap.get('Skip Leg Day').isUnlocked)){
                 // Add a 1-second delay before starting the fight loop
                 setTimeout(() => {
                     fightLoop(resolve);
@@ -1061,7 +1065,7 @@ function attackPlayer(resolve) {
             playerStunCount += grappleStunTurns;
             logFight(`<span style='color: #FF4500;'>Chuck Norris performs a Grappling Move, stunning you for ${grappleStunTurns} turn(s).</span>`);
         } else { // 10% chance for Jump Kick
-            playerBaseMaxDamage *= 0.8;
+            playerBaseMaxDamage = Math.max(playerMinDamage, playerBaseMaxDamage * 0.8);
             playerMaxDamage = Math.ceil(playerBaseMaxDamage * astralEdgeMult);
             document.getElementById('playerDamageStat').innerText = `${formatNumber(playerMinDamage)} - ${formatNumber(playerMaxDamage)}`;
             logFight(`<span style='color: #8B0000;'>Chuck Norris executes a Jump Kick! Your maximum attack damage is reduced by 20%.</span>`);
@@ -1405,47 +1409,8 @@ function endFight(isForfeit = false) {
         logFight("<span style='color: green;'>You are the Winner!</span>");
         overlayWinnerLoserText("Winner", "Dead");
 
-    // Stellar Harvest Skill effect
-    if (stellarHarvestSkill && !purchasedUpgrades.some(upgrade => upgrade.name === `Cosmic Drought`)) {
-        const multiplier = celestialCollectorSkill ? 1.5: 1.3;
-        const duration = celestialCollectorSkill ? 600000 : 180000; // 10 minutes (600,000 ms) or 3 minute (180,000 ms)
+        incrementStellarHarvest();
 
-        if (stellarHarvestMult == 1 && stellarCookieSkill){
-            clearInterval(cookieIntervalId);
-            const cookieButton = document.getElementById('cookieButton');
-            cookieButton.classList.remove('spinning');
-            cookieButton.classList.add('spinning');
-            cookieIntervalId = setInterval(() => {
-                cookieCollectAllResources();
-            }, 100); // 100 milliseconds = 0.1 seconds
-        }
-
-        stellarHarvestMult *= multiplier;
-        updateEffectiveMultipliers();
-        updateStellarHarvestDisplay();
-        //TODO: use global tooltip instead
-
-        if(stellarHarvestMult > 50){
-            unlockAchievement('Stellar Harvester');
-        }
-
-        // Set a timeout to reset the multiplier after the specified duration
-        const timeoutId = setTimeout(() => {
-            stellarHarvestMult = Math.max(stellarHarvestMult / multiplier, 1);
-            updateEffectiveMultipliers();
-            updateStellarHarvestDisplay();
-
-            if (stellarHarvestMult == 1 && stellarCookieSkill){
-                const cookieButton = document.getElementById('cookieButton');
-                cookieButton.classList.remove('spinning');
-                clearInterval(cookieIntervalId);
-            }
-            //TODO: use global tooltip to show it decreased
-        }, duration);
-
-        // Store the timeout ID in the array
-        currentTimeouts.push(timeoutId);
-    }
     } else {
         logFight(`<span style='color: red;'>${currEnemyName} is the Winner!</span>`);
         overlayWinnerLoserText("Loser", "Taunting");

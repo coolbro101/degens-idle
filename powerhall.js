@@ -48,7 +48,7 @@ function unlockPowerHallSkill(skill, duringLoad = false) {
         switch (skill.name) {
 
             case 'Power Surge':
-                powerSurgeMultiplier = Math.max(powerSurgeMultiplier, 1.5);
+                powerSurgeMultiplier = Math.max(powerSurgeMultiplier, 1 + (0.5 * oversurgedPower));
                 break;
 
             case 'Temporal Flux':
@@ -75,7 +75,7 @@ function unlockPowerHallSkill(skill, duringLoad = false) {
     
 
             case 'Astral Precision':
-                playerMinDamageMult = 0.75;
+                playerMinDamageMult = celestialPrecisionSkill ? 1.5 : 0.75;
                 break;
 
             case 'Void Stabilizer':
@@ -231,12 +231,16 @@ function initializePowerHallSkills() {
             }
             skillDiv.addEventListener('click', async () => {
                 if (!skill.unlocked && power >= skill.cost) {
-                    const result = await showMessageModal(
-                        'Confirm Unlock',
-                        `Do you want to unlock ${skill.name} for ${formatNumber(skill.cost)} Power?`,
-                        true,
-                        false
-                    );
+                    let result = true;  // Default to true if loveHallUnlocked is true
+
+                    if (!loveHallUnlocked) {
+                        result = await showMessageModal(
+                            'Confirm Unlock',
+                            `Do you want to unlock ${skill.name} for ${formatNumber(skill.cost)} Power?`,
+                            true,
+                            false
+                        );
+                    }
                     if (result) {
                         power -= skill.cost;
                         unlockPowerHallSkill(skill);
@@ -261,6 +265,15 @@ function openPowerHall() {
         updatePowerHallSkillDisplay();
 
         unlockAchievement('Enter Hall of Power');
+
+        openPowerHallTimestamp = crunchTimer; 
+        checkFastCommuter();
+
+        // Prevent overlay from closing when clicking inside the content
+        const powerHallContent = document.querySelector('.powerhall-overlay-content');
+        powerHallContent.addEventListener('click', function(event) {
+            event.stopPropagation();  // Stop event propagation when clicking inside the library content
+        });
 
         if(!purchasedUpgrades.some(upgrade => upgrade.name === "Helpful Vegeta")){
             unlockAchievement('How did you know you could enter?');
@@ -302,3 +315,17 @@ document.addEventListener('DOMContentLoaded', () => {
         closePowerHall();
     });
 });
+
+function resetPowerHallSkills() {
+    // Iterate over all power hall skills and reset their unlocked state
+    powerHallSkills.forEach(skill => {
+        skill.unlocked = false; // Set all skills to locked/unpurchased state
+    });
+
+    // Clear the display and reinitialize skills
+    powerHallSkillsContainer.innerHTML = ''; // Clear current skill elements
+    initializePowerHallSkills(); // Reinitialize the skills in the UI
+
+    // Update the skill display to reflect the reset state
+    updatePowerHallSkillDisplay();
+}

@@ -276,10 +276,10 @@ const achievements = [
         img: 'imgs/achievements/trading.jpg',
     },
     {
-        name: 'Does Not Exist 46',
+        name: 'Correcting Mistakes',
         isUnlocked: false,
-        hoverText: 'Does not exist yet',
-        img: 'imgs/achievements/uninitialized.jpg',
+        hoverText: 'win speed game with at least 7 misclicks',
+        img: 'imgs/achievements/correcting_mistakes.jpg',
     },
     {
         name: 'Take Out a Loan',
@@ -316,6 +316,12 @@ const achievements = [
         isUnlocked: false,
         hoverText: 'defeat Training Dummy in less than 15 seconds',
         img: 'imgs/achievements/training_hard.jpg',
+    },
+    {
+        name: 'Eager to Love',
+        isUnlocked: false,
+        hoverText: 'enter Hall of Love in less than 3 seconds',
+        img: 'imgs/achievements/eager_to_love.jpg',
     },
     {
         name: 'Nebula Overdrive',
@@ -396,28 +402,34 @@ const achievements = [
         img: 'imgs/achievements/offline_gains.jpg',
     },
     {
-        name: 'Pie Guy',
-        isUnlocked: false,
-        hoverText: `solve &pi;&times;100 math problems`,
-        img: 'imgs/achievements/pie_guy.jpg',
-    },
-    {
         name: 'When Math Maths',
         isUnlocked: false,
         hoverText: 'win math game using at least 5 portals',
         img: 'imgs/achievements/when_math_maths.jpg',
     },
     {
-        name: 'Does Not Exist 69',
+        name: 'Pathological Speedster',
         isUnlocked: false,
-        hoverText: 'Does not exist yet',
-        img: 'imgs/achievements/uninitialized.jpg',
+        hoverText: 'tap 1500 times in winning speed games',
+        img: 'imgs/achievements/pathological_speedster.jpg',
     },
     {
-        name: 'Does Not Exist 70',
+        name: 'Pattern Prodigy',
         isUnlocked: false,
-        hoverText: 'Does not exist yet',
-        img: 'imgs/achievements/uninitialized.jpg',
+        hoverText: 'memorize 500 dots in winning games',
+        img: 'imgs/achievements/pattern_prodigy.jpg',
+    },
+    {
+        name: 'Pie Guy',
+        isUnlocked: false,
+        hoverText: `solve &pi;&times;100 math problems`,
+        img: 'imgs/achievements/pie_guy.jpg',
+    },
+    {
+        name: 'Consolation Prize',
+        isUnlocked: false,
+        hoverText: `open 100 unlucky boxes`,
+        img: 'imgs/achievements/consolation_prize.jpg',
     },
     {
         name: 'Dirty Trick',
@@ -438,10 +450,10 @@ const achievements = [
         img: 'imgs/achievements/cosmic_drought.jpg',
     },
     {
-        name: 'Does Not Exist 74',
+        name: 'Guaranteed-ish',
         isUnlocked: false,
-        hoverText: 'Does not exist yet',
-        img: 'imgs/achievements/uninitialized.jpg',
+        hoverText: 'reach max crit chance',
+        img: 'imgs/achievements/guaranteed_ish.jpg',
     },
     {
         name: 'Serenity',
@@ -468,10 +480,10 @@ const achievements = [
         img: 'imgs/achievements/uninitialized.jpg',
     },
     {
-        name: 'Does Not Exist 79',
+        name: 'Infinite Embrace',
         isUnlocked: false,
-        hoverText: 'Does not exist yet',
-        img: 'imgs/achievements/uninitialized.jpg',
+        hoverText: 'perform your first infinite embrace',
+        img: 'imgs/achievements/infinite_embrace.jpg',
     },
     {
         name: 'Does Not Exist 80',
@@ -480,16 +492,16 @@ const achievements = [
         img: 'imgs/achievements/uninitialized.jpg',
     },
     {
-        name: 'Does Not Exist 81',
+        name: 'Gentle Embrace',
         isUnlocked: false,
-        hoverText: 'Does not exist yet',
-        img: 'imgs/achievements/uninitialized.jpg',
+        hoverText: 'infinite embrace for < 3.3 base LP',
+        img: 'imgs/achievements/mini_embrace.jpg',
     },
     {
-        name: 'Does Not Exist 82',
+        name: 'Massive Embrace',
         isUnlocked: false,
-        hoverText: 'Does not exist yet',
-        img: 'imgs/achievements/uninitialized.jpg',
+        hoverText: 'infinite embrace for > 25 LP',
+        img: 'imgs/achievements/massive_embrace.jpg',
     },
     {
         name: 'Does Not Exist 83',
@@ -516,28 +528,16 @@ const achievements = [
         img: 'imgs/achievements/developer_options.jpg',
     },
     {
-        name: 'Does Not Exist 87',
+        name: 'Zero-Sum Game',
         isUnlocked: false,
-        hoverText: 'Does not exist yet',
-        img: 'imgs/achievements/uninitialized.jpg',
+        hoverText: 'give hope / take hope',
+        img: 'imgs/achievements/zero_sum_game.jpg',
     },
     {
         name: 'One Hit KO',
         isUnlocked: false,
         hoverText: 'one punch the man',
         img: 'imgs/achievements/one_punch_the_man.jpg',
-    },
-    {
-        name: 'Does Not Exist 89',
-        isUnlocked: false,
-        hoverText: 'Does not exist yet',
-        img: 'imgs/achievements/uninitialized.jpg',
-    },
-    {
-        name: 'Does Not Exist 90',
-        isUnlocked: false,
-        hoverText: 'Does not exist yet',
-        img: 'imgs/achievements/uninitialized.jpg',
     },
     {
         name: 'More than Sauron',
@@ -552,10 +552,10 @@ const achievements = [
         img: 'imgs/achievements/tiniest_crunch.jpg',
     },
     {
-        name: 'Does Not Exist 93',
+        name: '42 Misclicks',
         isUnlocked: false,
-        hoverText: 'Does not exist yet',
-        img: 'imgs/achievements/uninitialized.jpg',
+        hoverText: '???',
+        img: 'imgs/achievements/misfire.jpg',
     },
     {
         name: 'Rasta Deadpool',
@@ -564,10 +564,10 @@ const achievements = [
         img: 'imgs/achievements/rasta_deadpool.jpg',
     },
     {
-        name: 'Does Not Exist 95',
+        name: 'Fast Commuter',
         isUnlocked: false,
-        hoverText: 'Does not exist yet',
-        img: 'imgs/achievements/uninitialized.jpg',
+        hoverText: '???',
+        img: 'imgs/achievements/fast_commuter.jpg',
     },
     {
         name: 'PigeonPost',
@@ -689,13 +689,22 @@ function updateAchievementsInfo() {
     infoElement.textContent = `Achievements Unlocked: ${numUnlockedAchievements}/${totalCount} | Multiplier: ${achievementMultiplier.toFixed(2)}x (to ALL RESOURCES)`;
 }
 
+function calculateAchievementMultiplier() {
+    numUnlockedAchievements = Array.from(achievementsMap.values()).filter(ach => ach.isUnlocked).length; // Recalculate the number of unlocked achievements
+    
+    if (achievementHyperchargeSkill) {
+        achievementMultiplier = (1 + achievementBoostValue) ** numUnlockedAchievements;
+    } else {
+        achievementMultiplier = 1 + (achievementBoostValue * numUnlockedAchievements);
+    }
+}
 // Function to unlock an achievement
 function unlockAchievement(name, duringLoad = false) {
     const achievement = achievementsMap.get(name); // Access the achievement directly from the map
     if (achievement && !achievement.isUnlocked) {
         achievement.isUnlocked = true;
-        numUnlockedAchievements = Array.from(achievementsMap.values()).filter(ach => ach.isUnlocked).length; // Recalculate the number of unlocked achievements
-        achievementMultiplier = 1 + (0.01 * numUnlockedAchievements)
+
+        calculateAchievementMultiplier()
 
         if (!duringLoad) {
             saveGameState();

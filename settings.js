@@ -368,6 +368,46 @@ document.getElementById('automationButton').addEventListener('click', function()
             }
         }, 0); // Ensure the inputs are rendered first
 
+        // Dynamically add Auto-Fighting setting if autoFightSkill is unlocked
+        if (autoFightSkill) {
+            const autoFightHtml = `
+                <div style="margin-bottom: 15px;">
+                    <label for="autoFightSwitch" style="margin-right: 10px;">Enable Auto-Fighting</label>
+                    <label class="switch">
+                        <input type="checkbox" id="autoFightSwitch">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            `;
+            automationContent.innerHTML += autoFightHtml;
+
+            // Use a timeout to ensure the checkbox is fully rendered before setting its state
+            setTimeout(() => {
+                const autoFightSwitch = document.getElementById('autoFightSwitch');
+                autoFightSwitch.checked = autoFightEnabled; // Assume autoFightIntervalId manages auto-fighting
+            }, 0); // Adjust timeout if necessary
+        }
+
+        
+        // Dynamically add Auto-Fighting setting if autoFightSkill is unlocked
+        if (hopiumTradeSkill && equilibriumOfHopeSkill) {
+            const autoHopiumTradeHtml = `
+                <div style="margin-bottom: 15px;">
+                    <label for="autoHopiumTradeSwitch" style="margin-right: 10px;">Enable Auto Hopium Trade</label>
+                    <label class="switch">
+                        <input type="checkbox" id="autoHopiumTradeSwitch">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            `;
+            automationContent.innerHTML += autoHopiumTradeHtml;
+
+            // Use a timeout to ensure the checkbox is fully rendered before setting its state
+            setTimeout(() => {
+                const autoHopiumTradeSwitch = document.getElementById('autoHopiumTradeSwitch');
+                autoHopiumTradeSwitch.checked = autoTradeHopiumIntervalId !== null;
+            }, 0); // Adjust timeout if necessary
+        }
 
         // Check if any feature is missing and at least one is unlocked
         const someFeaturesMissing = !autobuyUpgradesSkill || autoPrestigeThreshold === null || !buyMarkersSkill || autoAscendThreshold === null || autoTranscendThreshold === null;
@@ -457,6 +497,39 @@ document.getElementById('saveAutomationSettingsButton').addEventListener('click'
         } else if (toggleBuyMarkersOn) {
             toggleAllBuyMarkers(true);
         } // Neutral does nothing, so no action needed
+    }
+
+    // Handle auto-fighting only if the skill is unlocked
+    if (autoFightSkill) {
+        const autoFightSwitch = document.getElementById('autoFightSwitch');
+        console.log("Auto-fight switch state at save:", autoFightSwitch.checked); // Debug log
+
+        if (autoFightSwitch.checked) {
+            autoFightEnabled = true;
+        } else {
+            autoFightEnabled = false;
+        }
+    }
+
+    // Handle auto-buy upgrades only if the skill is unlocked
+    if (hopiumTradeSkill && equilibriumOfHopeSkill) {
+        const autoHopiumTradeSwitch = document.getElementById('autoHopiumTradeSwitch');
+        console.log("Auto-hopium trade switch state at save:", autoHopiumTradeSwitch.checked); // Debug log
+
+        if (autoHopiumTradeSwitch.checked) {
+            // Enable auto-buy if it’s not already running
+            if (autoTradeHopiumIntervalId === null) {
+                autoTradeHopium();
+                console.log("Auto-hopium trade started"); // Debug log
+            }
+        } else {
+            // Disable auto-buy if the switch is unchecked
+            if (autobuyIntervalId !== null) {
+                clearInterval(autoTradeHopiumIntervalId);
+                autoTradeHopiumIntervalId = null;
+                console.log("Auto-hopium trade stopped"); // Debug log
+            }
+        }
     }
 
     // Close the overlay
