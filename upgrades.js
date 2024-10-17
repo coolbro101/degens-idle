@@ -4,7 +4,7 @@ const upgrades = [
         cost: { copium: 2, delusion: 0, yachtMoney: 0, trollPoints: 0, hopium: 0, knowledge: 0, power: 0, serenity: 0 },
         earnings: { copiumPerSecond: 1.4, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0.8, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 0 },
         img: `imgs/john_travolta.jpg`,
-        message: `imgs/modal_imgs/howtoplay.png`,
+        message: `imgs/modal_imgs/howtoplay.jpg`,
     },
     {
         name: `You made it`,
@@ -37,8 +37,8 @@ const upgrades = [
         name: `What is DEGENS?`,
         cost: { copium: 100, delusion: 90, yachtMoney: 0, trollPoints: 0, hopium: 0, knowledge: 0, power: 0, serenity: 0 },
         earnings: { copiumPerSecond: 2.5, delusionPerSecond: 5.3, yachtMoneyPerSecond: 2.4, trollPointsPerSecond: 3.2, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 0 },   
-        img: `imgs/modal_imgs/DEGENS_IDLE.png`,
-        message: `imgs/modal_imgs/DEGENS_IDLE.png`,
+        img: `imgs/modal_imgs/DEGENS_IDLE.jpg`,
+        message: `imgs/modal_imgs/DEGENS_IDLE.jpg`,
     },
     {
         name: `Not All Trolls Are Bad`,
@@ -114,7 +114,7 @@ const upgrades = [
     {
         name: `Real Investments`,
         cost: { copium: 2000, delusion: 0, yachtMoney: 1000, trollPoints: 2000, hopium: 0, knowledge: 0, power: 0, serenity: 0 },
-        earnings: { copiumPerSecond: 5, delusionPerSecond: 0, yachtMoneyPerSecond: 29, trollPointsPerSecond: 5, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 0 },
+        earnings: { copiumPerSecond: 5, delusionPerSecond: 0, yachtMoneyPerSecond: 30, trollPointsPerSecond: 5, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 0 },
         img: `imgs/nvidia.jpg`,
         hoverOverwrite: `Investments = Good`,
     },
@@ -247,7 +247,7 @@ const upgrades = [
         earnings: { copiumPerSecond: 10, delusionPerSecond: 10, yachtMoneyPerSecond: 10, trollPointsPerSecond: 10, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 0 },
         img: `imgs/ascension.jpg`,
         message: `<p>Congratulations, brave soul! With the purchase of the Ascension upgrade, you have unlocked the extraordinary ability to Ascend Above Mortals and enter the revered God Mode. Prepare yourself for an epic journey where the limits of mortality no longer bind you.</p>
-                    <p>Your intuition whispers:<span style="color: #40E0D0;"> I think the optimum strategy is for the first few ascensions to be taken as soon as possible.</span></p>
+                    <p>Your intuition whispers:<span style="color: #40E0D0;"> Optimum strategy is for the first few ascensions to be taken as soon as possible.</span></p>
                     <p>Welcome to the next chapter of your legendary adventure. Ascend and let your godlike journey begin!</p>`,
     },
     {
@@ -435,6 +435,14 @@ const upgrades = [
         message: `imgs/modal_imgs/resource_hover.jpg`,
     },
     {
+        name: `Time Warp`,
+        cost: { copium: 1.234e14, delusion: 5.678e14, yachtMoney: 9.012e14, trollPoints: 3.456e14, hopium: 78.90, knowledge: 1234, power: 0, serenity: 0 },
+        earnings: { copiumPerSecond: 12, delusionPerSecond: 34, yachtMoneyPerSecond: 56, trollPointsPerSecond: 78, hopiumPerSecond: 0.9, knowledgePerSecond: 0.000012, powerPerSecond: 0, serenityPerSecond: 0 },
+        img: `imgs/time_warp.jpg`,
+        message: `You've unlocked the power of Time Warp! This remarkable feature accelerates resource generation and all game timers, including warp time accumulation itself, by an impressive 5x. For every hour you spend playing—whether active or offline—you’ll accumulate 1 minute of Time Warp, up to a maximum of 6 minutes. Best of all, Time Warp works across all prestige layers, carrying its temporal prowess through every level of advancement. Use Time Warp wisely to supercharge your progress and witness time itself bend to your advantage.`,
+        achievement: 'Time Warp',
+    },
+    {
         name: `Cybertruck`,
         cost: { copium: 0, delusion: 0, yachtMoney: 3e14, trollPoints: 0, hopium: 10000000, knowledge: 0, power: 0, serenity: 0 },
         earnings: { copiumPerSecond: 1.05e7, delusionPerSecond: 1.65e6, yachtMoneyPerSecond: -100000, trollPointsPerSecond: 1.2e6, hopiumPerSecond: 0, knowledgePerSecond: 0.0000037, powerPerSecond: 0, serenityPerSecond: 0 },
@@ -482,7 +490,7 @@ const upgrades = [
     {
         name: `Shooter Dad`,
         cost: { copium: 0, delusion: 0, yachtMoney: 0, trollPoints: 0, hopium: 5e11, knowledge: 100000, power: 0, serenity: 0 },
-        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 1.56e7, trollPointsPerSecond: 0, hopiumPerSecond: 125, knowledgePerSecond: 0.000168, powerPerSecond: 0, serenityPerSecond: 0 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 2.66e7, trollPointsPerSecond: 0, hopiumPerSecond: 135, knowledgePerSecond: 0.000278, powerPerSecond: 0, serenityPerSecond: 0 },
         img: `imgs/shooter_swag.jpg`,
     },
     {
@@ -494,7 +502,7 @@ const upgrades = [
     {
         name: `Build a Base`,
         cost: { copium: 8e17, delusion: 4e17, yachtMoney: 4e17, trollPoints: 8e17, hopium: 1e12, knowledge: 1, power: 0, serenity: 0 },
-        earnings: { copiumPerSecond: -2.5e7, delusionPerSecond: 0, yachtMoneyPerSecond: -1.3e7, trollPointsPerSecond: -4e7, hopiumPerSecond: -75, knowledgePerSecond: 0.0025, powerPerSecond: 0, serenityPerSecond: 0 },
+        earnings: { copiumPerSecond: -2.5e7, delusionPerSecond: 0, yachtMoneyPerSecond: -1.3e7, trollPointsPerSecond: -4e7, hopiumPerSecond: -75, knowledgePerSecond: 0.0026, powerPerSecond: 0, serenityPerSecond: 0 },
         img: `imgs/all_your_base.jpg`,
         hoverOverwrite: `Xy'løth Q'värk, F'näürg zxÿl-gørh'tha! Z'qúol b'zhåk vi'krêth, nx'tuöl j'dä!`,
         achievement: 'Build a Base',
@@ -502,7 +510,7 @@ const upgrades = [
     {
         name: `NGU Idle`,
         cost: { copium: 8e17, delusion: 3.5e17, yachtMoney: 3.5e17, trollPoints: 8e17, hopium: 1e12, knowledge: 6e7, power: 0, serenity: 0 },
-        earnings: { copiumPerSecond: 9.8e7, delusionPerSecond: 6.8e7, yachtMoneyPerSecond: 8.8e7, trollPointsPerSecond: 1.8e8, hopiumPerSecond: 800, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 0 },
+        earnings: { copiumPerSecond: 9.9e7, delusionPerSecond: 6.9e7, yachtMoneyPerSecond: 8.9e7, trollPointsPerSecond: 1.9e8, hopiumPerSecond: 800, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 0 },
         img: `imgs/ngu_idle.jpg`,
         message: `Congratulations on unlocking the "NGU Idle" upgrade! This upgrade is a tribute to one of the greatest idle games ever. NGU Idle, known for its deep mechanics and quirky humor, has set a high standard in the idle game genre.<br><br>Here's to celebrating a game that has set a high bar for idle games everywhere. Enjoy the nostalgia and the boost it brings to your Degens Idle journey -- you may now watch all your Numbers Go Up!`,
     },
@@ -695,7 +703,7 @@ const upgrades = [
     },
     {
         name: `Ok to be selfish?`,
-        cost: { copium: 7e32, delusion: 0, yachtMoney: 0, trollPoints: 5e34, hopium: 0, knowledge: 0, power: 2e-3, serenity: 0 },
+        cost: { copium: 4e32, delusion: 0, yachtMoney: 0, trollPoints: 5e34, hopium: 0, knowledge: 0, power: 2e-3, serenity: 0 },
         earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 1.3e13, trollPointsPerSecond: 5e12, hopiumPerSecond: 0, knowledgePerSecond: 145, powerPerSecond: 0, serenityPerSecond: 0 },
         img: `imgs/selfish_food.jpg`,
     },
@@ -714,7 +722,7 @@ const upgrades = [
     },
     {
         name: `Food + Cats = Profit?`,
-        cost: { copium: 0, delusion: 0, yachtMoney: 0, trollPoints: 3e36, hopium: 0, knowledge: 0, power: 1e-1, serenity: 0 },
+        cost: { copium: 4e33, delusion: 0, yachtMoney: 0, trollPoints: 3e36, hopium: 0, knowledge: 0, power: 1e-1, serenity: 0 },
         earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 2e13, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 400, powerPerSecond: 0, serenityPerSecond: 0 },
         img: `imgs/food_plus_cats.jpg`,
     },
@@ -768,7 +776,7 @@ const upgrades = [
         isFight: true,
         achievement: 'Begin Training',
         hoverOverwrite: 'Beware 3 power will be consumed. Remaining power will be converted to Damage.',
-        autoBattlePower: 1000,
+        autoBattlePower: 10000,
     },
     {
         name: `Agent Smith`,
@@ -777,7 +785,7 @@ const upgrades = [
         img: `imgs/agent_smith.jpg`,
         isFight: true,
         isKey: true,
-        autoBattlePower: 8000,
+        autoBattlePower: 50000,
     },
     {
         name: `Feel the Pump`,
@@ -800,7 +808,7 @@ const upgrades = [
         isFight: true,
         achievement: 'Mortal Kombat',
         isKey: true,
-        autoBattlePower: 60000,
+        autoBattlePower: 200000,
     },
     {
         name: `Small Wins`,
@@ -821,7 +829,7 @@ const upgrades = [
         img: `imgs/darth_vader.jpg`,
         isFight: true,
         isKey: true,
-        autoBattlePower: 150000,
+        autoBattlePower: 600000,
     },
     {
         name: `Burn the House Down`,
@@ -843,7 +851,7 @@ const upgrades = [
         img: `imgs/isshin.jpg`,
         isFight: true,
         isKey: true,
-        autoBattlePower: 800000,
+        autoBattlePower: 1600000,
     },
     {
         name: `Work do be like that`,
@@ -872,11 +880,12 @@ const upgrades = [
     {
         name: `Sauron`,
         cost: { copium: 5e48, delusion: 5e48, yachtMoney: 5e48, trollPoints: 5e48, hopium: 0, knowledge: 5e38, power: 13000, serenity: 0 },
-        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 8e18, trollPointsPerSecond: 0, hopiumPerSecond: -9e12, knowledgePerSecond: 625000, powerPerSecond: 0, serenityPerSecond: 0 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 8e18, trollPointsPerSecond: 0, hopiumPerSecond: -9e12, knowledgePerSecond: 645000, powerPerSecond: 0, serenityPerSecond: 0 },
         img: `imgs/sauron.jpg`,
         isFight: true,
         isKey: true,
-        autoBattlePower: 2e8,
+        autoBattlePower: 1e8,
+        achievement: 'Avoid the Crit',
     },
     {
         name: `Avoid Temptations`,
@@ -910,13 +919,13 @@ const upgrades = [
         img: `imgs/kratos.jpg`,
         isFight: true,
         isKey: true,
-        autoBattlePower: 6.7e12,
+        autoBattlePower: 6.5e10,
 
     },
     {
         name: `Complex Skill Trees`,
         cost: { copium: 2e52, delusion: 0, yachtMoney: 0, trollPoints: 2e52, hopium: 2e48, knowledge: 2e41, power: 600000, serenity: 0 },
-        earnings: { copiumPerSecond: 6e18, delusionPerSecond: 4e18, yachtMoneyPerSecond: 0, trollPointsPerSecond: 7e18, hopiumPerSecond: 0, knowledgePerSecond: 75000, powerPerSecond: 0, serenityPerSecond: 0 },
+        earnings: { copiumPerSecond: 8e18, delusionPerSecond: 5e18, yachtMoneyPerSecond: 0, trollPointsPerSecond: 8e18, hopiumPerSecond: 0, knowledgePerSecond: 95000, powerPerSecond: 0, serenityPerSecond: 0 },
         img: `imgs/path_of_exile_skill_tree.jpg`,
         message: `Huge shoutout to Path of Exile—the greatest game of all time! No other ARPG, or any game for that matter, has ever managed to replicate the sheer complexity and depth of its legendary skill trees. It’s a masterpiece of design, offering limitless possibilities for those daring enough to explore its vast network of nodes. Every decision shapes your journey, making each build a unique adventure.<br><br>Path of Exile has set a standard that’s unmatched, and we can only hope that Path of Exile 2 will continue to raise the bar even higher.`,
     },
@@ -960,7 +969,7 @@ const upgrades = [
         img: `imgs/deadpool.jpg`,
         isFight: true,
         isKey: true,
-        autoBattlePower: 6.9e24,
+        autoBattlePower: 6.9e22,
     },
     {
         name: `What The`,
@@ -991,7 +1000,7 @@ const upgrades = [
     {
         name: `Spend That Money`,
         cost: { copium: 0, delusion: 0, yachtMoney: 2.5e64, trollPoints: 0, hopium: 0, knowledge: 5e44, power: 5e7, serenity: 0 },
-        earnings: { copiumPerSecond: 9e20, delusionPerSecond: 8e20, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 200000, powerPerSecond: 0, serenityPerSecond: 0 },
+        earnings: { copiumPerSecond: 9e20, delusionPerSecond: 8e20, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 220000, powerPerSecond: 0, serenityPerSecond: 0 },
         img: `imgs/treat_yo_self.jpg`,        
     },
     {
@@ -1003,19 +1012,19 @@ const upgrades = [
     {
         name: `Don't split hairs`,
         cost: { copium: 2.3e62, delusion: 2.1e62, yachtMoney: 0, trollPoints: 0, hopium: 0, knowledge: 4e45, power: 9.9e7, serenity: 0 },
-        earnings: { copiumPerSecond: 6.5e20, delusionPerSecond: 6.5e20, yachtMoneyPerSecond: 0, trollPointsPerSecond: 1e21, hopiumPerSecond: 0, knowledgePerSecond: 310000, powerPerSecond: 0, serenityPerSecond: 0 },
+        earnings: { copiumPerSecond: 6.5e20, delusionPerSecond: 6.5e20, yachtMoneyPerSecond: 0, trollPointsPerSecond: 1e21, hopiumPerSecond: 0, knowledgePerSecond: 360000, powerPerSecond: 0, serenityPerSecond: 0 },
         img: `imgs/comb_over.jpg`,        
     },
     {
         name: `Kung Fu Bunny`,
         cost: { copium: 0, delusion: 2.3e62, yachtMoney: 0, trollPoints: 5e62, hopium: 0, knowledge: 8e45, power: 1.1e8, serenity: 0 },
-        earnings: { copiumPerSecond: 1.5e21, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 580000, powerPerSecond: 0, serenityPerSecond: 0 },
+        earnings: { copiumPerSecond: 1.5e21, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 640000, powerPerSecond: 0, serenityPerSecond: 0 },
         img: `imgs/bunny_martial_arts.jpg`,        
     },
     {
         name: `Biggest Conspiracy`,
         cost: { copium: 0, delusion: 0, yachtMoney: 1.8e64, trollPoints: 2.5e63, hopium: 0, knowledge: 1e46, power: 1.5e8, serenity: 0 },
-        earnings: { copiumPerSecond: 0, delusionPerSecond: 1.9e21, yachtMoneyPerSecond: 0, trollPointsPerSecond: 2.4e21, hopiumPerSecond: 0, knowledgePerSecond: 450000, powerPerSecond: 0, serenityPerSecond: 0 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 1.9e21, yachtMoneyPerSecond: 0, trollPointsPerSecond: 2.4e21, hopiumPerSecond: 0, knowledgePerSecond: 480000, powerPerSecond: 0, serenityPerSecond: 0 },
         img: `imgs/dank_memes_steel_beams.jpg`,        
     },
     {
@@ -1025,7 +1034,7 @@ const upgrades = [
         img: `imgs/chuck_norris.jpg`,
         isFight: true,
         isKey: true,
-        autoBattlePower: 5e16,
+        autoBattlePower: 2e15,
     },
     {
         name: `Surprise Package`,
@@ -1068,7 +1077,7 @@ const upgrades = [
                 <p><strong>Vegeta:</strong> You’re ready. My goal was for you to grow strong enough to stop her. Now, go do it. Save the multiverse!</p>
                 <p>With those words, Vegeta collapses, a proud but weary smile on his face, knowing his mission is complete.</p>`,
         isKey: true,
-        autoBattlePower: 1e18,
+        autoBattlePower: 1e17,
     },
     {
         name: `Oedipus`,
@@ -1306,6 +1315,7 @@ const upgrades = [
         message: `<p>The cosmic drought has brought an end to your Stellar Harvest. The star systems you once nurtured have faded, and your operations across the multiverse have halted.</p>
                 <p>But your heroic efforts in saving the multiverse haven’t gone unnoticed. Word has reached the galactic federation, and in recognition of your valor and the financial burdens you've faced, they've granted you an allowance.</p>
                 <p>Though the road ahead is uncertain, with the federation's support, new possibilities await. The multiverse may still need you.</p>`,
+        isKey: true,
     },
     {         
         name: `Search for Hope`,
@@ -1343,29 +1353,30 @@ const upgrades = [
         cost: { copium: 0, delusion: 0, yachtMoney: 0, trollPoints: 0, hopium: 0, knowledge: 1e72, power: 1e19, serenity: 0.1 },
         earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 3e13, powerPerSecond: 0, serenityPerSecond: 0.0001 },
         img: `imgs/meditation.jpg`,
-        message: ` <p>After pushing past all physical limits, you’ve discovered that the true answers lie beyond the material world. You have unlocked <strong>Meditation</strong>, a metaphysical realm where the deepest questions can be answered. In this state, you will be guided through an abstract challenge: keep a set of mystical <strong>balls</strong> within the boundaries of a meditative space for a certain duration. Succeeding in your meditation will reveal powerful upgrades, each related to different belief systems, philosophies, religions, and worldviews.</p>
-                    <h3>How the Meditation Game Works:</h3>
-                    <p>During meditation, your goal is to ensure that the mystical balls remain within a bounded arena. Your mastery of resources will determine how well you can maintain focus and balance. Here’s how each of your resources will help increase your chances of success:</p>
-                    <ul>
-                        <li><strong>Copium</strong> - Influences <strong>Ball Size</strong>. More Copium means smaller balls, making it easier to keep them in bounds.</li>
-                        <li><strong>Delusion</strong> - Impacts <strong>Turn Radius</strong>. A greater delusion will cause the balls to adjust their direction more quickly, pulling them back toward the center faster.</li>
-                        <li><strong>Yacht Money</strong> - <strong>Reduces Meditation Duration</strong>. The more you accumulate, the shorter the time needed to complete the meditation challenge.</li>
-                        <li><strong>Troll Points</strong> - Increases <strong>Respawn Time</strong>. This gives you more time before a ball that goes out of bounds reappears, offering brief relief.</li>
-                        <li><strong>Hopium</strong> - <strong>Reduces the Total Number of Balls</strong>. With more hopium, fewer balls need to be managed during meditation.</li>
-                        <li><strong>Knowledge</strong> - Affects <strong>Velocity</strong>. Higher knowledge will slow down the speed of the balls, making it easier to keep them within bounds.</li>
-                        <li><strong>Power</strong> - Affects <strong>Gravity</strong>. A stronger pull toward the center ensures that balls are less likely to stray too far from the boundary.</li>
-                        <li><strong>Serenity</strong> - Provides additional <strong>Focus</strong>. More serenity allows more balls to go out of bounds before you lose focus and fail the meditation.</li>
-                    </ul>
-                    <p>Use your resources wisely, maintain your inner focus, and explore the vast array of perspectives unlocked through meditation. Each successful meditation brings you one step closer to deeper understanding and metaphysical mastery.</p>`,
+        message: `<p>Congratulations! You’ve reached a new level of enlightenment, unlocking a powerful new type of upgrade: <strong>Meditations</strong>. These meditations are similar to battles in that they play out passively, but they tap into a different kind of challenge—one that is driven by all 8 of your resources. In meditation, you’ll explore the metaphysical realm, where the ultimate truths await.</p>
+                <h3>How the Meditation Upgrades Work:</h3>
+                <p>In each meditation, your goal is to maintain a set of mystical <strong>balls</strong> within a meditative space. Just like battles, meditations unfold automatically, but here, the outcome is determined by your mastery of all 8 resources:</p>
+                <ul>
+                    <li><strong>Copium</strong> - Influences <strong>Ball Size</strong>. More Copium results in smaller balls, making them easier to keep within bounds.</li>
+                    <li><strong>Delusion</strong> - Affects <strong>Turn Speed</strong>. A greater delusion allows the balls to adjust their direction quicker, pulling them back toward the center faster.</li>
+                    <li><strong>Yacht Money</strong> - <strong>Reduces Meditation Duration</strong>. Accumulating more shortens the time required to complete the meditation challenge.</li>
+                    <li><strong>Troll Points</strong> - Increases <strong>Respawn Delay</strong>. Higher Troll Points give you more time before a ball that leaves the bounds reappears, offering brief respite.</li>
+                    <li><strong>Hopium</strong> - <strong>Reduces the Number of Balls</strong>. With more Hopium, fewer balls must be managed during meditation.</li>
+                    <li><strong>Knowledge</strong> - Affects <strong>Velocity</strong>. Greater Knowledge slows down the balls, making it easier to keep them in the meditative space.</li>
+                    <li><strong>Power</strong> - Affects <strong>Gravity</strong>. A stronger gravitational pull towards the center keeps the balls from straying too far from the boundary.</li>
+                    <li><strong>Serenity</strong> - Enhances <strong>Focus</strong>. More Serenity allows more balls to exit the boundary before you lose focus and fail the meditation.</li>
+                </ul>
+                <p>As you master each meditation, you’ll unlock upgrades tied to diverse belief systems, philosophies, and worldviews. Use your resources strategically to navigate these metaphysical challenges and achieve deeper understanding and metaphysical mastery.</p>`,
         isKey: true,
         
     },
     {         
         name: `Yin and Yang`,
         cost: { copium: 1e97, delusion: 1e97, yachtMoney: 1e97, trollPoints: 1e97, hopium: 0, knowledge: 0, power: 0, serenity: 1 },
-        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 7e40, trollPointsPerSecond: 0, hopiumPerSecond: 1e47, knowledgePerSecond: 3e13, powerPerSecond: 0, serenityPerSecond: 0.0004 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 7e42, trollPointsPerSecond: 0, hopiumPerSecond: 1e47, knowledgePerSecond: 3e13, powerPerSecond: 0, serenityPerSecond: 0.008 },
         img: `imgs/arena_yin_yang.png`,
         isMeditation: true,
+        autoMeditateThreshold: 100,
         achievement: 'Focus Your Mind',
         isKey: true,
         message: `Congratulations on your first successful meditation! Through this meditation, you have gained a deeper understanding of Yin and Yang, the dual forces that create balance and harmony in the universe. You have learned that <strong>opposites are interconnected</strong>, and each one gives rise to the other. There is no light without darkness, no strength without softness, and no action without stillness. By embracing both sides, you now understand that balance is the key to living in harmony with yourself and the world around you. Continue to seek balance in all things, and you will find peace.`,
@@ -1385,57 +1396,402 @@ const upgrades = [
     {         
         name: `Infinite Embrace`,
         cost: { copium: 1e99, delusion: 1e99, yachtMoney: 1e99, trollPoints: 1e99, hopium: 0, knowledge: 0, power: 0, serenity: 100 },
-        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 2e40, trollPointsPerSecond: 0, hopiumPerSecond: 1e47, knowledgePerSecond: 1e14, powerPerSecond: 0, serenityPerSecond: 0.001 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 2e43, trollPointsPerSecond: 0, hopiumPerSecond: 1e47, knowledgePerSecond: 1e14, powerPerSecond: 0, serenityPerSecond: 0.001 },
         img: `imgs/infinite_embrace.jpg`,
-        message: `<p>Once you reach 1000 serenity, the Infinite Embrace will become available, offering you the chance to perform a sacred act that will resonate throughout the multiverse.</p>
+        message: `<p>Once you complete one meditation and reach 1000 serenity, the Infinite Embrace will become available, offering you the chance to perform a sacred act that will resonate throughout the multiverse.</p>
                 <p>Physically, the Infinite Embrace resets all of your progress—prestiges, god modes, big crunches, the Hall of Knowledge, and the Hall of Power. But metaphysically, it is an infusion of boundless love into the fabric of existence. Each time you perform this ritual, you strengthen the universe, spreading warmth, harmony, and love to every future incarnation.</p>
                 <p><strong>The more serenity you accumulate in this multiverse, the more Love Points will be injected during the embrace.</strong> These Love Points are permanent, ensuring that your connection to the multiverse grows with each cycle, and they can be spent in the Hall of Love, which remains unlocked across all Infinite Embraces.</p>
                 <p>Through this act, the multiverse is shaped by your love and serenity, enriching all future cycles. Your achievements and Love Points will remain intact, continuing to grow as you transcend each cycle. The embrace is a cosmic renewal, where love fuels the multiverse and your journey within it.</p>`,
     },
     {         
+        name: `Is it worth it?`,
+        cost: { copium: 0, delusion: 1e100, yachtMoney: 0, trollPoints: 0, hopium: 0, knowledge: 1e76, power: 0, serenity: 90 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 3e40, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 0.002 },
+        img: `imgs/to_crunch_or_not_to_crunch.jpg`,
+    },
+    {         
         name: `Existentialism`,
         cost: { copium: 1.5e100, delusion: 1.5e100, yachtMoney: 1.5e100, trollPoints: 1.5e100, hopium: 0, knowledge: 0, power: 0, serenity: 5 },
-        earnings: { copiumPerSecond: 2.2e41, delusionPerSecond: 1.6e41, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 1e47, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 0.002 },
+        earnings: { copiumPerSecond: 5.2e45, delusionPerSecond: 1.6e45, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 1.1e47, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 0.05 },
         img: `imgs/arena_existentialism.png`,
         isMeditation: true,
+        autoMeditateThreshold: 1000,
         isKey: true,
         message: `You've uncovered the truth that <strong>meaning in life is not preordained</strong>—it is something you must create for yourself. In a vast and indifferent universe, you alone have the freedom to choose your purpose. Through this meditation, you’ve learned that the path to fulfillment is in embracing your freedom and accepting responsibility for your choices. Seek meaning in your actions, and the universe will respond.`,
     },
     {         
         name: `Classic Science`,
-        cost: { copium: 0, delusion: 0, yachtMoney: 5e100, trollPoints: 8e100, hopium: 0, knowledge: 1e76, power: 0, serenity: 10 },
+        cost: { copium: 0, delusion: 0, yachtMoney: 5e100, trollPoints: 8e100, hopium: 0, knowledge: 1e76, power: 0, serenity: 50 },
         earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 1e41, hopiumPerSecond: 1e47, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 0.0003 },
         img: `imgs/classic_science.jpg`,
     },
     {         
         name: `Humorless Resolve`,
-        cost: { copium: 5e100, delusion: 5e100, yachtMoney: 0, trollPoints: 5e100, hopium: 0, knowledge: 1e76, power: 0, serenity: 10 },
-        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 1e41, hopiumPerSecond: 1e47, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 0.0005 },
+        cost: { copium: 5e100, delusion: 5e100, yachtMoney: 0, trollPoints: 5e100, hopium: 0, knowledge: 1e76, power: 0, serenity: 500 },
+        earnings: { copiumPerSecond: -1e40, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 1e41, hopiumPerSecond: 1e47, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 0.0005 },
         img: `imgs/cant_take_a_joke.jpg`,
     },
     {         
+        name: `The Best Revenge`,
+        cost: { copium: 0, delusion: 0, yachtMoney: 0, trollPoints: 0, hopium: 1e103, knowledge: 0, power: 0, serenity: 500 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 1e47, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 0.1 },
+        img: `imgs/best_revenge.jpg`,
+    },
+    {         
         name: `Altruism`,
-        cost: { copium: 1e100, delusion: 1e100, yachtMoney: 1e100, trollPoints: 1e100, hopium: 0, knowledge: 0, power: 0, serenity: 15 },
-        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 3e41, trollPointsPerSecond: 0, hopiumPerSecond: 2e47, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 0.009 },
+        cost: { copium: 1e102, delusion: 1e102, yachtMoney: 1e102, trollPoints: 1e102, hopium: 0, knowledge: 0, power: 0, serenity: 7500 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 2e47, trollPointsPerSecond: 0, hopiumPerSecond: 8e47, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 10 },
         img: `imgs/arena_altruism.png`,
         isMeditation: true,
+        autoMeditateThreshold: 100000,
         isKey: true,
         message: `Through this meditation, you’ve learned that <strong>true fulfillment comes from selfless acts</strong> and putting the well-being of others above your own. Altruism teaches that by lifting others up, we create a better world for everyone. Compassion, generosity, and kindness ripple through the world, leaving a lasting positive impact. Continue to give without expectation, and you’ll find the world gives back in ways you never imagined.`,
     },
     {         
         name: `One in a Million`,
-        cost: { copium: 1.8e101, delusion: 0, yachtMoney: 2.5e101, trollPoints: 5e100, hopium: 0, knowledge: 1e76, power: 0, serenity: 10 },
-        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 1e47, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 0.002 },
+        cost: { copium: 1.8e104, delusion: 0, yachtMoney: 2.5e104, trollPoints: 5e103, hopium: 0, knowledge: 1e76, power: 0, serenity: 9400 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 2e15, powerPerSecond: 0, serenityPerSecond: 0.2 },
         img: `imgs/doesnt_go_through_phone.jpg`,
     },
     {         
+        name: `Must be patient`,
+        cost: { copium: 3.8e105, delusion: 4.1e104, yachtMoney: 0, trollPoints: 3e104, hopium: 0, knowledge: 1e77, power: 1e20, serenity: 3500 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 4e42, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 0.8 },
+        img: `imgs/must_be_patient.jpg`,
+    },
+    {         
+        name: `Hotkeys`,
+        cost: { copium: 8e106, delusion: 0, yachtMoney: 0, trollPoints: 2e104, hopium: 0, knowledge: 5e79, power: 0, serenity: 25000 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 2e43, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 1.1 },
+        img: `imgs/hotkeys.jpg`,
+        message: `<p>What the hell? Have these hotkeys been in the game all along? Yes, they have!</p>
+                <p>Here’s a quick rundown of the powerful hotkeys you can use to streamline your gameplay:</p>
+
+                <ul>
+                    <li><strong>M Key:</strong> Same as <strong>Buy Max</strong> button (you should have already known about this one)</li>
+                    <li><strong>S Key:</strong> Same as above but for <strong>Buy Seen</strong>.</li>
+                    <li><strong>B Key:</strong> Toggle <strong>Auto Buy Upgrades</strong>.</li>
+                    <li><strong>P Key:</strong> Toggle <strong>Auto Prestige</strong>. Activate Auto Prestige at the last threshold or disable it to 1e300.</li>
+                    <li><strong>A Key:</strong> Toggle <strong>Auto Ascend</strong>. Pressing this will either set Auto Ascend to the maximum or disable it altogether.</li>
+                    <li><strong>T Key:</strong> Toggle <strong>Auto Transcend</strong>. Same as above for Transcend.</li>
+                    <li><strong>F Key:</strong> Toggle <strong>Auto Fight</strong> (unlockable in Hall of Love).</li>
+                    <li><strong>Z Key:</strong> Open <strong>Prestige</strong> (if prestige possible).</li>
+                    <li><strong>X Key:</strong> Open <strong>Ascend</strong> (if ascend possible).</li>
+                    <li><strong>C Key:</strong> Open <strong>Transcend</strong> Menu (if transcend possible).</li>
+                    <li><strong>V Key:</strong> Open <strong>Big Crunch</strong> Menu (if big crunch possible).</li>
+                    <li><strong>N Key:</strong> Open <strong>Embrace</strong> Menu (if embrace possible).</li>
+                    <li><strong>SPACE BAR Key:</strong> Toggle <strong>Select First X</strong> upgrades (only in Ascend / Transcend).</li>
+                </ul>
+
+                <p>Now you know! Use these hotkeys to gain an edge and automate your progress in ways you never imagined.</p>`,
+    },
+    {         
         name: `Rastafarianism`,
-        cost: { copium: 1e102, delusion: 1e102, yachtMoney: 1e102, trollPoints: 1e102, hopium: 0, knowledge: 0, power: 0, serenity: 15 },
-        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 4.2e42, hopiumPerSecond: 4.2e47, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 0.042 },
+        cost: { copium: 1e105, delusion: 1e105, yachtMoney: 1e105, trollPoints: 1e104, hopium: 0, knowledge: 0, power: 0, serenity: 10420 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 4.2e47, yachtMoneyPerSecond: 0, trollPointsPerSecond: 4.2e47, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 42 },
         img: `imgs/arena_rastafarianism.png`,
         isMeditation: true,
+        autoMeditateThreshold: 1000000,
         isKey: true,
         message: `In this meditation, you’ve connected with the <strong>spiritual power of unity, peace, and respect for all living things</strong>. Rastafarianism teaches the importance of freedom, self-awareness, and living in harmony with nature. By embracing these values, you have strengthened your bond with the earth and your community. Walk in the light of peace and continue to cultivate a deep respect for life in all its forms.`,
     },
-    
+    {         
+        name: `One Coffee, Extra Sass`,
+        cost: { copium: 2e105, delusion: 0, yachtMoney: 0, trollPoints: 5e106, hopium: 0, knowledge: 0, power: 0, serenity: 50000 },
+        earnings: { copiumPerSecond: 1e47, delusionPerSecond: 0, yachtMoneyPerSecond: -2e46, trollPointsPerSecond: 2e47, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 3 },
+        img: `imgs/coffee_opinion.jpg`,
+    },
+    {         
+        name: `Quality Time`,
+        cost: { copium: 3e108, delusion: 0, yachtMoney: 0, trollPoints: 0, hopium: 0, knowledge: 0, power: 0, serenity: 150000 },
+        earnings: { copiumPerSecond: 5e47, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 5 },
+        img: `imgs/gf_playing_games.jpg`,
+    },
+    {         
+        name: `Dualism`,
+        cost: { copium: 0, delusion: 0, yachtMoney: 0, trollPoints: 1e108, hopium: 0, knowledge: 0, power: 0, serenity: 200000 },
+        earnings: { copiumPerSecond: 1e48, delusionPerSecond: 2e50, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 2e17, powerPerSecond: 0, serenityPerSecond: 200 },
+        img: `imgs/arena_dualism.png`,
+        isMeditation: true,
+        autoMeditateThreshold: 1e8,
+        isKey: true,
+        message: `In this meditation, you’ve learned that <strong>existence is shaped by the interplay between two fundamental forces</strong>: body and soul, mind and matter. Dualism shows us that both the physical and spiritual worlds are essential and interconnected. By recognizing and balancing these opposing yet complementary forces, you gain deeper insight into yourself and the universe. Embrace both sides to live in harmony and reach your full potential.`,
+    },
+    {         
+        name: `Impossible Meditation`,
+        cost: { copium: 3e108, delusion: 0, yachtMoney: 0, trollPoints: 0, hopium: 0, knowledge: 0, power: 0, serenity: 150000 },
+        earnings: { copiumPerSecond: 5e47, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 5 },
+        img: `imgs/trying_my_best.jpg`,
+    },
+    {         
+        name: `Ship Has Sailed`,
+        cost: { copium: 1e110, delusion: 0, yachtMoney: 0, trollPoints: 1e111, hopium: 2e111, knowledge: 0, power: 0, serenity: 500000 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: -5e47, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 25 },
+        img: `imgs/ship_has_sailed.jpg`,
+    },
+    {
+        name: `More Decisions...`,
+        cost: { copium: 0, delusion: 1e114, yachtMoney: 0, trollPoints: 3e114, hopium: 0, knowledge: 0, power: 1e23, serenity: 2e7 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 3e47, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 44 },
+        img: `imgs/two_buttons_2.jpg`,     
+    },
+    {         
+        name: `Libertarianism`,
+        cost: { copium: 5e113, delusion: 0, yachtMoney: 5e113, trollPoints: 0, hopium: 0, knowledge: 0, power: 2e24, serenity: 1e8 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 2e51, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 2e18, powerPerSecond: 0, serenityPerSecond: 1999 },
+        img: `imgs/arena_libertarianism.png`,
+        isMeditation: true,
+        autoMeditateThreshold: 1e11,
+        isKey: true,
+        message: `You’ve discovered that <strong>true freedom lies in the ability to live independently and make your own choices</strong>, without unnecessary constraints. Libertarianism teaches the importance of personal liberty and responsibility, where individuals thrive when allowed to pursue their own paths. Through this meditation, you’ve embraced the value of autonomy, and with it, the power to shape your own destiny.`,
+        achievement: 'Study Libertarianism',
+    },
+    {         
+        name: `Different Tastes`,
+        cost: { copium: 0, delusion: 2e115, yachtMoney: 0, trollPoints: 1e115, hopium: 0, knowledge: 0, power: 0, serenity: 1e9 },
+        earnings: { copiumPerSecond: -1e48, delusionPerSecond: 1e50, yachtMoneyPerSecond: 0, trollPointsPerSecond: 4e49, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 240 },
+        img: `imgs/different_tastes.jpg`,
+    },
+    {         
+        name: `One Drink`,
+        cost: { copium: 1e119, delusion: 5e119, yachtMoney: 0, trollPoints: 0, hopium: 0, knowledge: 0, power: 0, serenity: 1e9 },
+        earnings: { copiumPerSecond: 1e50, delusionPerSecond: 0, yachtMoneyPerSecond: -3e49, trollPointsPerSecond: 8e49, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 350 },
+        img: `imgs/one_drink.jpg`,
+    },
+    {         
+        name: `They Whatevered`,
+        cost: { copium: 1e120, delusion: 0, yachtMoney: 2e120, trollPoints: 3e121, hopium: 0, knowledge: 0, power: 0, serenity: 5e9 },
+        earnings: { copiumPerSecond: 1.5e50, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 8e49, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 790 },
+        img: `imgs/whatever_bitches.jpg`,
+    },
+    {         
+        name: `Hinduism`,
+        cost: { copium: 1e120, delusion: 0, yachtMoney: 0, trollPoints: 0, hopium: 0, knowledge: 0, power: 1e27, serenity: 2e9 },
+        earnings: { copiumPerSecond: 5e53, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 1e53, knowledgePerSecond: 3e21, powerPerSecond: 0, serenityPerSecond: 32500 },
+        img: `imgs/arena_hinduism.png`,
+        isMeditation: true,
+        autoMeditateThreshold: 1e13,
+        isKey: true,
+        message: `Through this meditation, you’ve gained insight into the <strong>cycle of life, karma, and spiritual growth</strong>. Hinduism teaches that every action shapes your journey toward enlightenment, and by aligning with your dharma (righteous path), you move closer to your true purpose. You’ve learned the importance of inner peace, self-awareness, and respect for the interconnectedness of all life. Continue on your path with an open heart, and the universe will guide you.`,
+    },
+    {         
+        name: `We All Deserve Breaks`,
+        cost: { copium: 0, delusion: 1e121, yachtMoney: 0, trollPoints: 2e122, hopium: 0, knowledge: 0, power: 0, serenity: 2e10 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 2e52, yachtMoneyPerSecond: -1e51, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 2800 },
+        img: `imgs/not_adulting.jpg`,
+    },
+    {         
+        name: `Overdue Xzibit Cameo`,
+        cost: { copium: 1e126, delusion: 0, yachtMoney: 1e127, trollPoints: 4.2e126, hopium: 0, knowledge: 0, power: 0, serenity: 9e10 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 4.2e53, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 4200 },
+        img: `imgs/xzibit.jpg`,
+    },
+    {
+        name: `Get Hooked`,
+        cost: { copium: 0, delusion: 1e128, yachtMoney: 0, trollPoints: 5e128, hopium: 0, knowledge: 0, power: 5e30, serenity: 5e10 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: -1e59, yachtMoneyPerSecond: 0, trollPointsPerSecond: -1e60, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 50000 },
+        img: `imgs/pudge.jpg`,
+        hoverOverwrite: 'Care',
+        message: `Got hooked by Pudge—classic. Once that hook lands, you're stuck, literally and figuratively. Dota 2 pulls you in with its intense strategy, team dynamics, and those epic plays that make your heart race. Whether it’s landing the perfect Black Hole, clutching a game with a surprise Aegis steal, or outplaying with a well-timed BKB, every match is a new adventure. Dota isn't just a game, it's a battlefield where you live for the highs, the lows, and everything in between. Shoutout to the greatest team game of all time!`,
+    },
+    {         
+        name: `Shinto`,
+        cost: { copium: 1e127, delusion: 1e127, yachtMoney: 0, trollPoints: 0, hopium: 0, knowledge: 0, power: 1e31, serenity: 1e12 },
+        earnings: { copiumPerSecond: 5e55, delusionPerSecond: 5e55, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 7e53, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 470000 },
+        img: `imgs/arena_shinto.png`,
+        isMeditation: true,
+        autoMeditateThreshold: 1e15,
+        isKey: true,
+        message: `Through this meditation, you’ve deepened your <strong>connection to the kami (spirits) that reside in nature and all things</strong>. Shinto teaches that harmony with the natural world brings clarity, peace, and spiritual balance. By honoring the sacredness of life, you’ve learned that everything around you is alive with spiritual energy. Continue to respect and live in harmony with nature, and it will nurture your spirit in return.`,
+        achievement: 'Study Shinto',
+    },
+    {         
+        name: `Dad Joke #1`,
+        cost: { copium: 0, delusion: 0, yachtMoney: 4e127, trollPoints: 4e127, hopium: 0, knowledge: 0, power: 0, serenity: 1e13 },
+        earnings: { copiumPerSecond: -1e52, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 4e54, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 45678 },
+        img: `imgs/dad_joke_1.jpg`,
+    },
+    {         
+        name: `Dad Joke #2`,
+        cost: { copium: 0, delusion: 0, yachtMoney: 8e127, trollPoints: 8e127, hopium: 0, knowledge: 0, power: 0, serenity: 3e13 },
+        earnings: { copiumPerSecond: -2e52, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 8e54, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 56789 },
+        img: `imgs/dad_joke_2.jpg`,
+    },
+    {         
+        name: `Dad Joke #3`,
+        cost: { copium: 0, delusion: 0, yachtMoney: 1.6e128, trollPoints: 1.6e128, hopium: 0, knowledge: 0, power: 0, serenity: 9e13 },
+        earnings: { copiumPerSecond: -3e52, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 1.6e55, hopiumPerSecond: 1e52, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 67890 },
+        img: `imgs/dad_joke_3.jpg`,
+    },
+    {         
+        name: `Stoicism`,
+        cost: { copium: 1e134, delusion: 0, yachtMoney: 1e134, trollPoints: 0, hopium: 0, knowledge: 0, power: 2e33, serenity: 2e13 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 1e57, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 8e26, powerPerSecond: 0, serenityPerSecond: 6000000 },
+        img: `imgs/arena_stoicism.png`,
+        isMeditation: true,
+        autoMeditateThreshold: 1e18,
+        isKey: true,
+        message: `Through this meditation, you’ve embraced the <strong>strength of inner calm and resilience</strong> in the face of life’s challenges. Stoicism teaches that while you cannot control external events, you can control your response to them. By mastering your emotions and focusing on virtue, you’ve gained the power to face any hardship with grace and wisdom. Continue to cultivate this inner strength, and you will find peace in all circumstances.`,
+    },
+    {
+        name: `Second Pizza Meme`,
+        cost: { copium: 2.5e135, delusion: 0, yachtMoney: 2.5e135, trollPoints: 5e135, hopium: 2e135, knowledge: 0, power: 0, serenity: 1e14 },
+        earnings: { copiumPerSecond: 7.5e55, delusionPerSecond: 0, yachtMoneyPerSecond: -3e55, trollPointsPerSecond: 7e56, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 150000 },
+        img: `imgs/pizza_like.jpg`,
+    },
+    {
+        name: `Schrodinger's Cat`,
+        cost: { copium: 2e137, delusion: 2e137, yachtMoney: 0, trollPoints: 0, hopium: 0, knowledge: 0, power: 0, serenity: 1e15 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 5e56, yachtMoneyPerSecond: 0, trollPointsPerSecond: 1e57, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 650000 },
+        img: `imgs/schrodingers_cat.jpg`,
+    },
+    {         
+        name: `Deism`,
+        cost: { copium: 5e138, delusion: 0, yachtMoney: 0, trollPoints: 5e138, hopium: 0, knowledge: 0, power: 3e36, serenity: 1e17 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 7e59, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 9e8 },
+        img: `imgs/arena_deism.png`,
+        isMeditation: true,
+        autoMeditateThreshold: 1e20,
+        isKey: true,
+        message: `Through this meditation, you’ve understood that the <strong>universe operates under the natural laws set in motion by a higher power</strong>, yet it is up to you to seek truth and purpose. Deism teaches that reason, observation, and understanding of the world around you lead to enlightenment. With this knowledge, you’ve realized that your journey is shaped by your actions and understanding of the universe's order.`,
+    },
+    {
+        name: `I Hear Ya`,
+        cost: { copium: 7e138, delusion: 0, yachtMoney: 0, trollPoints: 0, hopium: 0, knowledge: 0, power: 1e36, serenity: 1e16 },
+        earnings: { copiumPerSecond: 6e56, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 1e57, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 8e6 },
+        img: `imgs/i_hear_ya.jpg`,
+    },
+    {
+        name: `Angry Girlfriend`,
+        cost: { copium: 0, delusion: 0, yachtMoney: 0, trollPoints: 0, hopium: 0, knowledge: 1e110, power: 0, serenity: 1e16 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 1e57, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 1e22, powerPerSecond: 0, serenityPerSecond: 9e6 },
+        img: `imgs/gf_mad_look.jpg`,
+    },
+    {         
+        name: `Skepticism`,
+        cost: { copium: 0, delusion: 1e144, yachtMoney: 0, trollPoints: 1e144, hopium: 0, knowledge: 0, power: 1e39, serenity: 1e20 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 1e30, powerPerSecond: 0, serenityPerSecond: 1.3e10 },
+        img: `imgs/arena_skepticism.png`,
+        isMeditation: true,
+        autoMeditateThreshold: 1e25,
+        isKey: true,
+        message: `In this meditation, you’ve learned the <strong>value of questioning and seeking truth</strong>. Skepticism teaches that through doubt, we grow closer to understanding, as every idea must be examined and tested. By embracing a mindset of curiosity and critical thinking, you’ve unlocked the path to deeper knowledge. Continue to question, explore, and refine your beliefs, and truth will reveal itself in time.`,
+        achievement: 'Study Skepticism',
+    },
+    {
+        name: `We're All Gamers`,
+        cost: { copium: 2e143, delusion: 2e143, yachtMoney: 0, trollPoints: 0, hopium: 0, knowledge: 0, power: 0, serenity: 1.5e20 },
+        earnings: { copiumPerSecond: 1e59, delusionPerSecond: 1e59, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 3e8 },
+        img: `imgs/we_are_all_gamers.jpg`,
+    },
+    {
+        name: `Actual Life Advice`,
+        cost: { copium: 5e145, delusion: 0, yachtMoney: 0, trollPoints: 5e145, hopium: 0, knowledge: 1e118, power: 0, serenity: 8e21 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 3e59, yachtMoneyPerSecond: 0, trollPointsPerSecond: 2e59, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 6e8 },
+        img: `imgs/actual_life_advice.jpg`,
+        hoverOverwrite: `don't take advice from a guy who made a game called "Degens Idle"`,
+    },
+    {         
+        name: `Buddhism`,
+        cost: { copium: 0, delusion: 0, yachtMoney: 0, trollPoints: 0, hopium: 1e149, knowledge: 0, power: 2e41, serenity: 1e22 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 1e65, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 1e57, knowledgePerSecond: 1e31, powerPerSecond: 0, serenityPerSecond: 1e13 },
+        img: `imgs/arena_buddhism.png`,
+        isMeditation: true,
+        autoMeditateThreshold: 1e25,
+        isKey: true,
+        message: `Through this meditation, you’ve discovered the <strong>path to inner peace and mindfulness</strong>. Buddhism teaches that by releasing attachment and practicing compassion, you can transcend suffering and find enlightenment. You’ve learned the power of living in the present moment, cultivating awareness and kindness toward yourself and others. Continue to walk the middle path, and you will find peace in all aspects of life.`,
+        hoverOverwrite: 'there is no such thing as a wrong sidekick',
+    },
+    {
+        name: `Your Guiding Light`,
+        cost: { copium: 0, delusion: 0, yachtMoney: 1e148, trollPoints: 0, hopium: 0, knowledge: 1e120, power: 0, serenity: 1e21 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 1e62, trollPointsPerSecond: -1e59, hopiumPerSecond: 1e55, knowledgePerSecond: 1e29, powerPerSecond: 0, serenityPerSecond: 1e11 },
+        img: `imgs/your_guiding_light.jpg`,
+    },
+    {
+        name: `Religious Books`,
+        cost: { copium: 0, delusion: 0, yachtMoney: 0, trollPoints: 0, hopium: 1e145, knowledge: 1e120, power: 0, serenity: 1e21 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 1e55, knowledgePerSecond: 1e29, powerPerSecond: 0, serenityPerSecond: 3e11 },
+        img: `imgs/the_cure.jpg`,
+        hoverOverwrite: `Shoutout to "The Cure", written by the Degens Idle creator's sister! Pro tip: Owning this book will reduce randomness in the Skepticism meditation, so set it to autobuy if you want to optimize your strategy without relying purely on luck.`,
+    },
+    {         
+        name: `Christianity`,
+        cost: { copium: 0, delusion: 0, yachtMoney: 7e155, trollPoints: 0, hopium: 7e155, knowledge: 0, power: 7e43, serenity: 7e24 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 7e60, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 0 },
+        img: `imgs/arena_christianity.png`,
+        isMeditation: true,
+        autoMeditateThreshold: 7e27,
+        isKey: true,
+        message: `In this meditation, you’ve embraced the <strong>power of faith, love, and redemption</strong>. Christianity teaches that by living with compassion and following a path of grace, you can find peace and salvation. Through your meditation, you’ve learned the importance of forgiveness, selflessness, and the strength that comes from faith. Continue to live with love in your heart, and you will find a deep connection to the divine.`,
+    },
+    {
+        name: `Journey > Destination`,
+        cost: { copium: 0, delusion: 2e156, yachtMoney: 0, trollPoints: 0, hopium: 0, knowledge: 0, power: 0, serenity: 1e25 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 1e62, yachtMoneyPerSecond: -1e60, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 1e30, powerPerSecond: 0, serenityPerSecond: 5e11 },
+        img: `imgs/journey_over_destination.jpg`,
+    },
+    {
+        name: `Helping with Chores`,
+        cost: { copium: 0, delusion: 0, yachtMoney: 0, trollPoints: 9e156, hopium: 0, knowledge: 0, power: 0, serenity: 9e25 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 1e65, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 0 },
+        img: `imgs/helping_with_chores.jpg`,
+    },
+    {         
+        name: `Epicureanism`,
+        cost: { copium: 0, delusion: 0, yachtMoney: 0, trollPoints: 1e163, hopium: 1e163, knowledge: 0, power: 1e46, serenity: 3e27 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 1e72, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 1e38, powerPerSecond: 0, serenityPerSecond: 1e16 },
+        img: `imgs/arena_epicureanism.png`,
+        isMeditation: true,
+        autoMeditateThreshold: 5e30,
+        isKey: true,
+        message: `Through this meditation, you’ve discovered the <strong>joy of finding pleasure in simplicity and peace</strong>. Epicureanism teaches that true happiness comes from seeking tranquility, enjoying life’s simple pleasures, and avoiding unnecessary pain. You’ve learned that balance, moderation, and appreciating the present moment are the keys to a fulfilled life. Continue to embrace the small joys, and contentment will follow.`,
+    },
+    {
+        name: `Hold the Fuck Up`,
+        cost: { copium: 0, delusion: 1e169, yachtMoney: 0, trollPoints: 1e169, hopium: 0, knowledge: 1e150, power: 0, serenity: 2e30 },
+        earnings: { copiumPerSecond: -1e69, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 1e70, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 4e14 },
+        img: `imgs/hold_the_fuck_up.jpg`,
+    },
+    {
+        name: `God's Plan`,
+        cost: { copium: 0, delusion: 0, yachtMoney: 0, trollPoints: 0, hopium: 0, knowledge: 1.5e155, power: 0, serenity: 1e32 },
+        earnings: { copiumPerSecond: -1e70, delusionPerSecond: -1e70, yachtMoneyPerSecond: -1e70, trollPointsPerSecond: -1e70, hopiumPerSecond: -1e60, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 6.9e14 },
+        img: `imgs/gods_plan.jpg`,
+    },
+    {         
+        name: `Agnosticism`,
+        cost: { copium: 0, delusion: 0, yachtMoney: 0, trollPoints: 0, hopium: 0, knowledge: 2e155, power: 0, serenity: 1.2e32 },
+        earnings: { copiumPerSecond: 1e76, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 1e60, knowledgePerSecond: 1e42, powerPerSecond: 0, serenityPerSecond: 1e18 },
+        img: `imgs/arena_agnosticism.png`,
+        isMeditation: true,
+        autoMeditateThreshold: 1e38,
+        isKey: true,
+        message: `Through this meditation, you’ve embraced the <strong>wisdom of uncertainty and open-mindedness</strong>. Agnosticism teaches that by acknowledging the limits of human understanding, you remain open to new ideas and possibilities. You’ve learned that sometimes the greatest wisdom lies in accepting that some truths may be beyond our grasp, and that is perfectly okay.`,
+    },
+    {
+        name: `Future Happiness`,
+        cost: { copium: 0, delusion: 0, yachtMoney: 0, trollPoints: 0, hopium: 0, knowledge: 5e155, power: 0, serenity: 1e32 },
+        earnings: { copiumPerSecond: -1e74, delusionPerSecond: -1e74, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 0 },
+        img: `imgs/future_happiness.jpg`,
+    },
+    {
+        name: `Meaning of Life`,
+        cost: { copium: 4.2e196, delusion: 0, yachtMoney: 0, trollPoints: 0, hopium: 0, knowledge: 4.2e157, power: 0, serenity: 4.2e34 },
+        earnings: { copiumPerSecond: -1e77, delusionPerSecond: -1e77, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 0 },
+        img: `imgs/meaning_of_life.jpg`,
+        message: `<p>
+                    After navigating the chaos of existence, discovering the flickers of hope, and wielding the unrelenting power that made you the strongest being in the multiverse, you saved the world. You’ve meditated deeply on love and serenity, studying countless philosophies and beliefs in your pursuit of wisdom. But now, you stand at a new threshold—the Meaning of Life.
+                </p>
+                <p>
+                    You’ve spent eons exploring humanity’s collective knowledge, meditating on the teachings of philosophers, sages, and scholars. Yet, in this journey, one truth becomes painfully clear: one lifetime is never enough to grasp the totality of wisdom passed down by those who came before you. You realize that even with all your strength, love, and serenity, you can only gather fragments, scattered nuggets of truth from some. Every belief holds a kernel of wisdom, every philosophy some glimmer of understanding.
+                </p>
+                <p>
+                    With this knowledge, you form your own conclusions, a personal understanding of existence. However, the vastness of life’s mysteries remains. You are still far from fully understanding the meaning of life. What you have now is not the answer, but a fleeting glimpse of the infinite—a reminder that the pursuit itself may hold more significance than the destination.
+                </p>
+                <p>
+                    <strong>Keep searching. There’s always more to learn.</strong>
+                </p>`,
+        achievement: `Meaning of Life`,
+    },
 ];

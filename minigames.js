@@ -12,16 +12,18 @@ const miniGameTimeouts = {
     speed:  6 * 60 * 1000,  // 6 minutes
     memory: 10 * 60 * 1000, // 10 minutes
     math:   8 * 60 * 1000,  // 8 minutes
-    luck:   4 * 60 *1000,   // 4 minutes
+    luck:   4 * 60 * 1000,   // 4 minutes
 };
 
 // Object to store interval references for each mini-game
 const miniGameIntervals = {};
 
-let numMathSolves = 0;
+let numMathPortals = 0;
 let numSpeedTaps = 0;
 let numMemorizedDots = 0;
 let numUnluckyBoxes = 0;
+let numLuckyBoxes = 0;
+let numSoftCaps = 0;
 
 let lastClickedBoxIndex = null;
 let consecutiveClicks = 0;
@@ -40,7 +42,8 @@ function playMiniGame(gameType) {
     button.classList.add('disabled'); // Add the 'disabled' class to change its appearance
 
     // Convert mini-game timeouts from milliseconds to minutes for the message
-    const cooldownMinutes = (miniGamerSkill ? miniGameTimeouts[gameType] * 0.5 : miniGameTimeouts[gameType]) / (60 * 1000);
+    const cooldownMultiplier = miniGamerSkill ? (gamingAddictSkill ? 0.25 : 0.5) : 1;
+    const cooldownMinutes = (miniGameTimeouts[gameType] * cooldownMultiplier) / (60 * 1000);
     const cooldownMessage = (gameType === 'memory' || gameType === 'math') ? 
         `<br>In ${cooldownMinutes} minutes, you get to test your ${gameType} skills again.` : 
         `<br>In ${cooldownMinutes} minutes, you get to test your ${gameType} again.`;
@@ -158,9 +161,11 @@ function playMiniGame(gameType) {
 
                     numSpeedTaps += Math.max(0, points - misclicks);
                     localStorage.setItem('numSpeedTaps', numSpeedTaps);
-                    if (numSpeedTaps > 1500) {
+                    if (numSpeedTaps >= 1500) {
                         unlockAchievement('Pathological Speedster');
                     }
+
+                    calculateMiniGamesMultiplier();
 
                     resultMessage = `You tapped ${points} dots with ${misclicks} misclicks in ${duration} seconds (${effectiveClicksPerSecond.toFixed(2)} points per second). Your reward is <span style="color: green;">${formatNumber(reward)}</span> copium! You have now tapped ${numSpeedTaps} times in winning games.`;
                 } else {
@@ -174,7 +179,12 @@ function playMiniGame(gameType) {
                 copium += reward;
 
                 if (softCapReached) {
-                    resultMessage += `<br><span style="color: orange;">Soft cap reached: Maximum reward of ${miniGamesSoftCapHrs} hours effective Copium applied.</span>`;
+                    numSoftCaps++;
+                    localStorage.setItem('numSoftCaps', numSoftCaps);
+                    if (numSoftCaps >= 50) {
+                        unlockAchievement(`Can't Hold Me Back`);
+                    }
+                    resultMessage += `<br><span style="color: orange;">Soft cap reached: Maximum reward of ${miniGamesSoftCapHrs} hours effective Copium applied. This was your ${numSoftCaps}${getOrdinalSuffix(numSoftCaps)} soft cap.</span>`;
                 }
 
                 resultMessage += cooldownMessage;
@@ -205,6 +215,8 @@ function playMiniGame(gameType) {
             false, 
             false
         ).then(() => {
+
+            const memoryGameStartTime = crunchTimer;
 
             // Create a game area
             const gameArea = document.createElement('div');
@@ -322,8 +334,13 @@ function playMiniGame(gameType) {
                     softCapReached = true;
                 }
 
-                if(correct && gridSize >= 6 && sequenceLength >= 6){
-                    unlockAchievement('Memory Master');
+                if(correct && sequenceLength >= 6){
+                    if (gridSize >= 6) {
+                        unlockAchievement('Memory Master');
+                    }
+                    if (crunchTimer - memoryGameStartTime >= 180) {
+                        unlockAchievement('Long Term Memory');
+                    }
                 }
 
                 delusion += reward;
@@ -331,9 +348,10 @@ function playMiniGame(gameType) {
                 if (correct) {
                     numMemorizedDots += sequenceLength;
                     localStorage.setItem('numMemorizedDots', numMemorizedDots);
-                    if (numMemorizedDots > 500) {
+                    if (numMemorizedDots >= 500) {
                         unlockAchievement('Pattern Prodigy');
                     }
+                    calculateMiniGamesMultiplier();
                 }
 
                 let resultMessage = correct
@@ -341,7 +359,12 @@ function playMiniGame(gameType) {
                     : `You failed to match the pattern and lost <span style="color: red;">${formatNumber(Math.abs(reward))}</span> delusion!`;
 
                 if (softCapReached) {
-                    resultMessage += `<br><span style="color: orange;">Soft cap reached: Maximum reward of ${miniGamesSoftCapHrs} hours effective Delusion applied.</span>`;
+                    numSoftCaps++;
+                    localStorage.setItem('numSoftCaps', numSoftCaps);
+                    if (numSoftCaps >= 50) {
+                        unlockAchievement(`Can't Hold Me Back`);
+                    }
+                    resultMessage += `<br><span style="color: orange;">Soft cap reached: Maximum reward of ${miniGamesSoftCapHrs} hours effective Delusion applied. This was your ${numSoftCaps}${getOrdinalSuffix(numSoftCaps)} soft cap.</span>`;
                 }
 
                 resultMessage += cooldownMessage;
@@ -367,7 +390,9 @@ function playMiniGame(gameType) {
         let portalValues = []; // Store all portal values
         let selectedPortals = []; // Store selected portals for checking
         let targetSum = Math.floor(Math.random() * 71) + 10; // Random target sum between 10 and 80
-        let startTime = Date.now(); // Track the start time
+        if (targetSum >= 50) {
+            duration += 5;
+        }
 
         // Show the modal with instructions and start the game when the modal is closed
         showMessageModal(
@@ -413,9 +438,11 @@ function playMiniGame(gameType) {
             timerDisplay.style.zIndex = '1100'; // Set z-index higher than portals
             gameArea.appendChild(timerDisplay);
 
+            const mathStartTime = Date.now(); // Track the start time
+
             // Function to update the timer display with 2 decimal places
             const updateTimer = () => {
-                const elapsed = (Date.now() - startTime) / 1000;
+                const elapsed = (Date.now() - mathStartTime) / 1000;
                 const timeLeft = Math.max(0, duration - elapsed);
                 timerDisplay.textContent = `Time Left: ${timeLeft.toFixed(2)}`;
                 return timeLeft;
@@ -428,7 +455,7 @@ function playMiniGame(gameType) {
                     clearInterval(timerInterval); // Stop the timer when it reaches 0
                     endGame(false); // Time ran out, player loses
                 }
-            }, 100);
+            }, 20);
 
             // Function to create a portal with better collision detection
             function createPortal(num) {
@@ -444,7 +471,7 @@ function playMiniGame(gameType) {
                 portal.style.display = 'flex';
                 portal.style.alignItems = 'center';
                 portal.style.justifyContent = 'center';
-                portal.style.fontSize = '24px';
+                portal.style.fontSize = '28px';
                 portal.style.cursor = 'pointer';
                 portal.style.zIndex = '1000'; // Lower z-index than the target and timer displays
                 portal.textContent = num;
@@ -579,12 +606,13 @@ function playMiniGame(gameType) {
                     if (selectedPortals.length >= 5) {
                         unlockAchievement('When Math Maths');
                     }
-                    numMathSolves++;
-                    localStorage.setItem('numMathSolves', numMathSolves);
-                    if (numMathSolves > 314) {
+                    numMathPortals += selectedPortals.length;
+                    localStorage.setItem('numMathPortals', numMathPortals);
+                    if (numMathPortals > 314) {
                         unlockAchievement('Pie Guy');
                     }
-                    resultMessage = `You found the correct sum and earned <span style="color: green;">${formatNumber(reward)}</span> yachtMoney! That was your ${numMathSolves}${getOrdinalSuffix(numMathSolves)} solve.`;
+                    calculateMiniGamesMultiplier();
+                    resultMessage = `You found the correct sum and earned <span style="color: green;">${formatNumber(reward)}</span> yachtMoney! You now have selected ${numMathPortals} correct math portals.`;
                 } else {
                     reward = -Math.max(Math.floor(Math.abs(yachtMoney) * 0.2), 20);
                     resultMessage = `You didn't find the correct sum. You lost <span style="color: red;">${formatNumber(Math.abs(reward))}</span> yachtMoney.`;
@@ -594,7 +622,12 @@ function playMiniGame(gameType) {
 
                 // Add the soft cap message in orange if applicable
                 if (softCapReached) {
-                    resultMessage += `<br><span style="color: orange;">Soft cap reached: Maximum reward of ${miniGamesSoftCapHrs} hours effective Yacht Money applied.</span>`;
+                    numSoftCaps++;
+                    localStorage.setItem('numSoftCaps', numSoftCaps);
+                    if (numSoftCaps >= 50) {
+                        unlockAchievement(`Can't Hold Me Back`);
+                    }
+                    resultMessage += `<br><span style="color: orange;">Soft cap reached: Maximum reward of ${miniGamesSoftCapHrs} hours effective Yacht Money applied. This was your ${numSoftCaps}${getOrdinalSuffix(numSoftCaps)} soft cap.</span>`;
                 }
 
                 resultMessage += cooldownMessage;
@@ -610,7 +643,7 @@ function playMiniGame(gameType) {
     // Luck mini-game logic
     else if (gameType === 'luck') {
         let boxValues = [];
-        const sebosLuck = purchasedUpgrades.some(upgrade => upgrade.name === "Sebo's Luck");
+        const sebosLuck = purchasedUpgradesSet.has("Sebo's Luck");
         let totalBoxes = sebosLuck ? 4 : (luckGameSkill ? 5 : 6);
 
         // Adjust the value ranges based on luckGameSkill and Sebo's Luck
@@ -644,7 +677,11 @@ function playMiniGame(gameType) {
         }
 
         // Shuffle the box values to randomize the order
-        boxValues = boxValues.sort(() => Math.random() - 0.5);
+        for (let i = boxValues.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [boxValues[i], boxValues[j]] = [boxValues[j], boxValues[i]];
+        }
+    
 
         // Show the modal with instructions and start the game when the modal is closed
         showMessageModal(
@@ -762,20 +799,32 @@ function playMiniGame(gameType) {
                         if (boxValue < 0) {
                             numUnluckyBoxes ++;
                             localStorage.setItem('numUnluckyBoxes', numUnluckyBoxes);
-                            if (numUnluckyBoxes > 100) {
+                            if (numUnluckyBoxes >= 100) {
                                 unlockAchievement('Consolation Prize');
                             }
+                        } else {
+                            numLuckyBoxes ++;
+                            localStorage.setItem('numLuckyBoxes', numLuckyBoxes);
+                            if (numLuckyBoxes >= 777) {
+                                unlockAchievement('Luck of the Irish');
+                            }
+                            calculateMiniGamesMultiplier();
                         }
 
                         resultMessage = boxValue >= 0 ?
-                            `You chose a lucky box and gained <span style="color: green;">${formatNumber(reward)}</span> troll points!` :
-                            `You chose an unlucky box and lost <span style="color: red;">${formatNumber(Math.abs(reward))}</span> troll points. You have now opened ${numUnluckyBoxes} unlucky boxes.`;
+                            `You chose a lucky box and gained <span style="color: green;">${formatNumber(reward)}</span> troll points! That was your ${numLuckyBoxes}${getOrdinalSuffix(numLuckyBoxes)} lucky box.` :
+                            `You chose an unlucky box and lost <span style="color: red;">${formatNumber(Math.abs(reward))}</span> troll points. That was your ${numUnluckyBoxes}${getOrdinalSuffix(numUnluckyBoxes)} unlucky box.`;
 
                         trollPoints += reward;
 
                         // Add the soft cap message in orange if applicable
                         if (softCapReached) {
-                            resultMessage += `<br><span style="color: orange;">Soft cap reached: Maximum reward of ${miniGamesSoftCapHrs} hours effective Troll Points applied.</span>`;
+                            numSoftCaps++;
+                            localStorage.setItem('numSoftCaps', numSoftCaps);
+                            if (numSoftCaps >= 50) {
+                                unlockAchievement(`Can't Hold Me Back`);
+                            }
+                            resultMessage += `<br><span style="color: orange;">Soft cap reached: Maximum reward of ${miniGamesSoftCapHrs} hours effective Troll Points applied. This was your ${numSoftCaps}${getOrdinalSuffix(numSoftCaps)} soft cap.</span>`;
                         }
 
                         resultMessage += cooldownMessage;
@@ -807,7 +856,8 @@ function playMiniGame(gameType) {
 function startCooldown(gameType) {
     const button = document.getElementById(`${gameType}Game`);
     const startTime = Date.now();
-    const cooldownDuration = miniGamerSkill ? miniGameTimeouts[gameType] * 0.75 : miniGameTimeouts[gameType];
+    const cooldownMultiplier = miniGamerSkill ? (gamingAddictSkill ? 0.25 : 0.5) : 1;
+    const cooldownDuration = (miniGameTimeouts[gameType] * cooldownMultiplier);
 
     localStorage.setItem(`${gameType}CooldownStart`, startTime);
 
@@ -853,6 +903,81 @@ function startCooldown(gameType) {
 }
 
 
+function applyProgressiveScaling(effectValue, baseIncrease) {
+    let scaledEffect = 0;
+    let remainingTaps = effectValue;
+
+    // First tier: Apply 5x scaling for the first 200 taps
+    let firstTierTaps = Math.floor(200 / (10000 * baseIncrease));
+    if (remainingTaps > firstTierTaps) {
+        scaledEffect += firstTierTaps * baseIncrease * 5;
+        remainingTaps -= firstTierTaps;
+    } else {
+        scaledEffect += remainingTaps * baseIncrease * 5;
+        return scaledEffect;
+    }
+
+    // Second tier: Apply 3x scaling for the next 500 taps
+    let secondTierTaps = Math.floor(500 / (10000 * baseIncrease));
+    if (remainingTaps > secondTierTaps) {
+        scaledEffect += secondTierTaps * baseIncrease * 3;
+        remainingTaps -= secondTierTaps;
+    } else {
+        scaledEffect += remainingTaps * baseIncrease * 3;
+        return scaledEffect;
+    }
+
+    // Third tier: Apply 2x scaling for the next 1250 taps
+    let thirdTierTaps = Math.floor(1250 / (10000 * baseIncrease));
+    if (remainingTaps > thirdTierTaps) {
+        scaledEffect += thirdTierTaps * baseIncrease * 2;
+        remainingTaps -= thirdTierTaps;
+    } else {
+        scaledEffect += remainingTaps * baseIncrease * 2;
+        return scaledEffect;
+    }
+
+    // Fourth tier: Apply 1x scaling for the next 5000 taps
+    let fourthTierTaps = Math.floor(5000 / (10000 * baseIncrease));
+    if (remainingTaps > fourthTierTaps) {
+        scaledEffect += fourthTierTaps * baseIncrease;
+        remainingTaps -= fourthTierTaps;
+    } else {
+        scaledEffect += remainingTaps * baseIncrease;
+        return scaledEffect;
+    }
+
+    // Apply diminishing scaling: reduce scaling so it asymptotically approaches 6
+    let decrementMultiplier = 1;
+    while (remainingTaps > 0) {
+        let chunk = Math.min(Math.floor(1000 / (10000 * baseIncrease)), remainingTaps);
+        decrementMultiplier *= 0.980392156862745;  // Reduce the multiplier by 10% for every 0.25 effect
+        scaledEffect += chunk * baseIncrease * decrementMultiplier;
+        remainingTaps -= chunk;
+    }
+
+    // If we have more taps, continue with the remaining tiers (not needed for this test case)
+    return scaledEffect;
+}
+
+function calculateMiniGamesMultiplier() {
+    if (cosmicGamekeeperSkill) {
+        // Calculate each effect with its base increase and progressive scaling
+        const speedTapsEffect = applyProgressiveScaling(numSpeedTaps, 0.0001);
+        const memorizedDotsEffect = applyProgressiveScaling(numMemorizedDots, 0.0003);
+        const mathPortalsEffect = applyProgressiveScaling(numMathPortals, 0.0005);
+        const luckyBoxesEffect = applyProgressiveScaling(numLuckyBoxes, 0.0007);
+
+        // Sum up the effects and apply them to the cosmicGamekeeperMultiplier
+        cosmicGamekeeperMultiplier = 1 + (speedTapsEffect + memorizedDotsEffect + mathPortalsEffect + luckyBoxesEffect);
+
+        if (cosmicGamekeeperMultiplier > 7.5) {
+            unlockAchievement('Serious Gamer');
+        }
+    }
+}
+
+
 
 
 function unlockMiniGames() {
@@ -867,7 +992,8 @@ function unlockMiniGames() {
 
         if (startTime) {
             const elapsed = now - parseInt(startTime, 10);
-            const cooldownDuration = miniGamerSkill ? miniGameTimeouts[gameType] * 0.75 : miniGameTimeouts[gameType];
+            const cooldownMultiplier = miniGamerSkill ? (gamingAddictSkill ? 0.25 : 0.5) : 1;
+            const cooldownDuration = (miniGameTimeouts[gameType] * cooldownMultiplier);
 
             if (elapsed >= cooldownDuration) {
                 cooldowns[gameType] = false;

@@ -22,6 +22,9 @@ let lovePoints = 0;
 let numUnlockedAchievements = 0;
 let achievementMultiplier = 1;
 
+let cosmicGamekeeperMultiplier = 1;
+let cosmicGamekeeperSkill = false;
+
 let achievementBoostValue = 0.01;
 let achievementHyperchargeSkill = false;
 
@@ -41,7 +44,8 @@ let effectiveSerenityPerSecond = 0;
 let prestiges = 0;
 let epsMultiplier = 1;
 let prestigeRequirement = 1000;
-let purchasedUpgrades = [];
+let purchasedUpgrades = []; // Array for maintaining order and accessing properties
+let purchasedUpgradesSet = new Set(); // Set for fast lookups
 let availableUpgrades = [];
 
 let godModeLevel = 0;
@@ -63,6 +67,14 @@ let serenityBoostMultiplier = 1;
 let powerInfusionMultiplier = 1;
 let knowledgeInfusionMultiplier = 1;
 let basicResourceBoost = 1;
+let pulseOfAffectionSkill = false;
+let pulseOfAffectionMult = 1;
+
+let loveSizeMattersMultiplier = 1;
+let largestEmbrace = 0;
+
+let altruisticEmbraceSkill = false;
+let masterOfBargainsSkill = false;
 
 let currentNumberFormat = 'Mixed';
 
@@ -74,7 +86,7 @@ let isModalOpen = false;
 let cookieClickMultiplier = 10;
 let cookieAutoClicker = false;
 let knowledgeGenerationSkill = false;
-let prestigeBaseSkill = false;
+let prestigeBaseValue = 1.5;
 let twoDimensionalAscensionSkill = false;
 let linearAscensionSkill = false;
 let multibuyUpgradesButtonsUnlocked = false;
@@ -93,12 +105,26 @@ let perfectGodModeSkill = false;
 
 let serenityFlowSkill = false;
 let perfectPUGodModeSkill = false;
+let infiniteCollapseSkill = false;
+let zenOfTheStarsSkill = false;
 let rewardingVictoriesSkill = false;
 let rewardingMeditationsSkill = false;
+let quantumFortressSkill = false;
+let chronoMagnetizerSkill = false;
+let fortifiedDefensesSkill = false;
+let studyAcceleratorReduction = 0;
 let deadpoolRevivesSkill = false;
 let celestialPrecisionSkill = false;
+let gamingAddictSkill = false;
+let secondWaveAutomationSkill = false;
+let steadyFocusSkill = false;
+let masterOfElementsSkill = false;
+let spaceContinuumStretchSkill = false;
+let enlightenedPrestigeSkill = false;
+let hopefulBeginningSkill = false;
 let autoFightSkill = false;
 let autoFightEnabled = false;
+let autoMeditateSkill = false;
 let infinitePrestigeSkill = false;
 let crunchKnowledgeSkill = false;
 let stellarMeditationSkill = false;
@@ -106,17 +132,34 @@ let oversurgedPower = 1;
 let overcompressedPower = 1;
 let hopefulSoftCapSkill = false;
 let fertileScarcitySkill = false;
+let inversePrestigeSkill = false;
+let positiveMarkersSkill = false;
+let tunneledAscensionSkill = false;
+let illusionOfPowerSkill = false;
+let earlyAccelerantSkill = false;
+let earlyAccelerantMult = 1;
 
 let serenityGainCopium = false;
 let serenityGainDelusion = false;
 let serenityGainYachtMoney = false;
 let serenityGainTrollPoints = false;
+let masterOfTimeSkill = false;
+let loveSizeMattersSkill = false;
+let loveIsEverythingSkill = false;
+let etherealReflectionSkill = false;
 let resonanceOfLoveSkill = false;
 let hopiumTradeSkill = false;
+let tranquilityOverdriveSkill = false;
 let autoTradeHopiumIntervalId = null;
 let equilibriumOfHopeSkill = false;
 let temporalDragReduction = 1;
 let lookPastDistractions = 0;
+let faithFueledKnowledgeSkill = false;
+let eventHorizonBoostSkill = false;
+
+let autoBigCrunchThreshold = null
+let beaconOfSevenSunsSkill = false;
+let beaconOfSevenSunsMult = 1;
 
 let serenityUnlocked = false;
 let loveHallUnlocked = false;
@@ -154,6 +197,9 @@ let astralEdgeSkill = false;
 let mysticReboundSkill = false;
 let quantumBastionSkill = false;
 
+let enemiesFoughtManually = new Set();
+let numBattleGimmicks = new Set();
+
 let nebulaOverdriveSkill = false;
 let stellarHarvestSkill = false;
 let celestialCollectorSkill = false;
@@ -165,10 +211,36 @@ let stellarMeditationMult = 1;
 let currentTimeouts = [];  // Array to store all active timeout IDs
 let cookieIntervalId;
 
-let crunchTimer = 0;
+// Initialize switchStates to false for every upgrade
+let switchStates = Object.fromEntries(upgrades.map(upgrade => [upgrade.name, null]));
+let defaultBuyMarkerState = false;
+
+let crunchTimer = 9999;
+let embraceTimer = 9999;
+
+let numLoveHallFreeRespecs; // Global variable for free respecs
+
+const warpButton = document.getElementById('warpTimeButton');
+let accumulatedWarpTime = 0;
+let warpTimeMax = 60 * 60 * 6;
+let warpTimeActive = false;
+let warpTimeDuration = 0; // X minutes of warp
+let warpTimeRemaining = 0; // Track remaining warp time
+let warpTimeInterval = null;
+
+let enableQuickMode = false;
+let enableButtonAnimations = true;
+
+let resourceGenerationDisabled = false;
+
+// Global object to manage prevent event occuring at the same time
+let eventProgression = {
+    inProgress: false,
+    startedBy: null
+}
 
 function calculateBaseKnowledge() {
-    return knowledgePerSecond * totalMultiplier * (crunchKnowledgeSkill ? bigCrunchMultiplier**(2/3) : bigCrunchMultiplier**(1/2)) * knowledgeInfusionMultiplier;
+    return knowledgePerSecond * totalMultiplier * (crunchKnowledgeSkill ? bigCrunchMultiplier**(2/3) : bigCrunchMultiplier**(1/2)) * knowledgeInfusionMultiplier * ((faithFueledKnowledgeSkill && hopium > 1e10) ? Math.log10(hopium)/10 : 1);
 }
 
 function calculateEffectiveKnowledge() {
@@ -186,7 +258,7 @@ function calculateEffectiveKnowledge() {
     const extraKnowledge = Math.max(knowledge - knowledgeGeneratedIn2Hours, 0);
 
     // Calculate the diminishing multiplier, scaling as soon as it goes over 2 hours
-    const diminishingMultiplier = Math.max(0.05, 0.95 ** (extraKnowledge / knowledgeGeneratedIn2Hours)); 
+    const diminishingMultiplier = Math.max(0.05, 0.95 ** (extraKnowledge / knowledgeGeneratedIn2Hours));
 
     // Return the effective knowledge considering the diminishing multiplier
     return baseKnowledge * diminishingMultiplier;
@@ -194,9 +266,9 @@ function calculateEffectiveKnowledge() {
 
 function calculateBasePower() {
     let basePower = (moneyIsPowerTooSkill ?
-        (Math.max(knowledge, 0) ** (1/3) / 1e12) * (1 + (Math.max(yachtMoney, 0) ** (1/30) / 100)) 
-        : Math.max(knowledge, 0) ** (1/3) / 1e12) 
-        * powerSurgeMultiplier * devMultiplier * stellarHarvestMult * stellarMeditationMult * achievementMultiplier * powerInfusionMultiplier;
+        (Math.max(knowledge, 0) ** (1/3) / 1e12) * (1 + (Math.max(yachtMoney, 0) ** (1/30) / 100))
+        : Math.max(knowledge, 0) ** (1/3) / 1e12)
+        * powerSurgeMultiplier * devMultiplier * stellarHarvestMult * stellarMeditationMult * achievementMultiplier * powerInfusionMultiplier * cosmicGamekeeperMultiplier;
 
     if (powerIsPowerSkill) {
         basePower *= 1.1 ** (powerHallSkills.filter(skill => skill.unlocked).length);
@@ -215,27 +287,30 @@ function calculateEffectivePower() {
     }
 
     const powerGeneratedIn2Hours = basePower * 2 * 3600;  // Power generated in 2 hours (2 * 3600 seconds)
-    
+
     // Check how much power the player currently has
     const extraPower = Math.max(power - powerGeneratedIn2Hours, 0);
 
     // Calculate the diminishing multiplier, scaling as soon as it goes over 2 hours
-    const diminishingMultiplier = Math.max(0.05, 0.95 ** (extraPower / powerGeneratedIn2Hours)); 
+    const diminishingMultiplier = Math.max(0.05, 0.95 ** (extraPower / powerGeneratedIn2Hours));
 
     // Return the effective power considering the diminishing multiplier
     return basePower * diminishingMultiplier;
 }
 
 
+
 function updateEffectiveMultipliers() {
     const amplifierMultiplier = upgradeAmplifierSkill ? purchasedUpgrades.length : 1;
 
-    effectiveCopiumPerSecond = copiumPerSecond * totalMultiplier * amplifierMultiplier * copiumSurgeMultiplier * basicResourceBoost;
-    effectiveDelusionPerSecond = delusionPerSecond * totalMultiplier * amplifierMultiplier * delusionSurgeMultiplier * basicResourceBoost;
-    effectiveYachtMoneyPerSecond = yachtMoneyPerSecond * totalMultiplier * amplifierMultiplier * yachtMoneySurgeMultiplier * basicResourceBoost;
-    effectiveTrollPointsPerSecond = trollPointsPerSecond * totalMultiplier * amplifierMultiplier * trollPointsSurgeMultiplier * basicResourceBoost;
+    const loveMultiplier = loveIsEverythingSkill ? (serenity > 1.1 ? Math.log(serenity) / Math.log(1.1) : 1) : 1;
 
-    effectiveHopiumPerSecond = hopiumPerSecond * totalMultiplier;
+    effectiveCopiumPerSecond = copiumPerSecond * totalMultiplier * amplifierMultiplier * copiumSurgeMultiplier * basicResourceBoost * beaconOfSevenSunsMult * loveMultiplier * loveSizeMattersMultiplier;
+    effectiveDelusionPerSecond = delusionPerSecond * totalMultiplier * amplifierMultiplier * delusionSurgeMultiplier * basicResourceBoost * loveMultiplier;
+    effectiveYachtMoneyPerSecond = yachtMoneyPerSecond * totalMultiplier * amplifierMultiplier * yachtMoneySurgeMultiplier * basicResourceBoost * loveMultiplier * loveSizeMattersMultiplier;
+    effectiveTrollPointsPerSecond = trollPointsPerSecond * totalMultiplier * amplifierMultiplier * trollPointsSurgeMultiplier * basicResourceBoost * loveMultiplier;
+
+    effectiveHopiumPerSecond = hopiumPerSecond * totalMultiplier * beaconOfSevenSunsMult;
     if (serenityFlowSkill && serenity > 1) {
         effectiveHopiumPerSecond *= Math.sqrt(serenity);
     }
@@ -246,7 +321,7 @@ function updateEffectiveMultipliers() {
         effectivePowerPerSecond = calculateEffectivePower();
     }
 
-    effectiveSerenityPerSecond = serenityPerSecond * achievementMultiplier * serenityBoostMultiplier;
+    effectiveSerenityPerSecond = serenityPerSecond * achievementMultiplier * serenityBoostMultiplier * cosmicGamekeeperMultiplier;
 
     // Define an array of objects for the resources and their corresponding flags
     const serenityGainResources = [
@@ -259,12 +334,12 @@ function updateEffectiveMultipliers() {
     // Loop through each resource and apply the multiplier if the gain flag is true
     serenityGainResources.forEach(resource => {
         if (resource.gainFlag) {
-            effectiveSerenityPerSecond *= Math.max(1, Math.log2(resource.value) / 33);
+            effectiveSerenityPerSecond *= resource.value <= 0 ? 1 : Math.max(1, Math.log2(resource.value) / 33);
         }
     });
 
     if (resonanceOfLoveSkill){
-        effectiveSerenityPerSecond *= Math.max(1, Math.log10(lovePoints));
+        effectiveSerenityPerSecond *= Math.max(1, Math.log2(lovePoints));
     }
 
 }
@@ -295,6 +370,10 @@ function cookieCollectAllResources() {
     if(cookieClicks >= 500 && cookieClicks <= 505){
         unlockAchievement('Fatigued Finger');
     }
+    if (!achievementsMap.get('Warped Cookie').isUnlocked && !cookieIntervalId){
+        warpedCookieSequence += 'C';
+        manageWarpedCookieSequence();
+    }
     updateDisplay();
 }
 
@@ -306,6 +385,13 @@ let fidgetClicks = {
     trollPoints: false
 };
 
+let collectClicks = {
+    copium: 0,
+    delusion: 0,
+    yachtMoney: 0,
+    trollPoints: 0
+};
+
 // Function to collect a specific resource and update the game state
 function collectResource(resource) {
     // Increase the appropriate resource by the totalMultiplier
@@ -313,7 +399,7 @@ function collectResource(resource) {
     if (resource === 'delusion') delusion += totalMultiplier;
     if (resource === 'yachtMoney') yachtMoney += totalMultiplier;
     if (resource === 'trollPoints') trollPoints += totalMultiplier;
-    
+
     // Track the resource click if cookieKnowledgeable is true
     if (cookieKnowledgeable) {
         fidgetClicks[resource] = true;
@@ -321,7 +407,12 @@ function collectResource(resource) {
             unlockAchievement('Fidget Clicks');
         }
     }
-    
+
+    collectClicks[resource]++;
+    if (collectClicks.copium > 9 && collectClicks.delusion > 9 && collectClicks.yachtMoney > 9 && collectClicks.trollPoints > 9) {
+        unlockAchievement('Collect Clicks');
+    }
+
     // Update the display to reflect the new resource values
     updateDisplay();
 }
@@ -362,19 +453,29 @@ function loadGameState() {
     bigCrunchPower = parseFloat(localStorage.getItem('bigCrunchPower')) || 1e-7;
     bigCrunchMultiplier = parseFloat(localStorage.getItem('bigCrunchMultiplier')) || 1;
 
-    crunchTimer = parseFloat(localStorage.getItem('crunchTimer')) || 0;
-    
+    crunchTimer = parseFloat(localStorage.getItem('crunchTimer')) || 9999;
+    embraceTimer = parseFloat(localStorage.getItem('embraceTimer')) || 9999;
+
     // Load the first time prestige button available flag
     firstTimePrestigeButtonAvailable = JSON.parse(localStorage.getItem('firstTimePrestigeButtonAvailable')) || true;
 
     transcendenceUnlocked = JSON.parse(localStorage.getItem('transcendenceUnlocked')) || false;
-    if (transcendenceUnlocked) { document.getElementById('pu-god-display').style.display = 'block'; } 
+    if (transcendenceUnlocked) { document.getElementById('pu-god-display').style.display = 'block'; }
 
     // Workaround to allow loading 0
     autoPrestigeThreshold = !isNaN(parseFloat(localStorage.getItem('autoPrestigeThreshold'))) ? parseFloat(localStorage.getItem('autoPrestigeThreshold')) : null;
     autoAscendThreshold = !isNaN(parseFloat(localStorage.getItem('autoAscendThreshold'))) ? parseFloat(localStorage.getItem('autoAscendThreshold')) : null;
     autoTranscendThreshold = !isNaN(parseFloat(localStorage.getItem('autoTranscendThreshold'))) ? parseFloat(localStorage.getItem('autoTranscendThreshold')) : null;
-    
+    autoBigCrunchThreshold = !isNaN(parseFloat(localStorage.getItem('autoBigCrunchThreshold'))) ? parseFloat(localStorage.getItem('autoBigCrunchThreshold')) : null;
+
+    // Retrieve quick mode
+    enableQuickMode = localStorage.getItem('enableQuickMode') === 'true';
+
+    // Retrieve animation preferences
+    manageButtonAnimations(localStorage.getItem('enableButtonAnimations') == null ? true : localStorage.getItem('enableButtonAnimations') === 'true');
+
+    defaultBuyMarkerState = localStorage.getItem('defaultBuyMarkerState') === 'true';
+
     // read multibuyUpgradesButtonsUnlocked from localstorage
     multibuyUpgradesButtonsUnlocked = JSON.parse(localStorage.getItem('multibuyUpgradesButtonsUnlocked')) || false;
     if (multibuyUpgradesButtonsUnlocked){
@@ -385,10 +486,15 @@ function loadGameState() {
 
     forgetfulnessCounter = parseFloat(localStorage.getItem('forgetfulnessCounter')) || 0;
 
-    numMathSolves = parseFloat(localStorage.getItem('numMathSolves')) || 0;
+    numMathPortals = parseFloat(localStorage.getItem('numMathPortals')) || 0;
     numSpeedTaps = parseFloat(localStorage.getItem('numSpeedTaps')) || 0;
+    numCookedRabbits = parseFloat(localStorage.getItem('numCookedRabbits')) || 0;
     numMemorizedDots = parseFloat(localStorage.getItem('numMemorizedDots')) || 0;
     numUnluckyBoxes = parseFloat(localStorage.getItem('numUnluckyBoxes')) || 0;
+    numLuckyBoxes = parseFloat(localStorage.getItem('numLuckyBoxes')) || 0;
+    numSoftCaps = parseFloat(localStorage.getItem('numSoftCaps')) || 0;
+
+    numLoveHallFreeRespecs = localStorage.getItem('numLoveHallFreeRespecs') !== null ? parseFloat(localStorage.getItem('numLoveHallFreeRespecs')) : 1;
 
     consecutiveClicks = parseInt(localStorage.getItem('consecutiveClicks')) || 0;
     lastClickedBoxIndex = parseInt(localStorage.getItem('lastClickedBoxIndex')) || 0;
@@ -402,10 +508,10 @@ function loadGameState() {
     if (loveHallButton) {
         loveHallButton.style.display = loveHallUnlocked ? 'flex' : 'none';
     }
-    
+
     // Retrieve and parse all upgrades with the isGodMode property from local storage
     const savedUpgrades = JSON.parse(localStorage.getItem('upgrades')) || [];
-    
+
     // Restore the isGodMode property for each upgrade
     upgrades.forEach(upgrade => {
         const savedUpgrade = savedUpgrades.find(up => up.name === upgrade.name);
@@ -432,6 +538,12 @@ function loadGameState() {
         } else {
             cookieTooltip.textContent = `Each cookie click counts as ${cookieClickMultiplier} clicks on collect buttons for Copium, Delusion, Yacht Money, and Troll Points!`;
         }
+    } else {
+        document.getElementById('cookieButton').style.display = 'none';
+    }
+
+    if (JSON.parse(localStorage.getItem('timeWarpButtonVisible'))) {
+        warpButton.style.display = 'block';
     }
 
     const savedAchievements = JSON.parse(localStorage.getItem('achievements')) || [];
@@ -487,19 +599,37 @@ function loadGameState() {
     // Retrieve and parse the purchased upgrades from local storage, defaulting to an empty array if not found
     const savedPurchasedUpgrades = JSON.parse(localStorage.getItem('purchasedUpgrades')) || [];
 
+    largestEmbrace = parseFloat(localStorage.getItem('largestEmbrace')) || 0;
+    if(loveSizeMattersSkill && largestEmbrace > 25) {
+        loveSizeMattersMultiplier = Math.pow(largestEmbrace, 1.5) / 100;
+    }
+
+    accumulatedWarpTime = localStorage.getItem('accumulatedWarpTime') !== null ? parseFloat(localStorage.getItem('accumulatedWarpTime')) : 0;
+    warpTimeRemaining = localStorage.getItem('warpTimeRemaining') !== null ? parseFloat(localStorage.getItem('warpTimeRemaining')) : 0;
+    // If there's any remaining warp time, continue warp
+    if (warpTimeRemaining > 0) {
+        resumeWarpTime(warpTimeRemaining);
+    }
+
     // Map the saved purchased upgrade names to the actual upgrade objects
     purchasedUpgrades = savedPurchasedUpgrades.map(savedUpgradeName => upgrades.find(up => up.name === savedUpgradeName)).filter(Boolean);
 
+    // Create a Set to track purchased upgrade names for fast lookups
+    purchasedUpgradesSet = new Set(savedPurchasedUpgrades);
+
     // Filter out the available upgrades that have been purchased
-    availableUpgrades = upgrades.filter(upgrade => !purchasedUpgrades.includes(upgrade));
+    availableUpgrades = upgrades.filter(upgrade => !purchasedUpgradesSet.has(upgrade.name));
+
+    upgrades.forEach(upgrade => {
+        const storedState = JSON.parse(localStorage.getItem(`switchState-${upgrade.name}`));
+        switchStates[upgrade.name] = storedState === null ? null : storedState; // Preserve true, false, or null
+    });
+
 
     // Reapply the purchased upgrades and handle any special cases (e.g., "Cookie Clicker")
     purchasedUpgrades.forEach(upgrade => {
         if (upgrade) {
             addPurchasedUpgrade(upgrade.img, upgrade.name, upgrade.earnings, upgrade.isGodMode, upgrade.isPUGodMode, upgrade.message, upgrade.isFight, upgrade.isMeditation);
-            if (upgrade.name === "Cookie Clicker") {
-                document.getElementById('cookieButton').style.display = 'block';
-            }
         }
     });
 
@@ -510,14 +640,24 @@ function loadGameState() {
     updateTradeRatio();
     updateTradeButtonText();
 
-    if(buyMarkersSkill){ enableAllBuyMarkers() };
+    //if(buyMarkersSkill){ enableAllBuyMarkers() };
+
+    if (stellarMeditationSkill) {
+        stellarMeditationMult = calculateStellarMeditationMultiplier();
+    }
+    autoFightEnabled = JSON.parse(localStorage.getItem('autoFightEnabled')) || false;
+
+    if (fertileScarcitySkill && purchasedUpgradesSet.has('Cosmic Drought')) {
+        stellarHarvestMult = 250;
+        updateMultipliersDisplay();
+    }
 
     // Retrieve the last interaction time, defaulting to the current time if not found
     const lastInteraction = parseInt(localStorage.getItem('lastInteraction')) || Date.now();
     // Calculate the elapsed time since the last interaction
     const now = Date.now();
     const elapsedSeconds = (now - lastInteraction) / 1000;
-    
+
     updateMultipliersDisplay();
     updateEffectiveMultipliers();
 
@@ -533,7 +673,7 @@ function loadGameState() {
 
 function saveGameState() {
 
-    
+
     console.log('Saving game state...');
 
     // Save the resource values to local storage
@@ -555,7 +695,7 @@ function saveGameState() {
     localStorage.setItem('serenityPerSecond', serenityPerSecond);
 
     localStorage.setItem('lovePoints', lovePoints);
-    
+
     // Save the prestige values to local storage
     localStorage.setItem('prestiges', prestiges);
     localStorage.setItem('epsMultiplier', epsMultiplier);
@@ -570,33 +710,47 @@ function saveGameState() {
 
     // Save current crunch timer
     localStorage.setItem('crunchTimer', crunchTimer);
-    
+    localStorage.setItem('embraceTimer', embraceTimer);
+
     // Save all upgrades with the isGodMode property
     localStorage.setItem('upgrades', JSON.stringify(upgrades.map(upgrade => ({
         name: upgrade.name,
         isGodMode: upgrade.isGodMode || false,
         isPUGodMode: upgrade.isPUGodMode || false
     }))));
-    
+
     // Save the purchased upgrades
     localStorage.setItem('purchasedUpgrades', JSON.stringify(purchasedUpgrades.map(upgrade => upgrade.name)));
 
     // Save the first time prestige button available flag
     localStorage.setItem('firstTimePrestigeButtonAvailable', firstTimePrestigeButtonAvailable);
-    
+
     // Save the state of the Cookie Clicker button
     localStorage.setItem('cookieButtonVisible', document.getElementById('cookieButton').style.display === 'block');
+    localStorage.setItem('timeWarpButtonVisible', warpButton.style.display === 'block');
     localStorage.setItem('cookieClickMultiplier', cookieClickMultiplier);
 
     localStorage.setItem('transcendenceUnlocked', transcendenceUnlocked);
-    
+
     localStorage.setItem('autoPrestigeThreshold', autoPrestigeThreshold);
     localStorage.setItem('autoAscendThreshold', autoAscendThreshold);
     localStorage.setItem('autoTranscendThreshold', autoTranscendThreshold);
+    localStorage.setItem('autoBigCrunchThreshold', autoBigCrunchThreshold);
+
+    localStorage.setItem('enableQuickMode', enableQuickMode);
+    localStorage.setItem('enableButtonAnimations', enableButtonAnimations);
+
+    localStorage.setItem('defaultBuyMarkerState', defaultBuyMarkerState);
 
     localStorage.setItem('deadpoolRevives', deadpoolRevives);
-    
+
     localStorage.setItem('currentNumberFormat', JSON.stringify(currentNumberFormat));
+
+    localStorage.setItem('numLoveHallFreeRespecs', numLoveHallFreeRespecs);
+
+    localStorage.setItem('accumulatedWarpTime', accumulatedWarpTime);
+    localStorage.setItem('warpTimeRemaining', warpTimeRemaining); // Save remaining warp time
+ 
 
     // Save unlocked library skills
     if (Array.isArray(librarySkills)) {
@@ -626,10 +780,8 @@ function saveGameState() {
     localStorage.setItem('achievements', JSON.stringify(unlockedAchievements));
 
 
-    // Save the state of each switch
-    purchasedUpgrades.forEach(upgrade => {
-        const switchState = document.getElementById(`toggle-${upgrade.name}`).checked;
-        localStorage.setItem(`switchState-${upgrade.name}`, JSON.stringify(switchState));
+    Object.keys(switchStates).forEach(upgradeName => {
+        localStorage.setItem(`switchState-${upgradeName}`, JSON.stringify(switchStates[upgradeName]));
     });
 
     //save the state of createBackupOnImportCheckbox checkbox
@@ -717,6 +869,8 @@ function removeTooltip() {
 
 // Generate resources every interval
 function generateResources() {
+    if(resourceGenerationDisabled) return;
+
     copium += effectiveCopiumPerSecond / 2;
     delusion += effectiveDelusionPerSecond / 2;
     yachtMoney += effectiveYachtMoneyPerSecond / 2;
@@ -742,12 +896,14 @@ function generateResources() {
     }
 
     crunchTimer += 0.5;
+    embraceTimer += 0.5;
+    if (accumulatedWarpTime < warpTimeMax) accumulatedWarpTime += 0.5;
 
     updateDisplay();
 }
 
 async function restartPrestige(){
-    
+
     const confirmTitle = "Are You Sure You Want to Restart this Prestige?"
     const confirmMessage = `<p>Hold on a second, brave player! You're about to reset your prestige, which will take you all the way back to the beginning (before buying any upgrades).</p>
                             <p>Your precious prestige progress? It’s going back to square one, but your multiplier will remain intact.</p>
@@ -808,11 +964,23 @@ async function restartGame(isPrestige = false, forceRestart = false, isInfiniteE
                             <p>All your progress will be history. Forever. Gone. Like that sandwich you left in the fridge. Are you sure you’re ready for that kind of commitment?</p>
                             <p>This is your last chance to turn back! Once you click this button, there’s no going back. Just like trying to un-toast toast.</p>
                             <p>If you’re still certain, then hit the button below. Otherwise, maybe rethink this whole restarting thing. 😅</p>`;
+
+    let restartConfirm = false;
     
-    // If forceRestart is true, skip confirmation dialogs
-    if (forceRestart || isPrestige || 
-        (await showMessageModal(confirmTitle1, confirmMessage1, true, false) && 
-         await showMessageModal(confirmTitle2, confirmMessage2, true, false))) {
+    // Only show the confirmation dialogs if neither forceRestart nor isPrestige is true
+    if (!forceRestart && !isPrestige) {
+        // Only show the second confirmation if the first one is true
+        if (await showMessageModal(confirmTitle1, confirmMessage1, true, false)) {
+            restartConfirm = await showMessageModal(confirmTitle2, confirmMessage2, true, false);
+
+            if (!restartConfirm) {
+                unlockAchievement('Crisis Averted');
+            }
+        }
+    }
+    
+    // If forceRestart, isPrestige, or both confirmations are true, proceed with reset
+    if (forceRestart || isPrestige || restartConfirm) {
          // Reset all resources and earnings per second
         copium = 0;
         copiumPerSecond = 0;
@@ -822,7 +990,7 @@ async function restartGame(isPrestige = false, forceRestart = false, isInfiniteE
         yachtMoneyPerSecond = 0;
         trollPoints = 0;
         trollPointsPerSecond = 0;
-        hopium = 0;
+        hopium = hopefulBeginningSkill ? 1000000 : 0;
         hopiumPerSecond = 0;
         knowledge = 0;
         knowledgePerSecond = 0;
@@ -838,13 +1006,13 @@ async function restartGame(isPrestige = false, forceRestart = false, isInfiniteE
             if (!isInfiniteEmbrace) {
 
                 lovePoints = 0;
-                
+
                 // Reset love hall skills
                 loveHallSkills.forEach(skill => {
                     skill.unlocked = false;
                 });
 
-                
+
                 // Hide the cookie button
                 document.getElementById('cookieButton').style.display = 'none';
 
@@ -857,15 +1025,38 @@ async function restartGame(isPrestige = false, forceRestart = false, isInfiniteE
                 powerInfusionMultiplier = 1;
                 knowledgeInfusionMultiplier = 1;
                 basicResourceBoost = 1;
+                pulseOfAffectionSkill = false;
+                pulseOfAffectionMult = 1;
 
+                loveSizeMattersMultiplier = 1;
+                largestEmbrace = 0;
+
+                altruisticEmbraceSkill = false;
+                masterOfBargainsSkill = false;
+                
                 serenityFlowSkill = false;
                 perfectPUGodModeSkill = false;
+                infiniteCollapseSkill = false;
+                zenOfTheStarsSkill = false;
                 rewardingVictoriesSkill = false;
                 rewardingMeditationsSkill = false;
+                quantumFortressSkill = false;
+                chronoMagnetizerSkill = false;
+                fortifiedDefensesSkill = false;
+                studyAcceleratorReduction = 0;
                 deadpoolRevivesSkill = false;
                 celestialPrecisionSkill = false;
+                gamingAddictSkill = false;
+                secondWaveAutomationSkill = false;
+                steadyFocusSkill = false;
+                masterOfElementsSkill = false;
+                spaceContinuumStretchSkill = false;
+                enlightenedPrestigeSkill = false;
+                hopefulBeginningSkill = false;
+                hopium = 0;
                 autoFightSkill = false;
                 autoFightEnabled = false;
+                autoMeditateSkill = false;
                 infinitePrestigeSkill = false;
                 crunchKnowledgeSkill = false;
                 stellarMeditationSkill = false;
@@ -873,17 +1064,38 @@ async function restartGame(isPrestige = false, forceRestart = false, isInfiniteE
                 overcompressedPower = 1;
                 hopefulSoftCapSkill = false;
                 fertileScarcitySkill = false;
+                inversePrestigeSkill = false;
+                positiveMarkersSkill = false;
+                tunneledAscensionSkill = false;
+                illusionOfPowerSkill = false;
+                earlyAccelerantSkill = false;
+                earlyAccelerantMult = 1;
 
                 serenityGainCopium = false;
                 serenityGainDelusion = false;
                 serenityGainYachtMoney = false;
                 serenityGainTrollPoints = false;
+                masterOfTimeSkill = false;
+                loveSizeMattersSkill = false;
+                loveIsEverythingSkill = false;
+                etherealReflectionSkill = false;
                 resonanceOfLoveSkill = false;
                 hopiumTradeSkill = false;
+                tranquilityOverdriveSkill = false;
                 equilibriumOfHopeSkill = false;
                 temporalDragReduction = 1;
                 lookPastDistractions = 0;
-                    
+                faithFueledKnowledgeSkill = false;
+                eventHorizonBoostSkill = false;
+
+                autoBigCrunchThreshold = null
+                beaconOfSevenSunsSkill = false;
+                beaconOfSevenSunsMult = 1;
+
+                accumulatedWarpTime = 0;
+                endWarpTime();
+                warpButton.style.display = 'none';
+
                 loveHallUnlocked = false;
                 document.getElementById('loveHallButton').style.display = 'none';
 
@@ -908,9 +1120,16 @@ async function restartGame(isPrestige = false, forceRestart = false, isInfiniteE
                 achievementBoostValue = 0.01;
                 achievementHyperchargeSkill = false;
 
+                numLoveHallFreeRespecs = 1;
+
+                cosmicGamekeeperMultiplier = 1;
+                cosmicGamekeeperSkill = false;
+
                 embraceExtraLovePoints = 0;
 
                 deadpoolRevives = 0;
+
+                tongueTwisterState = 0;
 
                 document.getElementById('buySeenButton').classList.add('hidden');
                 document.getElementById('buyMaxButton').classList.add('hidden');
@@ -933,7 +1152,7 @@ async function restartGame(isPrestige = false, forceRestart = false, isInfiniteE
             puGodMultiplier = 1;
             bigCrunchPower = 1e-7;
             bigCrunchMultiplier = 1;
-            
+
             // Reset the isGodMode property for all upgrades
             upgrades.forEach(upgrade => {
                 upgrade.isGodMode = false;
@@ -952,7 +1171,7 @@ async function restartGame(isPrestige = false, forceRestart = false, isInfiniteE
 
             cookieAutoClicker = false;
             knowledgeGenerationSkill = false;
-            prestigeBaseSkill = false;
+            prestigeBaseValue = 1.5;
             twoDimensionalAscensionSkill = false;
             linearAscensionSkill = false;
             multibuyUpgradesButtonsUnlocked = false;
@@ -972,10 +1191,13 @@ async function restartGame(isPrestige = false, forceRestart = false, isInfiniteE
             lessDiminishingGodModeSkill = false;
             lessDiminishingPUGodModeSkill = false;
             perfectGodModeSkill = false;
-            autoPrestigeThreshold = null;
-            autoAscendThreshold = null;
-            autoTranscendThreshold = null;
-            autobuyUpgradesSkill = false;
+
+            if (!secondWaveAutomationSkill){
+                autoPrestigeThreshold = null;
+                autoAscendThreshold = null;
+                autoTranscendThreshold = null;
+                autobuyUpgradesSkill = false;
+            }
 
             compressedBigCrunchMult = 1;
 
@@ -1010,12 +1232,15 @@ async function restartGame(isPrestige = false, forceRestart = false, isInfiniteE
 
             powerUnlocked = false;
             document.getElementById('power-container').style.display = 'none';
-            
+
             serenityUnlocked = false;
             document.getElementById('serenity-container').style.display = 'none';
             localStorage.setItem('serenityUnlocked', 'false');
-            
-            toggleAllBuyMarkers(false);
+
+            if (!positiveMarkersSkill) {
+                switchStates = Object.fromEntries(upgrades.map(upgrade => [upgrade.name, null]));
+                defaultBuyMarkerState = false;
+            }
 
             document.getElementById('pu-god-display').style.display = 'none';
             document.getElementById('big-crunch-display').style.display = 'none';
@@ -1029,26 +1254,27 @@ async function restartGame(isPrestige = false, forceRestart = false, isInfiniteE
         }
 
         clearAllTimeouts();
-        clearInterval(cookieIntervalId)
+        clearInterval(cookieIntervalId);
 
         const cookieButtonVisible = JSON.parse(localStorage.getItem('cookieButtonVisible'));
         if (cookieButtonVisible && cookieAutoClicker) {
             const cookieButton = document.getElementById('cookieButton');
-            
+
             // Add the spinning class to trigger the animation
             cookieButton.classList.add('spinning');
-        
+
             cookieIntervalId = setInterval(() => {
                 cookieCollectAllResources();
             }, 100); // 100 milliseconds = 0.1 seconds
 
             const thisCookieIntervalId = cookieIntervalId;
-        
+
             // Stop the interval after 15 seconds
             const timeoutId = setTimeout(() => {
                 if (thisCookieIntervalId === cookieIntervalId) {
                     clearInterval(thisCookieIntervalId);
-        
+                    cookieIntervalId = null;
+
                     // Remove the spinning class to stop the animation
                     cookieButton.classList.remove('spinning');
                 }
@@ -1060,10 +1286,16 @@ async function restartGame(isPrestige = false, forceRestart = false, isInfiniteE
 
         // Clear purchased upgrades
         purchasedUpgrades = [];
-        document.getElementById('purchasedList').innerHTML = '';
+        purchasedUpgradesSet.clear();
+        const purchasedList = document.getElementById('purchasedList');
+        Events.wipe(purchasedList);
+        purchasedList.innerHTML = '';
 
         // Restore all upgrades
         availableUpgrades = upgrades.slice(); // Reset available upgrades to the original state
+
+        enemiesFoughtManually = new Set();
+        numBattleGimmicks = new Set();
 
         stellarHarvestMult = 1;
         stellarMeditationMult = 1;
@@ -1095,7 +1327,7 @@ function showStatusMessage(pressedButton, message, isSuccess, timeout=3000) {
         overlay.classList.add('error');
     }
     overlay.style.display = 'block';
-    
+
     const rect = pressedButton.getBoundingClientRect();
 
     // Adjust the positioning based on the device
@@ -1140,7 +1372,11 @@ function updateTradeRatio() {
         tradeRatioDisplay.textContent = 'Only Copium can convert to Hopium';
     } else {
         if (improvedTradeRatio){
-            tradeRatioDisplay.textContent = 'Trade ratio is 5:1';
+            if (masterOfBargainsSkill){
+                tradeRatioDisplay.textContent = 'Trade ratio is 3:1';
+            } else {
+                tradeRatioDisplay.textContent = 'Trade ratio is 5:1';
+            }
         } else {
             tradeRatioDisplay.textContent = 'Trade ratio is 10:1';
         }
@@ -1188,7 +1424,7 @@ function parseFormattedNumber(str, currentAmount = 0) {
 function updateTradeButtonText() {
     const tradeAmountInput = document.getElementById('tradeAmount').value;
     const tradeButton = document.getElementById('tradeButton');
-    
+
     if (tradeAmountInput) {
         tradeButton.textContent = `Trade ${tradeAmountInput}`;
     } else {
@@ -1292,8 +1528,13 @@ function tradeResources(tradeAmountInput = null) {
         }
         resourceAmount[fromResource] -= tradeAmount;
         if (improvedTradeRatio) {
-            resourceAmount[toResource] += tradeAmount / 5;
-            showStatusMessage(tradeButton, `Traded ${formatNumber(tradeAmount)} ${fromResource} for ${formatNumber(tradeAmount / 4)} ${toResource}.`, true);
+            if (masterOfBargainsSkill){
+                resourceAmount[toResource] += tradeAmount / 3;
+                showStatusMessage(tradeButton, `Traded ${formatNumber(tradeAmount)} ${fromResource} for ${formatNumber(tradeAmount / 3)} ${toResource}.`, true);
+            } else {
+                resourceAmount[toResource] += tradeAmount / 5;
+                showStatusMessage(tradeButton, `Traded ${formatNumber(tradeAmount)} ${fromResource} for ${formatNumber(tradeAmount / 5)} ${toResource}.`, true);
+            }
         } else {
             resourceAmount[toResource] += tradeAmount / 10;
             showStatusMessage(tradeButton, `Traded ${formatNumber(tradeAmount)} ${fromResource} for ${formatNumber(tradeAmount / 10)} ${toResource}.`, true);
@@ -1307,6 +1548,8 @@ function tradeResources(tradeAmountInput = null) {
     trollPoints = resourceAmount.trollPoints;
     hopium = resourceAmount.hopium;
 
+    unlockAchievement('Trade Resources');
+
     // Update the display to reflect the new resource values
     updateDisplay();
 }
@@ -1318,6 +1561,8 @@ function tradeTenPercent() {
 }
 
 function autoTradeHopium() {
+    if (isEventInProgress()) return;
+
     if (hopiumTradeSkill && equilibriumOfHopeSkill && autoTradeHopiumIntervalId === null) {
         autoTradeHopiumIntervalId = setInterval(() => {
             // Get 1% of the current hopium
@@ -1349,9 +1594,10 @@ function autoTradeHopium() {
 }
 
 
-const formatSignificant = new Intl.NumberFormat("en-US", { maximumFractionDigits: 3 });
+// const formatSignificant = new Intl.NumberFormat("en-US", { maximumFractionDigits: 3 });
 const formatFraction = new Intl.NumberFormat("en-US", { maximumSignificantDigits: 4 });
 const formatScientific = new Intl.NumberFormat("en-US", { maximumFractionDigits: 3, notation: "scientific" });
+const formatEngineering = new Intl.NumberFormat("en-US", { maximumFractionDigits: 3, notation: "engineering" });
 
 const PREFIXES = ["", "K", "M", "B", "T", "Qa", "Qi", "Sx", "Sp", "Oc", "No", "Dc", "UDc", "DDc",
     "TDc", "QaDc", "QiDc", "SxDc", "SpDc", "ODc", "NDc", "Vg", "UVg", "DVg", "TVg",
@@ -1363,16 +1609,17 @@ const PREFIXES = ["", "K", "M", "B", "T", "Qa", "Qi", "Sx", "Sp", "Oc", "No", "D
     "NSt", "Og", "UOg", "DOg", "TOg", "QaOg", "QiOg", "SxOg", "SpOg", "OOg", "NOg",
     "Nn", "UNn", "DNn", "TNn", "QaNn", "QiNn", "SxNn", "SpNn", "ONn", "NNn", "Ce"];
 
-function formatNumIntl(num, isScientific = false) {
+function formatNumIntl(num, formatType = 0) {
+    // fortmatTpe: 0 = suffixes, 1 = scientific, 2 = engineering
     const absNum = Math.abs(num);
     if (num === 0) return "0";
-    else if (absNum >= 1 && absNum < 1000) return formatSignificant.format(num);
-    else if (isScientific) return formatScientific.format(num).toLowerCase();
-    else if (absNum < 1) return formatFraction.format(num);
-    
+    else if (absNum < 1000 && (absNum > 0.001 || formatType == 0)) return formatFraction.format(num);
+    else if (formatType == 1) return formatScientific.format(num).toLowerCase();
+    else if (formatType == 2) return formatEngineering.format(num).toLowerCase();
+
     const exponent = Math.floor(Math.log10(absNum) / 3);
-    const digits = formatSignificant.format(num / 10 ** (3 * exponent));
-    
+    const digits = formatFraction.format(num / 10 ** (3 * exponent));
+
     return digits + PREFIXES[exponent];
 }
 
@@ -1382,16 +1629,19 @@ function formatNumber(num) {
     switch(currentNumberFormat) {
         case 'Mixed':
             if(Math.abs(num) < 1e36){
-                formattedNum = formatNumIntl(num, false);
+                formattedNum = formatNumIntl(num, 0);
             } else {
-                formattedNum = formatNumIntl(num, true);
+                formattedNum = formatNumIntl(num, 1);
             }
             break;
-        case 'Scientific': 
-            formattedNum = formatNumIntl(num, true);
+        case 'Scientific':
+            formattedNum = formatNumIntl(num, 1);
             break;
         case 'Suffixes':
-            formattedNum = formatNumIntl(num, false);
+            formattedNum = formatNumIntl(num, 0);
+            break;
+        case 'Engineering':
+            formattedNum = formatNumIntl(num, 2);
             break;
     }
 
@@ -1420,7 +1670,7 @@ function getOrdinalSuffix(n) {
 //     switch(Type) {
 //       case 0:
 //         return NumberMixedScientific(Num, Fixed)
-//       case 1: 
+//       case 1:
 //         return NumberScientific(Num, Fixed)
 //       case 2:
 //         return NumberStandard(Num, Fixed)
@@ -1448,22 +1698,26 @@ function updateDisplay() {
     document.getElementById('sps').innerHTML = formatNumber(effectiveSerenityPerSecond);
 
     updatePrestigeButton();
-    updateAscendButton();
     updateTranscendButton();
+    updateAscendButton();
     updateBigCrunchButton();
     updateInfiniteEmbraceButton();
     updateUpgradeButtons();
+    updateNumUpgrades();
+    updateWarpTime();
 }
 
 function updateMultipliersDisplay() {
 
-    totalMultiplier = epsMultiplier * godModeMultiplier * puGodMultiplier * bigCrunchMultiplier * achievementMultiplier * devMultiplier * stellarHarvestMult * stellarMeditationMult
+    earlyAccelerantMult = earlyAccelerantSkill ? 1 + (9 * Math.pow(0.975, purchasedUpgrades.length)) : 1;
+
+    totalMultiplier = epsMultiplier * godModeMultiplier * puGodMultiplier * bigCrunchMultiplier * achievementMultiplier * devMultiplier * stellarHarvestMult * stellarMeditationMult * cosmicGamekeeperMultiplier * earlyAccelerantMult
 
     document.getElementById('prestige-multiplier').textContent = `Prestige: x${formatNumber(epsMultiplier)} mult`;
     document.getElementById('god-mode-display').textContent = `God-Mode Level ${godModeLevel} (x${formatNumber(godModeMultiplier)} mult)`;
     document.getElementById('pu-god-display').textContent = `PU God Level ${puGodLevel} (x${formatNumber(puGodMultiplier)} mult)`;
     document.getElementById('big-crunch-display').textContent = `Big Crunch Power ${formatNumber(bigCrunchPower)} (x${formatNumber(bigCrunchMultiplier)} mult + KPSx${formatNumber(crunchKnowledgeSkill ? bigCrunchMultiplier**(2/3) : bigCrunchMultiplier**(1/2))})`;
-    
+
     updateStellarHarvestDisplay();
 }
 
@@ -1503,28 +1757,34 @@ function unlockHallofLove() {
 
 // Function to calculate the prestige multiplier based on the lowest of the first four resources
 function calculatePrestigeMultiplier() {
-    const base = prestigeBaseSkill ? 1.75 : 1.5;
-    const minResource = Math.min(copium, delusion, yachtMoney, trollPoints);
-    return base ** (Math.log10(minResource / 1000) + 1);
+    const minResource = inversePrestigeSkill
+                        ? Math.max(copium, delusion, yachtMoney, trollPoints)
+                        : Math.min(copium, delusion, yachtMoney, trollPoints);
+    return prestigeBaseValue ** (Math.log10(minResource / 1000) + 1);
 }
 
 // Inverse of calculatePrestigeMultiplier
 function calculateMinResource() {
-    const base = prestigeBaseSkill ? 1.75 : 1.5;
-    return Math.max(1000 * 10 ** ((Math.log10(epsMultiplier) / Math.log10(base)) - 1), 1000);
+    return Math.max(1000 * 10 ** ((Math.log10(epsMultiplier) / Math.log10(prestigeBaseValue)) - 1), 1000);
 }
 
 // Check if the player can prestige
 function canPrestige() {
-    const minResource = Math.min(copium, delusion, yachtMoney, trollPoints);
+    const minResource = inversePrestigeSkill
+                        ? Math.max(copium, delusion, yachtMoney, trollPoints)
+                        : Math.min(copium, delusion, yachtMoney, trollPoints);
     return minResource > prestigeRequirement;
 }
 
 async function prestige(skipConfirms = false) {
-    if (canPrestige()) {
-        const newPrestigeMult = calculatePrestigeMultiplier();
-        const newPrestigeReq = Math.min(copium, delusion, yachtMoney, trollPoints);
 
+    // Either skipConfirms
+    skipConfirms |= enableQuickMode;
+    if (canPrestige()  && !isEventInProgress()) {
+        const newPrestigeMult = calculatePrestigeMultiplier();
+        const newPrestigeReq = inversePrestigeSkill
+                                ? Math.max(copium, delusion, yachtMoney, trollPoints)
+                                : Math.min(copium, delusion, yachtMoney, trollPoints);
         let confirmed = true; // Assume confirmation is true by default
 
         // If skipConfirms is false, show the confirmation modal
@@ -1545,7 +1805,7 @@ async function prestige(skipConfirms = false) {
             if (!skipConfirms) { unlockAchievement('First Prestige'); }
             epsMultiplier = newPrestigeMult;
             prestigeRequirement = newPrestigeReq;
-            
+
             // Call restartGame with isPrestige flag set to true
             restartGame(true);
 
@@ -1565,12 +1825,15 @@ async function prestige(skipConfirms = false) {
 
 // Update the display of the prestige button
 function updatePrestigeButton() {
-    
+
     const prestigeButton = document.getElementById('prestigeButton');
     if (canPrestige()) {
         if (infinitePrestigeSkill) {
             const newPrestigeMult = calculatePrestigeMultiplier();
-            const newPrestigeReq = Math.min(copium, delusion, yachtMoney, trollPoints);
+            const newPrestigeReq = inversePrestigeSkill
+                                    ? Math.max(copium, delusion, yachtMoney, trollPoints)
+                                    : Math.min(copium, delusion, yachtMoney, trollPoints);
+
             epsMultiplier = newPrestigeMult;
             prestigeRequirement = newPrestigeReq;
             prestigeButton.style.display = 'none';
@@ -1587,7 +1850,7 @@ function updatePrestigeButton() {
             prestigeButton.textContent = `PRESTIGE (x${formatNumber(newMultiplier / epsMultiplier)} MULT)`;
             prestigeButton.style.display = 'block';
             // Check if auto-prestige should be triggered
-            if (autoPrestigeThreshold !== null && (newMultiplier / epsMultiplier) > autoPrestigeThreshold && !isEventInProgress) {
+            if (autoPrestigeThreshold !== null && autoPrestigeThreshold >= 1 && (newMultiplier / epsMultiplier) > autoPrestigeThreshold  && !isEventInProgress()) {
                 showPopupTooltip(`Auto-Prestiged for x${formatNumber(newMultiplier / epsMultiplier)}`, color='#DAA520')
                 prestige(true); // Trigger auto-prestige
             }
@@ -1598,25 +1861,26 @@ function updatePrestigeButton() {
 }
 
 function canAscend() {
-    return purchasedUpgrades.some(upgrade => upgrade.name === "Ascension") &&
+    return purchasedUpgradesSet.has("Ascension") &&
            purchasedUpgrades.some(upgrade => !upgrade.isGodMode);
 }
 
 function canTranscend() {
-    return purchasedUpgrades.some(upgrade => upgrade.name === "Transcendence") &&
-            purchasedUpgrades.some(upgrade => !upgrade.isPUGodMode);
+    return purchasedUpgradesSet.has("Transcendence") &&
+           purchasedUpgrades.some(upgrade => !upgrade.isPUGodMode);
 }
+
 
 function canBigCrunch() {
     return power * compressedBigCrunchMult > bigCrunchPower;
 }
 
 function canInfiniteEmbrace() {
-    return loveHallUnlocked && serenity > 1000;
+    return loveHallUnlocked && serenity > 1000 && purchasedUpgradesSet.has("Yin and Yang");
 }
 
 function calculateGodModeMultiplier(gmLevlel = godModeLevel) {
-    let productX = 1; // Initialize the product to 1 for the first element    
+    let productX = 1; // Initialize the product to 1 for the first element
     const diminishFactor = perfectGodModeSkill ? 0.992 : (lessDiminishingGodModeSkill ? 0.985 : 0.975);
     for (let i = 0; i < gmLevlel; i++) {
         let xi = 1 + 0.25 * Math.pow(diminishFactor, i); // Calculate xi
@@ -1635,14 +1899,19 @@ function calculatePUGodModeMultiplier(gmLevlel = puGodLevel) {
     return productX
 }
 
-
-
 function calculateBigCrunchMultiplier(bcPower = bigCrunchPower) {
-    return Math.pow(2, Math.log10(bcPower / 1e-7));
+    return Math.pow(eventHorizonBoostSkill ? 2.1: 2, Math.log10(bcPower / 1e-7));
 }
 
 function calculateLovePointsGained() {
-    return Math.max(0, Math.log10(serenity)) + embraceExtraLovePoints;
+    let baseLovePointsGained = Math.max(0, Math.log10(serenity) * pulseOfAffectionMult);
+
+    if (altruisticEmbraceSkill){
+        let meditationCount = purchasedUpgrades.filter(upgrade => upgrade.isMeditation && upgrade.name !== "Yin and Yang" && upgrade.name !== "Existentialism").length;
+        baseLovePointsGained *= 1.25 ** meditationCount;
+    }
+
+    return baseLovePointsGained + embraceExtraLovePoints;
 }
 
 
@@ -1658,127 +1927,208 @@ function calculateAscensionEpsMult() {
 
 
 let ascendInProgress = false;
+let tongueTwisterState = 0;
 
-async function ascend() {
+async function ascend(skipConfirms = false) {
+    skipConfirms |= enableQuickMode;
 
-    if (ascendInProgress) return; // Prevent additional clicks if ascend is already in progress
-    ascendInProgress = true;
-
-    const upgradeText = numAscensionUpgrades > 1
-        ? `select up to ${numAscensionUpgrades} upgrades to enhance and increase your god mode multiplier accordingly`
-        : "select an upgrade to enhance and increase your god mode multiplier";
-    const selectedUpgrades = await showMessageModal(
-        'God-Mode Ascension',
-        `Are you sure you want to ascend to increase your God-Mode level?<br><br>
-        Raising the level of God-Mode requires temporarily folding three dimensions in the space around you to a single point, which will unfortunately reduce your Prestige multiplier to its cube root. Your Prestige multiplier will change from <strong>x${formatNumber(epsMultiplier)}</strong> to <strong>x${formatNumber(calculateAscensionEpsMult())}</strong><br><br>
-        On the bright side, your God-Mode multiplier will increase from <strong>x${formatNumber(godModeMultiplier)}</strong> to at least <strong>x${formatNumber(calculateGodModeMultiplier(godModeLevel+1))}</strong>!<br><br>
-        Additionally, you can ${upgradeText}.`,
-        true,
-        true
-    );
-
-    if (selectedUpgrades) {
-
-        selectedUpgrades.forEach(upgrade => {
-            upgrade.isGodMode = true;
-        });
-
-        godModeLevel = upgrades.filter(upgrade => upgrade.isGodMode).length;
-        godModeMultiplier = calculateGodModeMultiplier(godModeLevel);
-
-        epsMultiplier = calculateAscensionEpsMult();
-        prestigeRequirement = calculateMinResource();
-        
-        showMessageModal('Ascension Successful!', `<strong>You have entered God-Mode Level ${godModeLevel}.</strong><br> Your multiplier God-Mode is now x${formatNumber(godModeMultiplier)}, your prestige multiplier is x${formatNumber(epsMultiplier)}, and your chosen upgrades are 10x stronger.`);        
-
-        unlockAchievement('First Ascension');
-
-        restartGame(true); // Use the existing restartGame function with prestige mode
-        // Save game state after ascending
-        saveGameState();
-
-    }
-
-    // Re-enable after the function completes
-    setTimeout(() => {
-        ascendInProgress = false;
-    }, 300);
-}
-
-
-async function transcend() {
-    
-    if (ascendInProgress) return; // Prevent additional clicks if ascend is already in progress
-    ascendInProgress = true;
-
-    const upgradeText = `select up to ${numPUAscensionUpgrades} upgrades to enhance and increase your Parallel Universe God-Mode multiplier accordingly`;
-    const firstTranscendText = (puGodLevel < 1 && bigCrunchMultiplier < 12) ? `<span style="color: #FFD700;">Hey it's your intuition again. Transcending does not reset Big Crunch. But Big Crunch resets Transcends. It is recommended to get Big Crunch Multiplier at minimum above 10 (~0.00021 Big Crunch Power) before going down this path.</span><br><br>` : '';
-    const selectedUpgrades = await showMessageModal(
-        'Parallel Universe God-Mode Ascension',
-        `Are you sure you want to ascend to increase your Parallel Universe God-Mode level?<br><br>${firstTranscendText}
-        Accessing this new dimension requires temporarily aligning your universe with a parallel one, which will unfortunately reduce your Prestige multiplier the same way that Ascending in your Universe would. Your Prestige multiplier will change from <strong>x${formatNumber(epsMultiplier)}</strong> to <strong>x${formatNumber(calculateAscensionEpsMult())}</strong><br><br>
-        On the bright side, your Parallel Universe God-Mode multiplier will increase from <strong>x${formatNumber(puGodMultiplier)}</strong> to at least <strong>x${formatNumber(calculatePUGodModeMultiplier(puGodLevel+2))}</strong>!<br><br>
-        Additionally, you can ${upgradeText}.`,
-        true,
-        true,
-        false,
-        true
-    );
-
-    if (selectedUpgrades) {
-
-        selectedUpgrades.forEach(upgrade => {
-            upgrade.isPUGodMode = true;
-        });
-
-        puGodLevel = upgrades.filter(upgrade => upgrade.isPUGodMode).length;
-        puGodMultiplier = calculatePUGodModeMultiplier(puGodLevel);
-
-        epsMultiplier = calculateAscensionEpsMult();
-        prestigeRequirement = calculateMinResource();
-        
-        showMessageModal('Transcendence Successful!', `<strong>You have entered Parallel Universe God-Mode Level ${puGodLevel}.</strong><br> Your Parallel Universe God-Mode multiplier is now x${formatNumber(puGodMultiplier)}, your prestige multiplier is x${formatNumber(epsMultiplier)}, and your chosen upgrades are 10x stronger.`);        
-
-        unlockAchievement('Transcend');
-
-        //if length of selectedupgrades is 1
-        if (selectedUpgrades.length == 1) {
-            unlockAchievement('Slow and Steady');
+    // If we can Ascend, and no other event is occuring and we successfully trigger a startEvent
+    if (canAscend() && !isEventInProgress() && startEvent("ascend")) {
+        let confirmed = true;
+        let selectedUpgrades = null;
+        if (!skipConfirms) {
+            const upgradeText = numAscensionUpgrades > 1
+                ? `select up to ${numAscensionUpgrades} upgrades to enhance and increase your God-Mode multiplier proportionally to how many upgrades you select`
+                : "select an upgrade to enhance which will make its gains 10x stronger and also increase your God-Mode multiplier (global 1.25x stacking but diminishing multiplier)";
+            selectedUpgrades = await showMessageModal(
+                'God-Mode Ascension',
+                `Raising your God-Mode level requires temporarily folding three dimensions in the space around you to a single point, which will unfortunately reduce your Prestige multiplier to its cube root.<br><br>
+                You can ${upgradeText}.`,
+                true,
+                true
+            );
+        } else {
+            // Auto Select up to numAscensionUpgrades or autoAscendThreshold
+            selectedUpgrades = purchasedUpgrades.filter(upgrade => !upgrade.isGodMode).slice(0, autoAscendThreshold > 0 ? autoAscendThreshold : numAscensionUpgrades);
         }
 
-        restartGame(true); // Use the existing restartGame function with prestige mode
-        // Save game state after transcending
-        saveGameState();
-    }
+        if (selectedUpgrades) {
 
-    // Re-enable after the function completes
-    setTimeout(() => {
-        ascendInProgress = false;
-    }, 300);
+            selectedUpgrades.forEach(upgrade => {
+                upgrade.isGodMode = true;
+            });
+
+            godModeLevel = upgrades.filter(upgrade => upgrade.isGodMode).length;
+            godModeMultiplier = calculateGodModeMultiplier(godModeLevel);
+
+            epsMultiplier = calculateAscensionEpsMult();
+            prestigeRequirement = calculateMinResource();
+
+            let suppressAscendPopup = false;
+
+            if (tongueTwisterState === 3 && selectedUpgrades.some(upgrade => upgrade.name === 'Ascension')) {
+                unlockAchievement('Tongue Twister');
+                suppressAscendPopup = true;
+            }
+            if (tongueTwisterState === 1 && selectedUpgrades.some(upgrade => upgrade.name === 'Transcendence')) {
+                tongueTwisterState = 2;
+            }
+
+            if (!skipConfirms) {
+                showMessageModal('Ascension Successful!', `<strong>You have entered God-Mode Level ${godModeLevel}.</strong><br> Your multiplier God-Mode is now x${formatNumber(godModeMultiplier)}, your prestige multiplier is x${formatNumber(epsMultiplier)}, and your chosen upgrades are 10x stronger.`);
+
+                if (!achievementsMap.get('First Ascension').isUnlocked) {
+                    unlockAchievement('First Ascension');
+                    suppressAscendPopup = true;
+                }
+            }
+
+            restartGame(true); // Use the existing restartGame function with prestige mode
+            // Save game state after ascending
+            saveGameState();
+
+            if (!suppressAscendPopup) {
+                showPopupTooltip(`Ascended ${selectedUpgrades.length} Upgrades`, color='#00008B')
+            }
+
+        }
+
+        // Trigger stop event after process complete
+        setTimeout(() => {
+            stopEvent("ascend");
+        }, 300);
+    }
+}
+
+
+async function transcend(skipConfirms = false) {
+    skipConfirms |= enableQuickMode;
+
+    // If we can Transcend, and no other event is occuring and we successfully trigger a startEvent
+    if (canTranscend() && !isEventInProgress() && startEvent("transcend")) {
+
+        let selectedUpgrades = null;
+        if (!skipConfirms) {
+            const upgradeText = `select up to ${numPUAscensionUpgrades} upgrades to enhance and increase your Parallel Universe God-Mode multiplier accordingly`;
+            selectedUpgrades = await showMessageModal(
+                'Parallel Universe God-Mode Ascension',
+                `Accessing this new dimension requires temporarily aligning your universe with a parallel one, which will unfortunately reduce your Prestige multiplier the same way that Ascending in your Universe would.<br><br>
+                On the bright side, your Parallel Universe God-Mode multiplier will increase - and it works multiplicatively with your God-Mode multiplier!<br><br>
+                Additionally, you can ${upgradeText}.`,
+                true,
+                true,
+                false,
+                true
+            );
+        } else {
+            // Auto Select up to numPUAscensionUpgrades or autoTranscendThreshold
+            selectedUpgrades = purchasedUpgrades.filter(upgrade => !upgrade.isPUGodMode).slice(0, autoTranscendThreshold > 0 ? autoTranscendThreshold : numPUAscensionUpgrades);
+        }
+
+        if (selectedUpgrades) {
+            selectedUpgrades.forEach(upgrade => {
+                upgrade.isPUGodMode = true;
+                if(tunneledAscensionSkill){
+                    upgrade.isGodMode = true;
+                }
+            });
+
+            puGodLevel = upgrades.filter(upgrade => upgrade.isPUGodMode).length;
+            puGodMultiplier = calculatePUGodModeMultiplier(puGodLevel);
+
+            let suppressAscendPopup = false;
+
+            if (tongueTwisterState === 0 && selectedUpgrades.some(upgrade => upgrade.name === 'Transcendence')) {
+                tongueTwisterState = 1;
+                if (tunneledAscensionSkill) {
+                    tongueTwisterState = 2;
+                }
+            } else if (tongueTwisterState === 2 && selectedUpgrades.some(upgrade => upgrade.name === 'Ascension')) {
+                tongueTwisterState = 3;
+                if (tunneledAscensionSkill) {
+                    unlockAchievement('Tongue Twister');
+                    suppressAscendPopup = true;
+                }
+            }
+
+            if(tunneledAscensionSkill){
+                const gmLevelsGained = upgrades.filter(upgrade => upgrade.isGodMode).length - godModeLevel;
+                if (gmLevelsGained == 5 && selectedUpgrades.length == 24){
+                    unlockAchievement('Laerdal Tunnel');
+                    suppressAscendPopup = true;
+                }
+                godModeLevel = upgrades.filter(upgrade => upgrade.isGodMode).length;
+                godModeMultiplier = calculateGodModeMultiplier(godModeLevel);
+            }
+
+            epsMultiplier = calculateAscensionEpsMult();
+            prestigeRequirement = calculateMinResource();
+
+            if (!skipConfirms) {
+                showMessageModal('Transcendence Successful!', `<strong>You have entered Parallel Universe God-Mode Level ${puGodLevel}.</strong><br> Your Parallel Universe God-Mode multiplier is now x${formatNumber(puGodMultiplier)}, your prestige multiplier is x${formatNumber(epsMultiplier)}, and your chosen upgrades are 10x stronger.`);
+
+                unlockAchievement('Transcend');
+
+                //if length of selectedupgrades is 1
+                if (selectedUpgrades.length == 1) {
+                    unlockAchievement('Slow and Steady');
+                    suppressAscendPopup = true;
+                }
+            }
+
+            restartGame(true); // Use the existing restartGame function with prestige mode
+            // Save game state after transcending
+            saveGameState();
+
+            if(!suppressAscendPopup) {
+                showPopupTooltip(`Transcended ${selectedUpgrades.length} Upgrades`, color='#702963')
+            }
+
+        }
+        // Trigger stop event after process complete
+        setTimeout(() => {
+            stopEvent("transcend");
+        }, 300);
+    }
 }
 
 
 
-async function bigCrunch() {
+async function bigCrunch(skipConfirms = false) {
+    skipConfirms |= enableQuickMode;
 
-    if (canBigCrunch()) {
+    // If we can BigCrunch, and no other event is occuring and we successfully trigger a startEvent
+    if (canBigCrunch() && !isEventInProgress() && startEvent("bigcrunch")) {
+        let confirmed = true;
 
-        const confirmed = await showMessageModal(
-            'Big Crunch Confirmation',
-            `Are you sure you want to prestige? You will reset all resources, prestiges, and god-mode levels, but your Big Crunch Multiplier will increase <strong>from ${formatNumber(bigCrunchMultiplier)} to ${formatNumber(calculateBigCrunchMultiplier(power * compressedBigCrunchMult))}</strong>.<br> Big crunch multiplier stacks with all your other multipliers, plus additionally affects your Knowledge generation! (Your Big Crunch Power will lock in at the current Power level)`,
-            true
-        );
+        // If skipConfirms is false, show the confirmation modal
+        if (!skipConfirms) {
+            confirmed = await showMessageModal(
+                'Big Crunch Confirmation',
+                `Are you sure you want to prestige? You will reset all resources, prestiges, and god-mode levels, but your Big Crunch Multiplier will increase <strong>from ${formatNumber(bigCrunchMultiplier)} to ${formatNumber(calculateBigCrunchMultiplier(power * compressedBigCrunchMult))}</strong>.<br> Big crunch multiplier stacks with all your other multipliers, plus additionally affects your Knowledge generation! (Your Big Crunch Power will lock in at the current Power level)`,
+                true
+            );
+        }
 
         if (confirmed && canBigCrunch()) {
+
+            resourceGenerationDisabled = true;
 
             // Capture the screen and animate the compression
             await animateBigCrunchEffect();
 
             bigCrunchPower = power * compressedBigCrunchMult;
-            if((calculateBigCrunchMultiplier() / bigCrunchMultiplier) < 1.1){
-                unlockAchievement('The Tiniest Crunch');
-            }
+            const prevBigCrunchMult = bigCrunchMultiplier;
             bigCrunchMultiplier = calculateBigCrunchMultiplier();
+            if((bigCrunchMultiplier / prevBigCrunchMult) < 1.1){
+                unlockAchievement('The Tiniest Crunch');
+            } else if ((bigCrunchMultiplier / prevBigCrunchMult) > 9000){
+                unlockAchievement('Biggest Crunch');
+                if ((bigCrunchMultiplier / prevBigCrunchMult) > 99000000){
+                    unlockAchievement('Impossible Crunch');
+                }
+            }
+
 
             // Call restartGame with isPrestige flag set to true
             restartGame(true);
@@ -1790,12 +2140,18 @@ async function bigCrunch() {
             puGodLevel = 0;
             puGodMultiplier = 1;
 
+            if (crunchTimer < 120) {
+                unlockAchievement('Fast Cruncher');
+            }
+
             crunchTimer = 0;
 
             upgrades.forEach(upgrade => {
                 upgrade.isGodMode = false;
                 upgrade.isPUGodMode = false;
             });
+
+            tongueTwisterState = 0;
 
             unlockAchievement('Big Crunch');
             if(compressedBigCrunchMult == 30){
@@ -1808,7 +2164,13 @@ async function bigCrunch() {
 
             // Animate the expansion back to full screen
             animateBigCrunchExpansion();
+
+            resourceGenerationDisabled = false;
         }
+        // Trigger stop event after process complete (greater delay to match the crunch animation)
+        setTimeout(() => {
+            stopEvent("bigcrunch");
+        }, 1500);
     }
 }
 
@@ -1883,6 +2245,7 @@ function animateInfiniteEmbraceExpansion() {
         setTimeout(() => {
             // Remove the mask element after the expansion is complete
             heartImage.parentElement.remove();
+            window.location.reload();
         }, 3000);  // 1.5-second duration for the expansion effect
     }
 }
@@ -1890,55 +2253,134 @@ function animateInfiniteEmbraceExpansion() {
 
 
 
-async function infiniteEmbrace() {
-    if (canInfiniteEmbrace()) {
-        const confirmed = await showMessageModal(
-            'Infinite Embrace Confirmation',
-            `
-            Infinite Embrace is a profound act of injecting more love into the multiverse, ensuring that your next incarnation will be more pleasant and harmonious. By embracing the universe with infinite love, you enhance the very fabric of existence, bringing more warmth and joy to every future cycle.
-            <br><br>
-            In order to complete this sacred ritual, all progress will be reset, including prestiges, god modes, big crunches, the Hall of Knowledge, and the Hall of Power. The only things that remain intact are your achievements and the everlasting Love Points you have gathered.
-            <br><br>
-            You will gain <strong>Love Points, increasing from ${formatNumber(lovePoints)} to ${formatNumber(lovePoints + calculateLovePointsGained())}</strong>. These Love Points can be spent at the Hall of Love, which will remain unlocked across all Infinite Embraces.
-            <br><br>
-            Remember: you never lose your Love Points. They will continue to accumulate across all cycles, fueling your journey through the multiverse.
-            <br><br>
-            Are you sure you want to activate Infinite Embrace and reset your progress to inject love into the multiverse?
-            `,
-            true
-        );
-        
+async function infiniteEmbrace(skipConfirms = false, lovePointsOverwrite = false) {
+    skipConfirms |= enableQuickMode;
+
+    // If we can Infinite Embrace, and no other event is occuring and we successfully trigger a startEvent
+    if ((lovePointsOverwrite || canInfiniteEmbrace()) && !isEventInProgress() && startEvent("infiniteEmbrace")) {
+        let confirmed = true;
+
+        if (!skipConfirms) {
+            confirmed = await showMessageModal(
+                'Infinite Embrace Confirmation',
+                `
+                Infinite Embrace is a profound act of injecting more love into the multiverse, ensuring that your next incarnation will be more pleasant and harmonious. By embracing the universe with infinite love, you enhance the very fabric of existence, bringing more warmth and joy to every future cycle.
+                <br><br>
+                In order to complete this sacred ritual, all progress will be reset, including prestiges, god modes, big crunches, the Hall of Knowledge, and the Hall of Power. The only things that remain intact are your achievements and the everlasting Love Points you have gathered.
+                <br><br>
+                You will gain <strong>Love Points, increasing from ${formatNumber(lovePoints)} to ${formatNumber(lovePoints + calculateLovePointsGained())}</strong>. These Love Points can be spent at the Hall of Love, which will remain unlocked across all Infinite Embraces.
+                <br><br>
+                Remember: you never lose your Love Points. They will continue to accumulate across all cycles, fueling your journey through the multiverse.
+                <br><br>
+                Are you sure you want to activate Infinite Embrace and reset your progress to inject love into the multiverse?
+                `,
+                true
+            );
+        }
 
         if (confirmed) {
+
+            resourceGenerationDisabled = true;
 
             // Capture the screen and animate the Infinite Embrace effect
             await animateInfiniteEmbraceEffect();
 
-            lovePoints += calculateLovePointsGained();
-            if (serenity < 2000) {
-                unlockAchievement('Gentle Embrace');
+            if (!lovePointsOverwrite) {
+                const lovePointsGained = calculateLovePointsGained();
+                lovePoints += lovePointsGained;
+                if (serenity < 2000) {
+                    unlockAchievement('Gentle Embrace');
+                } else if (lovePointsGained > 25) {
+                    unlockAchievement('Massive Embrace');
+                    if (lovePointsGained > largestEmbrace) {
+                        largestEmbrace = lovePointsGained;
+                        localStorage.setItem('largestEmbrace', largestEmbrace);
+                        if(loveSizeMattersSkill) {
+                            loveSizeMattersMultiplier = Math.pow(largestEmbrace, 1.5) / 100;
+                        }
+                    }
+                }
+                
+                if (embraceTimer < 180) {
+                    unlockAchievement('Fast Embracer');
+                }
             }
 
             // Call restartGame with isPrestige flag set to true
             restartGame(true, false, true);
 
-            crunchTimer = 0;
+
+            embraceTimer = 0;
 
             unlockAchievement('Infinite Embrace');
 
-            if (lovePoints > 25) {
-                unlockAchievement('Massive Embrace');
-            }
-
             // Save game state after prestige
+            numLoveHallFreeRespecs = localStorage.getItem('numLoveHallFreeRespecs') !== null ? parseFloat(localStorage.getItem('numLoveHallFreeRespecs')) : 1;
             updateMultipliersDisplay();
             saveGameState();
 
             // Animate the expansion back to full screen
             animateInfiniteEmbraceExpansion();
+
+            resourceGenerationDisabled = false;
         }
+
+        // Trigger stop event after process complete (even greater delay to match the embrace animation)
+        setTimeout(() => {
+            stopEvent("infiniteEmbrace");
+        }, 3000);
     }
 }
+
+async function respecSkills() {
+    loveHallSkills.forEach(skill => {
+        if (skill.unlocked) {
+            const pairSkill = loveHallSkills.find(s => s.pair === skill.pair && s.name !== skill.name);
+            const levelMultiplier = getLevelMultiplier(skill.level);
+
+            // If both skills in the pair are unlocked
+            if (pairSkill && pairSkill.unlocked) {
+                // Refund original cost for the first skill
+                lovePoints += skill.originalCost;
+                
+                // Refund the increased cost for the paired skill (multiplied cost)
+                lovePoints += pairSkill.originalCost * levelMultiplier;
+                
+                // Reset both skills
+                pairSkill.unlocked = false; // Reset the paired skill
+            } else {
+                // Refund original cost if only this skill is unlocked
+                lovePoints += skill.originalCost;
+            }
+
+            skill.unlocked = false; // Reset current skill
+        }
+    });
+
+    if (numLoveHallFreeRespecs > 0) {
+        numLoveHallFreeRespecs--;
+        localStorage.setItem('numLoveHallFreeRespecs', numLoveHallFreeRespecs);
+        await showMessageModal(
+            'Respec Successful',
+            `Skills reset! Love Points refunded. Free respecs remaining: ${numLoveHallFreeRespecs}.`,
+            false
+        );
+    } else {
+        // Charge 10% of total Love Points for respec
+        const respecCost = lovePoints * 0.1;
+        lovePoints -= respecCost;
+
+        unlockAchievement('Pay to Win');
+
+        await showMessageModal(
+            'Respec Successful',
+            `Skills reset with a cost of 10% Love Points. ${formatNumber(respecCost)} Love Points deducted.`,
+            false
+        );
+    }
+}
+
+
 
 
 
@@ -1948,32 +2390,15 @@ function updateAscendButton() {
         ascendButton.style.display = 'block';
         // Check if autoAscendThreshold is set and not null
 
-        if (autoAscendThreshold !== null && autoAscendThreshold !== 0 && !isEventInProgress) {
+        if (autoAscendThreshold !== null && autoAscendThreshold !== 0) {
             // Count the number of purchased upgrades that do not have isGodMode
             const nonGodModeUpgrades = purchasedUpgrades.filter(upgrade => !upgrade.isGodMode).length;
 
             // If the number of non-GodMode upgrades meets or exceeds the threshold, auto-ascend
             if (nonGodModeUpgrades >= autoAscendThreshold) {
-                // Get the upgrades to ascend with
-                const selectedUpgrades = purchasedUpgrades.filter(upgrade => !upgrade.isGodMode).slice(0, autoAscendThreshold);
-
-                selectedUpgrades.forEach(upgrade => {
-                    upgrade.isGodMode = true;
-                });
-
-                godModeLevel = upgrades.filter(upgrade => upgrade.isGodMode).length;
-                godModeMultiplier = calculateGodModeMultiplier(godModeLevel);
-
-                epsMultiplier = calculateAscensionEpsMult();
-                prestigeRequirement = calculateMinResource();
-
-                showPopupTooltip(`Auto-Ascended ${autoAscendThreshold} Upgrades`, color='#00008B')
-                
-                restartGame(true); // Use the existing restartGame function with prestige mode
-                saveGameState(); // Save game state after ascending
+                ascend(true);
             }
         }
-
     } else {
         ascendButton.style.display = 'none';
     }
@@ -1986,32 +2411,15 @@ function updateTranscendButton() {
         transcendButton.style.display = 'block';
 
         // Check if autoTranscendThreshold is set and not null
-        if (autoTranscendThreshold !== null && autoTranscendThreshold !== 0 && !isEventInProgress) {
+        if (autoTranscendThreshold !== null && autoTranscendThreshold !== 0) {
             // Count the number of purchased upgrades that do not have isPUGodMode
             const nonPUGodModeUpgrades = purchasedUpgrades.filter(upgrade => !upgrade.isPUGodMode).length;
 
             // If the number of non-PUGodMode upgrades meets or exceeds the threshold, auto-transcend
             if (nonPUGodModeUpgrades >= autoTranscendThreshold) {
-                // Get the upgrades to transcend with
-                const selectedUpgrades = purchasedUpgrades.filter(upgrade => !upgrade.isPUGodMode).slice(0, autoTranscendThreshold);
-
-                selectedUpgrades.forEach(upgrade => {
-                    upgrade.isPUGodMode = true;
-                });
-
-                puGodLevel = upgrades.filter(upgrade => upgrade.isPUGodMode).length;
-                puGodMultiplier = calculatePUGodModeMultiplier(puGodLevel);
-
-                epsMultiplier = calculateAscensionEpsMult();
-                prestigeRequirement = calculateMinResource();
-                
-                showPopupTooltip(`Auto-Transcended ${autoTranscendThreshold} Upgrades`, color='#702963')
-                
-                restartGame(true); // Use the existing restartGame function with prestige mode
-                saveGameState(); // Save game state after transcending
+                transcend(true);
             }
         }
-
     } else {
         transcendButton.style.display = 'none';
     }
@@ -2021,9 +2429,26 @@ function updateTranscendButton() {
 function updateBigCrunchButton() {
     const bigCrunchButton = document.getElementById('bigCrunchButton');
     if (bigCrunchUnlocked && canBigCrunch()) {
-        const newMultiplier = calculateBigCrunchMultiplier(power*compressedBigCrunchMult);
-        bigCrunchButton.textContent = `BIG CRUNCH (x${formatNumber((newMultiplier / bigCrunchMultiplier))} MULT)`;
-        bigCrunchButton.style.display = 'block';
+        if (infiniteCollapseSkill) {
+            
+            bigCrunchPower = power * compressedBigCrunchMult;
+            bigCrunchMultiplier = calculateBigCrunchMultiplier();
+
+            bigCrunchButton.style.display = 'none';
+            updateMultipliersDisplay();
+            updateEffectiveMultipliers();
+
+        } else {
+            const newMultiplier = calculateBigCrunchMultiplier(power * compressedBigCrunchMult);
+            bigCrunchButton.textContent = `BIG CRUNCH (x${formatNumber((newMultiplier / bigCrunchMultiplier))} MULT)`;
+            bigCrunchButton.style.display = 'block';
+
+            // Check if auto-crunch should be triggered
+            if (autoBigCrunchThreshold !== null && autoBigCrunchThreshold >= 1 && (newMultiplier / bigCrunchMultiplier) > autoBigCrunchThreshold && !isEventInProgress()) {
+                showPopupTooltip(`Auto-Crunched for x${formatNumber(newMultiplier / bigCrunchMultiplier)}`, color='#FF4433');
+                bigCrunch(true); // Trigger auto-crunch
+            }
+        }
     } else {
         bigCrunchButton.style.display = 'none';
     }
@@ -2039,6 +2464,144 @@ function updateInfiniteEmbraceButton() {
     }
 }
 
+// Function to update Warp Time visuals and progress
+function updateWarpTime() {
+    if ((warpButton.style.display) == 'none') return;
+
+    const overlayCircle = document.querySelector('.overlay-circle');
+
+    // Calculate the progress in percentage of max warp time
+    const progressPercentage = Math.min((accumulatedWarpTime / warpTimeMax) * 100, 100);
+
+    // Convert the progress into degrees for the conic-gradient
+    const progressDegree = (progressPercentage / 100) * 360;
+
+    // Reverse the conic-gradient to reveal the image clockwise
+    overlayCircle.style.backgroundImage = `conic-gradient(transparent ${progressDegree}deg, rgba(0, 0, 0, 0.9) ${progressDegree}deg 360deg)`;
+
+    const warpTimeTooltip = document.querySelector('#warpTimeButtonContainer .cookieTooltip');
+    if (warpTimeActive) {
+        warpTimeTooltip.innerHTML = `${warpTimeRemaining>60 ? `${Math.floor(warpTimeRemaining / 60)} minute${warpTimeRemaining < 120 ? '' : 's'}<br>` : ''}${warpTimeRemaining % 60} second${warpTimeRemaining > 1 ? 's' : ''}`;
+    } else if (accumulatedWarpTime < 3600) {
+        warpTimeTooltip.innerHTML = `Time Warp<br>Not Ready`;
+    } else {
+        warpTimeTooltip.innerHTML = `Activate<br><strong>${Math.floor(accumulatedWarpTime / 3600)} minute${accumulatedWarpTime < 7200 ? '' : 's'}</strong> of<br>Warp Time`;
+    }
+
+    // Add/remove 'affordable' class based on accumulatedWarpTime
+    if (accumulatedWarpTime >= 3600) {
+        warpButton.classList.add('affordable');
+        warpButton.classList.remove('not-affordable');
+    } else {
+        warpButton.classList.add('not-affordable');
+        warpButton.classList.remove('affordable');
+    }
+}
+
+const warpedCookieWinningSequence = 'WCCWWCWCCWC';
+let warpedCookieSequence = '';
+
+warpButton.addEventListener("click", function () {
+    
+    // If warp time is active and masterOfTimeSkill is true, stop the warp and add remaining time back
+    if (warpTimeActive) {
+        if (masterOfTimeSkill) {
+            accumulatedWarpTime += Math.max(warpTimeRemaining * 60 - 60, 0); // Convert remaining minutes to seconds and add back
+            endWarpTime(); // End the warp immediately
+
+            if (!achievementsMap.get('Warped Cookie').isUnlocked){
+                warpedCookieSequence += 'W';
+                manageWarpedCookieSequence();
+            }
+        }
+        return; // Exit early if warp is active and no other action is needed
+    }
+
+    if (accumulatedWarpTime < 3600) return; // Not enough warp time accumulated to start
+
+    warpTimeActive = true;
+    const fullHours = Math.floor(accumulatedWarpTime / 3600); // Only use full hours
+    warpTimeRemaining = fullHours * 60; // Warp for X minutes
+    accumulatedWarpTime -= fullHours * 3600; // Decrement full hour increments
+
+    // Speed up resource generation for the warp time duration
+    clearInterval(resourceGenerationInterval);
+    resourceGenerationInterval = setInterval(generateResources, 100); // Faster generation
+    warpTimeInterval = setInterval(updateWarpTimeRemaining, 1000); // Track remaining time every second
+
+    if (!achievementsMap.get('Warped Cookie').isUnlocked){
+        warpedCookieSequence += 'W';
+        manageWarpedCookieSequence();
+    }
+
+    // Disable button during warp, unless masterOfTimeSkill is active
+    if (!masterOfTimeSkill) {
+        warpButton.disabled = true;
+    }
+    warpButton.classList.remove("affordable");
+    warpButton.classList.add("spinning");
+});
+
+
+// Update warp time remaining and save state
+function updateWarpTimeRemaining() {
+    warpTimeRemaining--; // Decrease remaining time by 1 second
+
+    // If warp time has ended, stop the interval
+    if (warpTimeRemaining <= 0) {
+        endWarpTime();
+    } 
+}
+
+// End Warp Time logic
+function endWarpTime() {
+    clearInterval(warpTimeInterval);
+    clearInterval(resourceGenerationInterval);
+
+    // Restore the original resource generation interval
+    resourceGenerationInterval = setInterval(generateResources, 500); // Back to normal speed
+    warpTimeActive = false;
+    warpTimeRemaining = 0; // Reset warp time remaining
+
+    warpButton.classList.remove("spinning");
+
+    // Re-enable the button regardless of masterOfTimeSkill
+    warpButton.disabled = false;
+
+    // Update UI elements
+    updateWarpTime();
+}
+
+
+// Resume Warp Time after reload
+function resumeWarpTime(remainingTime) {
+    warpTimeActive = true;
+    warpTimeRemaining = remainingTime;
+
+    // Speed up resource generation and start warp timer
+    clearInterval(resourceGenerationInterval);
+    resourceGenerationInterval = setInterval(generateResources, 100);
+    warpTimeInterval = setInterval(updateWarpTimeRemaining, 1000);
+
+    // Disable button during warp
+    if (!masterOfTimeSkill) {
+        warpButton.disabled = true;
+    }
+    warpButton.classList.remove("affordable");
+    warpButton.classList.add("spinning");
+}
+
+// Manage sequence length to prevent it from growing infinitely
+function manageWarpedCookieSequence() {
+    // Ensure the sequence length doesn't exceed the winning sequence length
+    if (warpedCookieSequence.length > warpedCookieWinningSequence.length) {
+        warpedCookieSequence = warpedCookieSequence.slice(-warpedCookieWinningSequence.length); // Keep only the last n characters
+    }
+    if (warpedCookieSequence === warpedCookieWinningSequence) {
+        unlockAchievement('Warped Cookie');
+        warpedCookieSequence = ""; // Optionally reset the sequence after unlocking the achievement
+    }
+}
 
 
 // Function to generate idle resources based on the elapsed time
@@ -2056,6 +2619,8 @@ function generateIdleResources(elapsedSeconds) {
     }
 
     crunchTimer += elapsedSeconds;
+    embraceTimer += elapsedSeconds;
+    accumulatedWarpTime = Math.min (accumulatedWarpTime + elapsedSeconds, warpTimeMax);
 
     const baseKnowledgePerSecond = calculateBaseKnowledge();
 
@@ -2108,6 +2673,11 @@ function generateIdleResources(elapsedSeconds) {
 
 }
 
+function calculateStellarMeditationMultiplier() {
+    return (zenOfTheStarsSkill ? 1.5 : 1.1) ** purchasedUpgrades.filter(upgrade => upgrade.isMeditation).length;
+}
+
+
 // Function to encode a name for safe usage in URLs or storage
 function encodeName(name) {
     return encodeURIComponent(name);
@@ -2118,13 +2688,12 @@ function decodeName(encodedName) {
     return decodeURIComponent(encodedName);
 }
 
-let isEventInProgress = false; // Flag to prevent multiple fight triggers
 let forgetfulnessCounter = 0;
 
 // Function to handle the purchase of an upgrade
-async function buyUpgrade(encodedUpgradeName, callUpdatesAfterBuying = true) {
+async function buyUpgrade(encodedUpgradeName, callUpdatesAfterBuying = true, skipEventCheck = false) {
     // If a fight is in progress, don't allow buying another upgrade
-    if (isEventInProgress) return;
+    if (isEventInProgress() && !skipEventCheck) return;
 
     // Decode the upgrade name
     const upgradeName = decodeName(encodedUpgradeName);
@@ -2151,27 +2720,35 @@ async function buyUpgrade(encodedUpgradeName, callUpdatesAfterBuying = true) {
         hopium -= cost.hopium || 0;
         knowledge -= cost.knowledge || 0;
         power = (nebulaOverdriveSkill && !isFight && !isMeditation) ? power : power - cost.power || 0;
-        serenity -= cost.serenity || 0;
+        serenity = (tranquilityOverdriveSkill && !isFight && !isMeditation) ? serenity : serenity - cost.serenity || 0;
 
-        // Special case for the "Antimatter Dimension" upgrade
         if (isFight) {
 
-            if (name === 'Vegeta' && !purchasedUpgrades.some(upgrade => upgrade.name === "Cosmetic Surgery")){
-                showMessageModal('Hmph', `After all your time and effort tracking down Vegeta, you finally confront him, only to hear, "Hmph, you're too ugly to fight," as he flies off without a second thought. Frustrated and defeated, you realize you might need to find another way to make yourself more visually impressive—something that even Vegeta can't ignore.`);
-                forgetfulnessCounter++;
-                localStorage.setItem('forgetfulnessCounter', forgetfulnessCounter);
-                if (forgetfulnessCounter >= 15) {
-                    unlockAchievement('Delusion Causes Forgetfulness');
+            if (name === 'Vegeta' && !purchasedUpgradesSet.has("Cosmetic Surgery")) {
+                if (autoFightConditionCheck(upgrade)){
+                    unlockAchievement('Ugly by Choice')
+                } else {
+                    throttle(() => showMessageModal('Hmph', `After all your time and effort tracking down Vegeta, you finally confront him, only to hear, "Hmph, you're too ugly to fight," as he flies off without a second thought. Frustrated and defeated, you realize you might need to find another way to make yourself more visually impressive—something that even Vegeta can't ignore.`), 2000)();
+                    forgetfulnessCounter++;
+                    localStorage.setItem('forgetfulnessCounter', forgetfulnessCounter);
+                    if (forgetfulnessCounter >= 15) {
+                        unlockAchievement('Delusion Causes Forgetfulness');
+                    }
+                    return;
                 }
-                return;
             }
 
-            if (!(autoFightSkill && autoFightEnabled) || power < upgrade.autoBattlePower) {
+            let canManualFight = !(autoFightSkill && autoFightEnabled) || power < (illusionOfPowerSkill ? (upgrade.isGodMode && upgrade.isPUGodMode ? upgrade.autoBattlePower / 100 : (upgrade.isGodMode || upgrade.isPUGodMode ? upgrade.autoBattlePower / 10 : upgrade.autoBattlePower)) : upgrade.autoBattlePower);
 
-                isEventInProgress = true; // Set the flag to prevent multiple fight triggers
+            if (canManualFight && !isEventInProgress() && startEvent("bossfight")) {
+
+                enemiesFoughtManually.add(name);
+                if (name == 'Saitama' && enemiesFoughtManually.size == 2 && enemiesFoughtManually.values().next().value == 'Chuck Norris') {
+                    unlockAchievement('Two Worthy Opponents');
+                }
 
                 const fightResult = await startFightGame(name, img);
-                isEventInProgress = false; // Reset the flag after the fight ends
+                stopEvent("bossfight"); // Reset the flag after the fight ends
 
                 if (!fightResult) {
                     showMessageModal('You Lost', `Defeat isn’t the end, ${name} just tested your limits. Get back up and come back stronger!`);
@@ -2181,12 +2758,9 @@ async function buyUpgrade(encodedUpgradeName, callUpdatesAfterBuying = true) {
             }
         }
 
-        if (isMeditation) {
-
-            isEventInProgress = true; // Set the flag to prevent multiple fight triggers
-
+        if (isMeditation && !isEventInProgress() && startEvent("meditation")) {
             const meditationResult = await startMeditationGame(name, img);
-            isEventInProgress = false; // Reset the flag after the fight ends
+            stopEvent("meditation"); // Reset the flag after the fight ends
 
             if (!meditationResult) {
                 showMessageModal('You Lost', `Meditating on ${name} proved too challenging, and your concentration slipped. But deeper focus is within your grasp—return when your mind is at peace, and you'll surely overcome this challenge.`);
@@ -2194,18 +2768,29 @@ async function buyUpgrade(encodedUpgradeName, callUpdatesAfterBuying = true) {
                 return;
             }
 
-            stellarMeditationMult *= 1.1;
+            if (stellarMeditationSkill) {
+                stellarMeditationMult *= zenOfTheStarsSkill ? 1.5 :1.1;
+            }
         }
 
         // Increase the per second earnings for each resource, apply God Mode multiplier if applicable
         const multiplier = (upgrade.isGodMode && upgrade.isPUGodMode) ? 100 :
             (upgrade.isGodMode || upgrade.isPUGodMode) ? 10 : 1;
         const battleMultiplier = ((upgrade.isFight && rewardingVictoriesSkill) || (upgrade.isMeditation && rewardingMeditationsSkill)) ? 1.4 : 1;
-        copiumPerSecond += (earnings.copiumPerSecond || 0) * multiplier * battleMultiplier;
-        yachtMoneyPerSecond += (earnings.yachtMoneyPerSecond || 0) * multiplier * battleMultiplier;
-        trollPointsPerSecond += (earnings.trollPointsPerSecond || 0) * multiplier * battleMultiplier;
+
         knowledgePerSecond += (earnings.knowledgePerSecond || 0) * multiplier * battleMultiplier;
         serenityPerSecond += (earnings.serenityPerSecond || 0) * multiplier * battleMultiplier;
+
+        // Handle copium per second based on the toggle state
+        if (document.getElementById('toggleCopiumLabel').classList.contains('hidden')) {
+            // If the toggleCopium is hidden, add copium per second normally
+            copiumPerSecond += (earnings.copiumPerSecond || 0) * multiplier * battleMultiplier;
+        } else {
+            // If the toggleCopium is not hidden, adjust copium per second based on the toggle state
+            const toggleCopium = document.getElementById('toggleCopium').checked;
+            const copiumChange = Math.abs(earnings.copiumPerSecond || 0) * multiplier * battleMultiplier;
+            copiumPerSecond += toggleCopium ? copiumChange : -copiumChange;
+        }
 
         // Handle delusion per second based on the toggle state
         if (document.getElementById('toggleDelusionLabel').classList.contains('hidden')) {
@@ -2216,6 +2801,28 @@ async function buyUpgrade(encodedUpgradeName, callUpdatesAfterBuying = true) {
             const toggleDelusion = document.getElementById('toggleDelusion').checked;
             const delusionChange = Math.abs(earnings.delusionPerSecond || 0) * multiplier * battleMultiplier;
             delusionPerSecond += toggleDelusion ? delusionChange : -delusionChange;
+        }
+        
+        // Handle yachtMoney per second based on the toggle state
+        if (document.getElementById('toggleYachtMoneyLabel').classList.contains('hidden')) {
+            // If the toggleYachtMoney is hidden, add yachtMoney per second normally
+            yachtMoneyPerSecond += (earnings.yachtMoneyPerSecond || 0) * multiplier * battleMultiplier;
+        } else {
+            // If the toggleYachtMoney is not hidden, adjust yachtMoney per second based on the toggle state
+            const toggleYachtMoney = document.getElementById('toggleYachtMoney').checked;
+            const yachtMoneyChange = Math.abs(earnings.yachtMoneyPerSecond || 0) * multiplier * battleMultiplier;
+            yachtMoneyPerSecond += toggleYachtMoney ? yachtMoneyChange : -yachtMoneyChange;
+        }
+
+        // Handle trollPoints per second based on the toggle state
+        if (document.getElementById('toggleTrollPointsLabel').classList.contains('hidden')) {
+            // If the toggleTrollPoints is hidden, add trollPoints per second normally
+            trollPointsPerSecond += (earnings.trollPointsPerSecond || 0) * multiplier * battleMultiplier;
+        } else {
+            // If the toggleTrollPoints is not hidden, adjust trollPoints per second based on the toggle state
+            const toggleTrollPoints = document.getElementById('toggleTrollPoints').checked;
+            const trollPointsChange = Math.abs(earnings.trollPointsPerSecond || 0) * multiplier * battleMultiplier;
+            trollPointsPerSecond += toggleTrollPoints ? trollPointsChange : -trollPointsChange;
         }
 
         // Handle hopium per second based on the toggle state
@@ -2233,8 +2840,11 @@ async function buyUpgrade(encodedUpgradeName, callUpdatesAfterBuying = true) {
         addPurchasedUpgrade(img, name, earnings, upgrade.isGodMode, upgrade.isPUGodMode, upgrade.message, upgrade.isFight, upgrade.isMeditation);
         // Remove the upgrade from the available upgrades list
         availableUpgrades.splice(availableUpgrades.indexOf(upgrade), 1);
+
         // Add the upgrade to the purchased upgrades list
-        purchasedUpgrades.push(upgrade);
+        purchasedUpgrades.push(upgrade); // Add to array for order and property access
+        purchasedUpgradesSet.add(upgrade.name); // Add to set for fast lookups
+
 
         // Check if the upgrade has an associated achievement and unlock it
         if (upgrade.achievement) {
@@ -2244,6 +2854,10 @@ async function buyUpgrade(encodedUpgradeName, callUpdatesAfterBuying = true) {
         // Special case for unlocking the "Cookie Clicker" upgrade
         if (name === "Cookie Clicker") {
             document.getElementById('cookieButton').style.display = 'block';
+        }
+
+        if (name === "Time Warp") {
+            warpButton.style.display = 'block';
         }
 
         // Special case for unlocking the "Transcendence" upgrade
@@ -2259,6 +2873,7 @@ async function buyUpgrade(encodedUpgradeName, callUpdatesAfterBuying = true) {
         if (name == "Cosmic Drought") {
             if (stellarCookieSkill) {
                 clearInterval(cookieIntervalId)
+                cookieIntervalId = null;
                 document.getElementById('cookieButton');
                 cookieButton.classList.remove('spinning');
             }
@@ -2283,12 +2898,9 @@ async function buyUpgrade(encodedUpgradeName, callUpdatesAfterBuying = true) {
             localStorage.setItem('messageShownUpgrades', JSON.stringify(messageShownUpgrades));
         }
 
-        if (name === 'Altruism') {
-            showMessageModal('The Journey Continues', 
-                "This marks the end of v0.916. Hope you enjoyed the Power Saga and congratulations on completing your first successful meditation! With the Hall of Love now open, a whole new mechanic has been introduced, and Love Points are now part of your journey. While the Hall of Love skills are implemented, expect plenty of balancing to come as the game evolves. Feel free to explore the skills and prepare for even more content with future meditations. "
-                + "Stay active on Discord, share your feedback, and help shape the future of this game. With your input, something truly epic can be created!"
-            );
-        }        
+        // if (name === 'Skepticism') {
+        //     pass
+        // }
 
         // Apply a mini prestige multiplier if the upgrade has one
         if (miniPrestigeMultiplier) {
@@ -2296,47 +2908,54 @@ async function buyUpgrade(encodedUpgradeName, callUpdatesAfterBuying = true) {
         }
 
         if (name == 'Good Guy Sasuke') {
-            if (!purchasedUpgrades.some(upgrade => upgrade.name === "Cosmetic Surgery")){
+            if (!purchasedUpgradesSet.has("Cosmetic Surgery")) {
                 unlockAchievement('Stay Ugly');
             }
-        } else if (name == 'Channel inner Tyson'){
-            if (!purchasedUpgrades.some(upgrade => upgrade.name === `So what do I do here?`)){
+        } else if (name == 'Channel inner Tyson') {
+            if (!purchasedUpgradesSet.has('So what do I do here?')) {
                 unlockAchievement('Going in Blind');
             }
-        } else if (name == `Job Application #3`){
-            if (!purchasedUpgrades.some(upgrade => upgrade.name === `Job Application`) && !purchasedUpgrades.some(upgrade => upgrade.name === `Job Application #2`)){
+        } else if (name == 'Job Application #3') {
+            if (!purchasedUpgradesSet.has('Job Application') && !purchasedUpgradesSet.has('Job Application #2')) {
                 unlockAchievement('Reject Rejection');
             }
-        } else if (name == `Soothing Realization`){
-            if (!purchasedUpgrades.some(upgrade => upgrade.name === `Cookie Clicker`) && !purchasedUpgrades.some(upgrade => upgrade.name === `NGU Idle`) && !purchasedUpgrades.some(upgrade => upgrade.name === `Melvor Idle`) && !purchasedUpgrades.some(upgrade => upgrade.name === `Antimatter Dimensions`) && !purchasedUpgrades.some(upgrade => upgrade.name === `Increlution`)){
+        } else if (name == 'Soothing Realization') {
+            if (!purchasedUpgradesSet.has('Cookie Clicker') && !purchasedUpgradesSet.has('NGU Idle') && !purchasedUpgradesSet.has('Melvor Idle') && !purchasedUpgradesSet.has('Antimatter Dimensions') && !purchasedUpgradesSet.has('Increlution')) {
                 unlockAchievement('Degens Idle Purist');
             }
-        } else if (name == 'Spend That Money'){
-            if (!purchasedUpgrades.some(upgrade => upgrade.name === `Sebo's Luck`)){
+        } else if (name == 'Spend That Money') {
+            if (!purchasedUpgradesSet.has("Sebo's Luck")) {
                 unlockAchievement('Take Out a Loan');
             }
+        } else if (name == 'Ok to be selfish?') {
+            if (purchasedUpgrades[purchasedUpgrades.length - 2].name == 'Food + Cats = Profit?') {
+                console.log('Found Cat');
+                unlockAchievement('Feed the Cat');
+            }
+        } else if (name == 'Perfection doesn\'t exi...') {
+            unhideSerenity();
+            unlockAchievement('Serenity');
         }
 
         if (callUpdatesAfterBuying) {
             if (name == 'Degens Idle Dev') {
-                if (!purchasedUpgrades.some(upgrade => upgrade.name === "Hunt for Hussein")){
+                if (!purchasedUpgradesSet.has("Hunt for Hussein")) {
                     unlockAchievement('Big Brain Move');
                 }
             } else if (name == 'Vegeta') {
-                if (delusion > 0 && hopium < 0){
+                if (delusion > 0 && hopium < 0) {
                     unlockAchievement('Raw Power');
                 }
-            } else if (name == 'Agent Smith'){
-                if (power >= 1e11){
+            } else if (name == 'Agent Smith') {
+                if (power >= 1e11) {
                     unlockAchievement('Overkill Much?');
                 }
-            } else if (name == `Perfection doesn't exi...`){
-                unhideSerenity();
-                unlockAchievement('Serenity');
-            } else if (name == 'Love Shop'){
+            } else if (name == 'Love Shop') {
                 unlockHallofLove();
-            } else if (name == 'Training Dummy' && crunchTimer < 15.1){
+            } else if (name == 'Training Dummy' && crunchTimer < 15.1) {
                 unlockAchievement('Eager to Train');
+            } else if (name == 'Hotkeys' && window.innerWidth <= 768 && autoFightSkill) {
+                unlockAchievement('Hotkey Master');
             }
 
             // Update the upgrade list and display
@@ -2359,58 +2978,76 @@ async function buyUpgrade(encodedUpgradeName, callUpdatesAfterBuying = true) {
 
 // Function to handle the purchase of multiple upgrades
 function buyAllUpgrades(limit, pressedButton) {
-    let purchasedCount = 0; // Initialize a counter for the purchased upgrades
-    
-    let topUpgrades = availableUpgrades.slice(0, limit);
+    if (!isEventInProgress() && startEvent("buyAllUpgrades")) {
+        let purchasedCount = 0; // Initialize a counter for the purchased upgrades
 
-    if(limit === 8 || !buyMarkersSkill){
-        const truncateIndex = topUpgrades.findIndex(upgrade => upgrade.isKey);
-        // Truncate the list if any key upgrade is found
-        if (truncateIndex !== -1) {
-            topUpgrades = topUpgrades.slice(0, truncateIndex + 1);
+        let topUpgrades = availableUpgrades.slice(0, limit);
+
+        if(limit === 8 || !buyMarkersSkill){
+            const truncateIndex = topUpgrades.findIndex(upgrade => upgrade.isKey);
+            // Truncate the list if any key upgrade is found
+            if (truncateIndex !== -1) {
+                topUpgrades = topUpgrades.slice(0, truncateIndex + 1);
+            }
         }
-    }
 
-    topUpgrades.forEach(upgrade => {
-        if (buyMarkersSkill) {
-            const switchState = JSON.parse(localStorage.getItem(`switchState-${upgrade.name}`));
-            const isAffordableUpgrade = isAffordable(upgrade.cost);
-            const autoFightCondition = autoFightSkill && autoFightEnabled && power > upgrade.autoBattlePower;
-    
-            if (isAffordableUpgrade && autoFightCondition) {
-                buyUpgrade(encodeName(upgrade.name), false);
-                purchasedCount++;
-                incrementStellarHarvest();
+        let firstFightUpgrade = true;
+
+        topUpgrades.forEach(upgrade => {
+            if (buyMarkersSkill) {
+                const isAffordableUpgrade = isAffordable(upgrade.cost);
+
+                if (isAffordableUpgrade && autoFightConditionCheck(upgrade) && firstFightUpgrade) {
+                    buyUpgrade(encodeName(upgrade.name), false, true);
+                    purchasedCount++;
+                    incrementStellarHarvest();
+                    if(upgrade.name == 'Saitama' && enemiesFoughtManually.size == 0){
+                        unlockAchievement('Make Love, Not War');
+                    }
+                } else if (isAffordableUpgrade && autoMeditateConditionCheck(upgrade)) {
+                    buyUpgrade(encodeName(upgrade.name), false, true);
+                    upgradeBought = true;
+                    if (stellarMeditationSkill) {
+                        stellarMeditationMult *= (zenOfTheStarsSkill ? 1.5 : 1.1);
+                    }
+                } else if ((isAffordableUpgrade && switchStates[upgrade.name])) {
+                    buyUpgrade(encodeName(upgrade.name), false, true);
+                    purchasedCount++;
+                }
+
+            } else {
+                if (isAffordable(upgrade.cost) && !upgrade.isFight && !upgrade.isMeditation) {
+                    buyUpgrade(encodeName(upgrade.name), false, true);
+                    purchasedCount++; // Increment counter when an upgrade is bought
+                }
             }
-            else if ((isAffordableUpgrade && switchState)) {
-                buyUpgrade(encodeName(upgrade.name), false);
-                purchasedCount++;
-            }
 
+            if (upgrade.isFight) {firstFightUpgrade = false;}
 
+        });
+
+        if (purchasedCount > 0) {
+            updateUpgradeList();
+            updateMultipliersDisplay();
+            updateEffectiveMultipliers();
+            updateDisplay();
+            saveGameState();
+            showStatusMessage(pressedButton, `Purchased ${purchasedCount} upgrade(s).`, true, timeout=1000);
         } else {
-            if (isAffordable(upgrade.cost) && !upgrade.isFight && !upgrade.isMeditation) {
-                buyUpgrade(encodeName(upgrade.name), false);
-                purchasedCount++; // Increment counter when an upgrade is bought
-            }
+            showStatusMessage(pressedButton, 'No upgrades were purchased.', false, timeout=500);
         }
-    });
-    
-    if (purchasedCount > 0) {
-        updateUpgradeList();
-        updateMultipliersDisplay();
-        updateEffectiveMultipliers();
-        updateDisplay();
-        saveGameState();
-        showStatusMessage(pressedButton, `Purchased ${purchasedCount} upgrade(s).`, true, timeout=1000);
-    } else {
-        showStatusMessage(pressedButton, 'No upgrades were purchased.', false, timeout=500);
+        stopEvent("buyAllUpgrades");
     }
 }
 
 
+function autoFightConditionCheck(upgrade) {
+    return upgrade.isFight && autoFightSkill && autoFightEnabled && power > (illusionOfPowerSkill ? (upgrade.isGodMode && upgrade.isPUGodMode ? upgrade.autoBattlePower / 100 : (upgrade.isGodMode || upgrade.isPUGodMode ? upgrade.autoBattlePower / 10 : upgrade.autoBattlePower)) : upgrade.autoBattlePower);
+}
 
-
+function autoMeditateConditionCheck(upgrade) {
+    return upgrade.isMeditation && purchasedUpgradesSet.has("Cosmic Drought") && autoMeditateSkill && autoFightEnabled && serenity > upgrade.autoMeditateThreshold && (etherealReflectionSkill || (upgrade.isGodMode && upgrade.isPUGodMode));
+}
 
 // Function to format the cost or earnings of an upgrade for display
 function formatCostOrEarnings(costOrEarnings, isGodMode = false, isPUGodMode = false, isFight = false, isMeditation = false) {
@@ -2433,7 +3070,7 @@ function formatCostOrEarnings(costOrEarnings, isGodMode = false, isPUGodMode = f
         if (value !== 0) {
             // Get the display name using abbreviations or capitalize the resource name
             const displayName = abbreviations[resource] || resource.charAt(0).toUpperCase() + resource.slice(1);
-            let adjustedValue = (isGodMode && isPUGodMode) ? value * 100 : 
+            let adjustedValue = (isGodMode && isPUGodMode) ? value * 100 :
                       (isGodMode || isPUGodMode) ? value * 10 : value;
             if ((rewardingVictoriesSkill && isFight) || (rewardingMeditationsSkill && isMeditation)) {
                 adjustedValue *= 1.4;
@@ -2502,38 +3139,40 @@ function addPurchasedUpgrade(img, name, earnings, isGodMode = false, isPUGodMode
     const toggleSwitch = document.getElementById(`toggle-${name}`);
 
     if (toggleSwitch && !isFight && !isMeditation) { // Only add event listeners if it's not a fight upgrade
-        toggleSwitch.addEventListener('click', (event) => {
-            event.stopPropagation();
-        });
-    
-        toggleSwitch.addEventListener('change', (event) => {
-            if (!achievementsMap.get('Developer Options').isUnlocked) {
-                const currentToggle = { name: name, state: event.target.checked };
-                // Check if the current toggle matches the next item in the cheat sequence
-                if (devCheatSequence[currentCheatSequence.length] && 
-                    devCheatSequence[currentCheatSequence.length].name === currentToggle.name && 
-                    devCheatSequence[currentCheatSequence.length].state === currentToggle.state) {
-                    // If correct, add to the sequence
-                    currentCheatSequence.push(currentToggle);
-        
-                    // If the sequence is complete, trigger the cheat code
-                    if (currentCheatSequence.length === devCheatSequence.length) {
-                        unlockAchievement('Developer Options');
-                        currentCheatSequence = []; // Reset sequence after activation
+
+        Events.addListeners(toggleSwitch, 'togglers', {
+            click: (event) => {
+                event.stopPropagation();
+            },
+            change: (event) => {
+                if (!achievementsMap.get('Developer Options').isUnlocked) {
+                    const currentToggle = { name: name, state: event.target.checked };
+                    // Check if the current toggle matches the next item in the cheat sequence
+                    if (devCheatSequence[currentCheatSequence.length] &&
+                        devCheatSequence[currentCheatSequence.length].name === currentToggle.name &&
+                        devCheatSequence[currentCheatSequence.length].state === currentToggle.state) {
+                        // If correct, add to the sequence
+                        currentCheatSequence.push(currentToggle);
+
+                        // If the sequence is complete, trigger the cheat code
+                        if (currentCheatSequence.length === devCheatSequence.length) {
+                            unlockAchievement('Developer Options');
+                            currentCheatSequence = []; // Reset sequence after activation
+                        }
+                    } else {
+                        // Reset the sequence if the toggle doesn't match
+                        currentCheatSequence = [];
                     }
-                } else {
-                    // Reset the sequence if the toggle doesn't match
-                    currentCheatSequence = [];
                 }
+                // Update the toggle state in the global variable
+                switchStates[name] = event.target.checked;
             }
-            // Store the toggle state in localStorage
-            localStorage.setItem(`switchState-${name}`, JSON.stringify(event.target.checked));
         });
     }
 
     if (message) {
         upgradeElement.classList.add('clickable');
-        upgradeElement.addEventListener('click', (event) => {
+        Events.addListener(upgradeElement, 'click', (event) => {
             if (event.target.closest('.switch')) {
                 return; // Do nothing if the click originated from the switch
             }
@@ -2544,7 +3183,7 @@ function addPurchasedUpgrade(img, name, earnings, isGodMode = false, isPUGodMode
                     let admireTimeoutId = setTimeout(() => {
                         unlockAchievement('Admire The Acronym');
                     }, 15000);
-            
+
                     // Delay the event listener for a moment to avoid canceling the timeout by the same initial click
                     setTimeout(() => {
                         document.addEventListener('click', function cancelTimeout() {
@@ -2564,9 +3203,10 @@ function addPurchasedUpgrade(img, name, earnings, isGodMode = false, isPUGodMode
     }
 
     if (buyMarkersSkill && !isFight && !isMeditation) {
-        const savedSwitchState = JSON.parse(localStorage.getItem(`switchState-${name}`)) || false;
         if (toggleSwitch) {
-            toggleSwitch.checked = savedSwitchState;
+            // Use defaultBuyMarkerState if switchStates[name] is null
+            toggleSwitch.checked = switchStates[name] !== null ? switchStates[name] : defaultBuyMarkerState;
+            switchStates[name] = toggleSwitch.checked;
             toggleSwitch.parentElement.style.display = 'block';
         }
     } else {
@@ -2574,35 +3214,35 @@ function addPurchasedUpgrade(img, name, earnings, isGodMode = false, isPUGodMode
             toggleSwitch.parentElement.style.display = 'none';
         }
     }
+
 }
 
 
-
-
-function enableAllBuyMarkers(firstUnlock=false) {
+function enableAllBuyMarkers() {
 
     purchasedUpgrades.forEach(upgrade => {
         const name = upgrade.name;
 
         // Load the switch state from local storage
-        let savedSwitchState = true;
-        if (!firstUnlock) { savedSwitchState = JSON.parse(localStorage.getItem(`switchState-${name}`)) || false;}
+        let savedSwitchState = switchStates[name] !== null ? switchStates[name] : defaultBuyMarkerState;
         const toggleSwitch = document.getElementById(`toggle-${name}`);
         if (toggleSwitch && !upgrade.isFight && !upgrade.isMeditation) {
             toggleSwitch.checked = savedSwitchState;
             toggleSwitch.parentElement.style.display = 'block'; // Make the switch visible
 
             // Add event listener for the switch
-            toggleSwitch.addEventListener('change', (event) => {
-                const state = event.target.checked ? 'On' : 'Off';
-                console.log(`Switch for upgrade ${name} set to ${state}`);
-                // Save the switch state to local storage
-                localStorage.setItem(`switchState-${name}`, JSON.stringify(event.target.checked));
+            Events.addListeners(toggleSwitch, 'togglers', {
+                click: (event) => {
+                    event.stopPropagation();
+                },
+                change: (event) => {
+                    const state = event.target.checked ? 'On' : 'Off';
+                    console.log(`Switch for upgrade ${name} set to ${state}`);
+                    // Update the switch state in the global variable
+                    switchStates[name] = event.target.checked;
+                },
             });
 
-            toggleSwitch.addEventListener('click', (event) => {
-                event.stopPropagation();
-            });
         }
     });
 
@@ -2621,47 +3261,58 @@ function isAffordable(cost) {
 }
 
 function autobuyUpgrades() {
+    if (!isEventInProgress() && startEvent("autobuyUpgrades")) {
 
-    if (isEventInProgress) return;
+        let topUpgrades = availableUpgrades.slice(0, 16);
+        let upgradeBought = false;
+        let firstFightUpgrade = true;
 
-    let topUpgrades = availableUpgrades.slice(0, 10);
-    let upgradeBought = false;
+        for (let i = 0; i < topUpgrades.length; i++) {
+            const upgrade = topUpgrades[i];
+            const isAffordableUpgrade = isAffordable(upgrade.cost);
 
-    for (let i = 0; i < topUpgrades.length; i++) {
-        const upgrade = topUpgrades[i];
-        const switchState = JSON.parse(localStorage.getItem(`switchState-${upgrade.name}`));
-        const isAffordableUpgrade = isAffordable(upgrade.cost);
-        const autoFightCondition = autoFightSkill && autoFightEnabled && power > upgrade.autoBattlePower;
+            // Buy the upgrade if either condition is met:
+            // 1. It is affordable and switchState is true
+            // 2. It is affordable and autoFightSkill is true with sufficient power
+            if (isAffordableUpgrade && autoFightConditionCheck(upgrade) && firstFightUpgrade) {
+                buyUpgrade(encodeName(upgrade.name), false, true);
+                upgradeBought = true;
+                incrementStellarHarvest();
+                if(upgrade.name == 'Saitama' && enemiesFoughtManually.size == 0){
+                    unlockAchievement('Make Love, Not War');
+                }
+            } else if (isAffordableUpgrade && autoMeditateConditionCheck(upgrade)) {
+                buyUpgrade(encodeName(upgrade.name), false, true);
+                upgradeBought = true;
+                if (stellarMeditationSkill) {
+                    stellarMeditationMult *= (zenOfTheStarsSkill ? 1.5 : 1.1);
+                }
+            } else if ((isAffordableUpgrade && switchStates[upgrade.name])) {
+                buyUpgrade(encodeName(upgrade.name), false, true);
+                upgradeBought = true;
+            }
 
-        // Buy the upgrade if either condition is met:
-        // 1. It is affordable and switchState is true
-        // 2. It is affordable and autoFightSkill is true with sufficient power
-        if (isAffordableUpgrade && autoFightCondition) {
-            buyUpgrade(encodeName(upgrade.name), false);
-            upgradeBought = true;
-            incrementStellarHarvest();
+            if (upgrade.isFight) {firstFightUpgrade = false;}
+
+            // Check if it's a key upgrade and stop further key upgrade processing if buyMarkersSkill is false
+            if (!buyMarkersSkill && upgrade.isKey) {
+                break; // Break out of the loop after processing one key upgrade
+            }
         }
-        else if ((isAffordableUpgrade && switchState)) {
-            buyUpgrade(encodeName(upgrade.name), false);
-            upgradeBought = true;
+
+        // If at least one upgrade was bought, update everything
+        if (upgradeBought) {
+            updateUpgradeList();
+            updateMultipliersDisplay();
+            updateEffectiveMultipliers();
+            updateDisplay();
         }
 
-        // Check if it's a key upgrade and stop further key upgrade processing if buyMarkersSkill is false
-        if (!buyMarkersSkill && upgrade.isKey) {
-            break; // Break out of the loop after processing one key upgrade
-        }
-    }
-
-    // If at least one upgrade was bought, update everything
-    if (upgradeBought) {
-        updateUpgradeList();
-        updateMultipliersDisplay();
-        updateEffectiveMultipliers();
-        updateDisplay();
-        saveGameState();
+        stopEvent("autobuyUpgrades");
     }
 }
 
+let decisionTimerId = null;
 
 // Function to update the upgrade list display
 function updateUpgradeList() {
@@ -2677,6 +3328,7 @@ function updateUpgradeList() {
     }
 
     const upgradeList = document.getElementById('upgradeList');
+    Events.wipe(upgradeList);
     upgradeList.innerHTML = ''; // Clear the current upgrade list
 
 
@@ -2695,28 +3347,44 @@ function updateUpgradeList() {
     });
 
     // Attach event listeners to the new upgrade buttons
-    document.querySelectorAll('[data-upgrade-name]').forEach(button => {
-        button.addEventListener('click', throttle(() => {
-        const encodedName = button.getAttribute('data-upgrade-name');
-        buyUpgrade(encodedName); // Handle the upgrade purchase
-        hideTooltip();
+    upgradeList.querySelectorAll('[data-upgrade-name]').forEach(button => {
+        Events.addListener(button, 'click', throttle(() => {
+            const encodedName = button.getAttribute('data-upgrade-name');
+            buyUpgrade(encodedName); // Handle the upgrade purchase
+            hideTooltip();
         }, 500)); // 500ms delay
     });
 
     // Update the upgrade buttons to highlight affordable ones
     updateUpgradeButtons();
+
+
+    // Check if both 'Decisions, decisions...' and 'More Decisions...' are in the topUpgrades
+    if (topUpgrades.some(upgrade => upgrade.name === 'More Decisions...') && topUpgrades.some(upgrade => upgrade.name === 'Decisions, decisions...')) {
+        if (decisionTimerId === null) { // Only start the timer if it hasn't started yet
+            decisionTimerId = setTimeout(() => {
+                // Check if both upgrades are still in the list after 5 minutes
+                const currentUpgrades = availableUpgrades.slice(0, 8);
+                const stillHasDecisions = currentUpgrades.some(upgrade => upgrade.name === 'Decisions, decisions...');
+                const stillHasMoreDecisions = currentUpgrades.some(upgrade => upgrade.name === 'More Decisions...');
+
+                if (stillHasDecisions && stillHasMoreDecisions) {
+                    unlockAchievement('Decisively Indecisive'); // Unlock the achievement
+                }
+
+                decisionTimerId = null; // Reset the timer ID
+            }, 5 * 60 * 1000); // 5 minutes in milliseconds
+        }
+    }
 }
+
 
 // Function to handle touch and mouse events for tooltips
 function attachTooltipEvents(button, upgrade) {
     const showTooltipEvent = (event) => {
         event.preventDefault(); // Prevent default behavior (like text selection)
         showTooltip(event, upgrade.earnings, upgrade.isGodMode, upgrade.isPUGodMode, upgrade.isFight, upgrade.isMeditation, upgrade.hoverOverwrite);
-    };
-    const hideTooltipEvent = (event) => {
-        event.preventDefault(); // Prevent default behavior (like text selection)
-        hideTooltip();
-    };
+    }
     const moveTooltipEvent = (event) => {
         event.preventDefault(); // Prevent default behavior (like text selection)
         const tooltip = document.getElementById('upgradeTooltip');
@@ -2724,22 +3392,27 @@ function attachTooltipEvents(button, upgrade) {
         tooltip.style.top = `${event.pageY + 10}px`;
     };
 
-    button.addEventListener('mouseover', showTooltipEvent);
-    button.addEventListener('mousemove', moveTooltipEvent);
-    button.addEventListener('mouseout', hideTooltipEvent);
-    button.addEventListener('touchstart', (event) => {
-        showTooltipEvent(event);
-        button.touchStartX = event.touches[0].clientX;
-        button.touchStartY = event.touches[0].clientY;
-    });
-    button.addEventListener('touchmove', moveTooltipEvent);
-    button.addEventListener('touchend', (event) => {
-        hideTooltip();
-        const touchEndX = event.changedTouches[0].clientX;
-        const touchEndY = event.changedTouches[0].clientY;
-        const rect = button.getBoundingClientRect();
-        if (touchEndX >= rect.left && touchEndX <= rect.right && touchEndY >= rect.top && touchEndY <= rect.bottom) {
-            button.click(); // Simulate a click event if touchend is within the button
+    Events.addListeners(button, 'tooltip', {
+        mouseover: showTooltipEvent,
+        mousemove: moveTooltipEvent,
+        mouseout: (event) => {
+            event.preventDefault(); // Prevent default behavior (like text selection)
+            hideTooltip();
+        },
+        touchstart: (event) => {
+            showTooltipEvent(event);
+            button.touchStartX = event.touches[0].clientX;
+            button.touchStartY = event.touches[0].clientY;
+        },
+        touchmove: moveTooltipEvent,
+        touchend: (event) => {
+            hideTooltip();
+            const touchEndX = event.changedTouches[0].clientX;
+            const touchEndY = event.changedTouches[0].clientY;
+            const rect = button.getBoundingClientRect();
+            if (touchEndX >= rect.left && touchEndX <= rect.right && touchEndY >= rect.top && touchEndY <= rect.bottom) {
+                button.click(); // Simulate a click event if touchend is within the button
+            }
         }
     });
 }
@@ -2772,7 +3445,6 @@ function updateUpgradeButtons() {
             } else {
                 button.classList.remove('affordable', 'affordable-godmode', 'affordable-pu-godmode', 'affordable-double-godmode');
             }
-            
 
             // Attach event listeners for tooltips
             attachTooltipEvents(button, upgrade);
@@ -2791,9 +3463,87 @@ function updateUpgradeButtons() {
     }
 }
 
+// Function to update the display of amount of upgrades boughts
+function updateNumUpgrades() {
+    let numNormalUpgrades = purchasedUpgrades.filter(up => !up.isGodMode && !up.isPUGodMode).length;
+    let numGodModeUpgrades = purchasedUpgrades.filter(up => up.isGodMode && !up.isPUGodMode).length;
+    let numPUGodModeUpgrades = purchasedUpgrades.filter(up => !up.isGodMode && up.isPUGodMode).length;
+    let numDoubleGodModeUpgrades = purchasedUpgrades.filter(up => up.isGodMode && up.isPUGodMode).length;
+
+    let numPurchaseDisplay = document.getElementById('numPurchasedNormalUpgrades');
+    let numGodModeDisplay = document.getElementById('numPurchasedGodModeUpgrades');
+    let numPUGodModeDisplay = document.getElementById('numPurchasedPUGodModeUpgrades');
+    let numDoubleGodModeDisplay = document.getElementById('numPurchasedDoubleGodModeUpgrades');
+
+    let numSepOne = document.getElementById('numPurchasedSepOne');
+    let numSepTwo = document.getElementById('numPurchasedSepTwo');
+    let numSepThree = document.getElementById('numPurchasedSepThree');
+
+    // Show parenthesis if any upgrade has been bought
+    if( numNormalUpgrades > 0 || numGodModeUpgrades > 0 || numPUGodModeUpgrades > 0 || numDoubleGodModeUpgrades > 0) {
+        document.getElementById('numPurchasedUpgradesStart').style.display = "block";
+        document.getElementById('numPurchasedUpgradesEnd').style.display = "block";
+    } else {
+        document.getElementById('numPurchasedUpgradesStart').style.display = "none";
+        document.getElementById('numPurchasedUpgradesEnd').style.display = "none";
+    }
+
+    // Upgrades separator handler
+    if (numNormalUpgrades > 0 && (numGodModeUpgrades > 0 || numPUGodModeUpgrades > 0 || numDoubleGodModeUpgrades > 0)) {
+        numSepOne.style.display = "block";
+    } else {
+        numSepOne.style.display = "none";
+    }
+
+    if (numGodModeUpgrades > 0 && (numPUGodModeUpgrades > 0 || numDoubleGodModeUpgrades > 0)) {
+        numSepTwo.style.display = "block";
+    } else {
+        numSepTwo.style.display = "none";
+    }
+
+    if (numPUGodModeUpgrades > 0 && numDoubleGodModeUpgrades > 0) {
+        numSepThree.style.display = "block";
+    } else {
+        numSepThree.style.display = "none";
+    }
+
+    // Show amount of normal purchased upgrades
+    if (numNormalUpgrades > 0) {
+        numPurchaseDisplay.textContent = numNormalUpgrades;
+        numPurchaseDisplay.style.display = "block";
+    } else {
+        numPurchaseDisplay.style.display = "none";
+    }
+
+    // Show amount of god mode purchased upgrades
+    if (numGodModeUpgrades > 0) {
+        numGodModeDisplay.textContent = numGodModeUpgrades;
+        numGodModeDisplay.style.display = "block";
+    } else {
+        numGodModeDisplay.style.display = "none";
+    }
+
+    // Show amount of pu god mode purchased upgrades
+    if (numPUGodModeUpgrades > 0) {
+        numPUGodModeDisplay.textContent = numPUGodModeUpgrades;
+        numPUGodModeDisplay.style.display = "block";
+    } else {
+        numPUGodModeDisplay.style.display = "none";
+    }
+
+    // Show amount of double god mode purchased upgrades
+    if (numDoubleGodModeUpgrades > 0) {
+        numDoubleGodModeDisplay.textContent = numDoubleGodModeUpgrades;
+        numDoubleGodModeDisplay.style.display = "block";
+    } else {
+        numDoubleGodModeDisplay.style.display = "none";
+    }
+
+}
+
 // Attach tooltip and touch events for buy buttons
 function initializeBuyButtons() {
-    
+
     document.getElementById('buySeenButton').classList.remove('hidden');
     document.getElementById('buyMaxButton').classList.remove('hidden');
 
@@ -2835,7 +3585,7 @@ function updateStellarHarvestDisplay() {
 
 function incrementStellarHarvest() {
     // Stellar Harvest Skill effect
-    if (stellarHarvestSkill && !purchasedUpgrades.some(upgrade => upgrade.name === `Cosmic Drought`)) {
+    if (stellarHarvestSkill && !purchasedUpgradesSet.has('Cosmic Drought')) {
         const multiplier = celestialCollectorSkill ? 1.5: 1.3;
         const duration = celestialCollectorSkill ? 600000 : 180000; // 10 minutes (600,000 ms) or 3 minute (180,000 ms)
 
@@ -2868,6 +3618,7 @@ function incrementStellarHarvest() {
                 const cookieButton = document.getElementById('cookieButton');
                 cookieButton.classList.remove('spinning');
                 clearInterval(cookieIntervalId);
+                cookieIntervalId = null;
             }
             //TODO: use global tooltip to show it decreased
         }, duration);
@@ -2896,7 +3647,7 @@ function toggleDevMultiplier(factor) {
 // Function to ascend and select a random upgrade to set to godmode
 async function devAscend() {
     const top100AvailableUpgrades = availableUpgrades
-        .slice(0, 200)
+        .slice(0, 400)
         .filter(up => !up.isGodMode);
 
         const nextUpgrade = top100AvailableUpgrades[0];
@@ -2940,7 +3691,7 @@ async function devCrunch() {
 
     bigCrunchPower = bigCrunchPower*1.1;
     bigCrunchMultiplier = calculateBigCrunchMultiplier();
-    
+
     // Call restartGame with isPrestige flag set to true
     restartGame(true);
 
@@ -2982,9 +3733,22 @@ function toggleDevMode(intervalTime) {
     }
 }
 
+let prevPrestigeThreshold = 100;
+
+// Global object to track key presses
+let keysPressed = {
+    m: false,
+    s: false,
+    a: false,
+    t: false,
+    b: false,
+    p: false,
+    f: false // Add 'f' for autoFightSkill
+};
+
 // Define the hotkey handler function
 function hotkeyHandler(event) {
-    if (event.shiftKey && event.altKey) {
+    if (event.shiftKey && event.altKey && true) {
         switch (event.key) {
             case '!':
                 toggleDevMultiplier(10);
@@ -3015,18 +3779,124 @@ function hotkeyHandler(event) {
                 break;
         }
     } else {
-        switch (event.key) {
+        switch (event.key.toLowerCase()) {
             case 'm':
                 if (multibuyUpgradesButtonsUnlocked) {
                     buyAllUpgrades(100, document.getElementById('buyMaxButton'));
+                    keysPressed.m = true; // Mark 'm' key as pressed
                 }
                 break;
             case 's':
                 if (multibuyUpgradesButtonsUnlocked) {
                     buyAllUpgrades(8, document.getElementById('buyMaxButton'));
+                    keysPressed.s = true; // Mark 's' key as pressed
+                }
+                break;
+            case 'a':
+                if (autoAscendThreshold !== null) {
+                    if (autoAscendThreshold > 0) {
+                        autoAscendThreshold = 0;
+                        showPopupTooltip('Auto Ascend Disabled');
+                    } else {
+                        autoAscendThreshold = numAscensionUpgrades;
+                        showPopupTooltip('Auto Ascend Set to Max');
+                    }
+                    keysPressed.a = true; // Mark 'a' key as pressed
+                }
+                break;
+            case 't':
+                if (autoTranscendThreshold !== null) {
+                    if (autoTranscendThreshold > 0) {
+                        autoTranscendThreshold = 0;
+                        showPopupTooltip('Auto Transcend Disabled');
+                    } else {
+                        autoTranscendThreshold = numPUAscensionUpgrades;
+                        showPopupTooltip('Auto Transcend Set to Max');
+                    }
+                    keysPressed.t = true; // Mark 't' key as pressed
+                }
+                break;
+            case 'b':
+                if (autobuyUpgradesSkill) {
+                    if (autobuyIntervalId !== null) {
+                        clearInterval(autobuyIntervalId);
+                        autobuyIntervalId = null;
+                        showPopupTooltip('Auto Buy Upgrades Disabled');
+                    } else {
+                        autobuyIntervalId = setInterval(autobuyUpgrades, chronoMagnetizerSkill && fasterAutobuyerskill ? 125 : (fasterAutobuyerskill ? 250 : 1500));
+                        showPopupTooltip('Auto Buy Upgrades Enabled');
+                    }
+                    keysPressed.b = true; // Mark 'b' key as pressed
+                }
+                break;
+            case 'p':
+                if (prevPrestigeThreshold !== null) {
+                    if (autoPrestigeThreshold == 0) {
+                        autoPrestigeThreshold = prevPrestigeThreshold;
+                        showPopupTooltip(`Auto Prestige Enabled (${formatNumber(autoPrestigeThreshold)})`);
+                    } else {
+                        prevPrestigeThreshold = autoPrestigeThreshold;
+                        autoPrestigeThreshold = 0;
+                        showPopupTooltip('Auto Prestige Disabled');
+                    }
+                    keysPressed.p = true; // Mark 'p' key as pressed
+                }
+                break;
+            case 'f':
+                if (autoMeditateSkill) {
+                    if (autoFightEnabled) {
+                        autoFightEnabled = false;
+                        showPopupTooltip('Auto Fight/Meditate Disabled');
+                    } else {
+                        autoFightEnabled = true;
+                        showPopupTooltip('Auto Fight/Meditate Enabled');
+                    }
+                    localStorage.setItem('autoFightEnabled', autoFightEnabled);
+                    keysPressed.f = true; // Mark 'f' key as pressed
+                } else if (autoFightSkill) {
+                    if (autoFightEnabled) {
+                        autoFightEnabled = false;
+                        showPopupTooltip('Auto Fight Disabled');
+                    } else {
+                        autoFightEnabled = true;
+                        showPopupTooltip('Auto Fight Enabled');
+                    }
+                    localStorage.setItem('autoFightEnabled', autoFightEnabled);
+                    keysPressed.f = true; // Mark 'f' key as pressed
+                }
+                break;
+            case 'z': // Open Prestige, if quick mode enable trigger it directly whithout confirmations
+                prestige();
+                break;
+            case 'x': // Open Ascend, if quick mode enable trick the game to perform an auto ascend even if automation not unlocked
+                ascend();
+                break;
+            case 'c': // Open Transcend, if quick mode enable trick the game to perform an auto transcend even if automation not unlocked
+                transcend();
+                break;
+            case 'v': // Open Big Crunch, if quick mode enable trigger it directly whithout confirmations
+                bigCrunch();
+                break;
+            case 'n': // Open Embrace
+                infiniteEmbrace();
+                break;
+            case ' ': // Select first x upgrades
+                if(document.getElementsByClassName("select-first-button").length == 1) {
+                    document.getElementsByClassName("select-first-button")[0].click();
+                    event.preventDefault();
                 }
                 break;
         }
+
+        checkHotkeyAchievement();
+    }
+}
+
+function checkHotkeyAchievement() {
+    // Check if all keys have been pressed and are enabled
+    const allKeysPressed = Object.values(keysPressed).every(value => value === true);
+    if (allKeysPressed) {
+        unlockAchievement('Hotkey Master');
     }
 }
 
@@ -3109,7 +3979,7 @@ function displayNextModal() {
     }
 
     // Existing logic for other titles
-    if (title === "Are You Sure You Want to Restart?" || title === "You Didn't Ask for It, But I'll Give You One More Try") {
+    if (title === "Are You Sure You Want to Restart?" || title === "You Didn't Ask for It, But I'll Give You One More Try" || (title === 'Respec Confirmation' && message.includes('10%'))) {
         modalContent.classList.add('modal-restart');
     } else {
         modalContent.classList.remove('modal-restart');
@@ -3136,8 +4006,6 @@ function displayNextModal() {
             } else {
                 closeModal(true);
             }
-        } else if (event.key === 'Enter' && (message.includes('Enter the sequence:') || message.includes('What is '))) {
-            closeModal(gameInput.value);
         }
     };
 
@@ -3158,18 +4026,67 @@ function displayNextModal() {
         modalCloseButton.style.display = 'none';
         modalConfirmButtons.style.display = 'flex';
         ascendUpgradeSelection.style.display = 'block';
+        Events.wipe(ascendUpgradeList);
         ascendUpgradeList.innerHTML = '';
 
         let selectedUpgrades = [];
 
+        const maxSelectableUpgrades = isTranscend ? numPUAscensionUpgrades : numAscensionUpgrades;
+
+        // Calculate the number of valid upgrades to select
+        const validUpgradesCount = purchasedUpgrades.filter(upgrade => {
+            return isTranscend ? !upgrade.isPUGodMode : !upgrade.isGodMode;
+        }).length;
+
+        const numToSelect = Math.min(maxSelectableUpgrades, validUpgradesCount);
+
+        // Remove the existing button if it already exists
+        const existingButton = document.querySelector('.select-first-button');
+        if (existingButton) {
+            existingButton.remove();
+        }
+
+        if (numToSelect > 1) {
+            // Create the new button
+            const selectFirstButton = document.createElement('button');
+            selectFirstButton.textContent = `Select First ${numToSelect}`;
+            selectFirstButton.className = 'modal-button select-first-button';
+
+            // Handle clicking the new button
+            selectFirstButton.onclick = () => {
+                // Deselect all previously selected upgrades
+                selectedUpgrades = [];
+                document.querySelectorAll('.ascend-upgrade-item.selected').forEach(item => {
+                    item.classList.remove('selected');
+                });
+
+                // Select the first `numToSelect` valid upgrades
+                let count = 0;
+                purchasedUpgrades.forEach((upgrade) => {
+                    const condition = isTranscend ? !upgrade.isPUGodMode : !upgrade.isGodMode;
+                    if (condition && count < numToSelect) {
+                        const upgradeItem = document.querySelector(`.ascend-upgrade-item[data-upgrade-name="${upgrade.name}"]`);
+                        if (upgradeItem) {
+                            upgradeItem.classList.add('selected');
+                            selectedUpgrades.push(upgrade);
+                            count++;
+                        }
+                    }
+                });
+            };
+
+            // Insert the new button above the upgrade list
+            ascendUpgradeSelection.insertBefore(selectFirstButton, ascendUpgradeList);
+        }
+
         purchasedUpgrades.forEach((upgrade) => {
             const condition = isTranscend ? !upgrade.isPUGodMode : !upgrade.isGodMode;
-            const maxSelectableUpgrades = isTranscend ? numPUAscensionUpgrades : numAscensionUpgrades;
             if (condition) {
                 const upgradeItem = document.createElement('div');
                 upgradeItem.className = 'ascend-upgrade-item';
                 upgradeItem.textContent = upgrade.name;
                 upgradeItem.upgrade = upgrade;
+                upgradeItem.setAttribute('data-upgrade-name', upgrade.name);
                 if (upgrade.isGodMode) {
                     upgradeItem.classList.add('is-godmode');
                 } else if (upgrade.isPUGodMode) {
@@ -3203,6 +4120,8 @@ function displayNextModal() {
         modalConfirmButton.onclick = () => {
             if (selectedUpgrades.length > 0) {
                 closeModal(selectedUpgrades);
+            } else {
+                showStatusMessage(modalConfirmButton, `Select at least 1 upgrade`, false, timeout=1000);
             }
         };
 
@@ -3277,43 +4196,44 @@ function showPopupTooltip(message, color = 'gray', durationSeconds = 2) {
 }
 
 
+const resourceToolTips = new Map();
+function closeResourceToolTip(name) {
+    const tip = resourceToolTips.get(name)
+    if (tip) {
+        tip.remove(); // remove from dom
+        resourceToolTips.delete(tip);
+    }
+}
+
 document.querySelectorAll('.resource-value').forEach(function (element) {
-    let tooltipContainer;  // Declare outside to reference in both mouseenter and mouseleave
+    const resourceId = element.id;  // Directly use element.id
 
     element.addEventListener('mouseenter', function (event) {
-        let resourceId = element.id;  // Directly use element.id
-        let tooltipText = calculateTooltip(resourceId);  // Get tooltip content
-
-        // Ensure no tooltip exists before creating a new one
-        if (!tooltipContainer) {
-            tooltipContainer = document.createElement('div');
-            tooltipContainer.className = 'resource-gain-tooltip';
-            tooltipContainer.innerHTML = tooltipText;
-
-            document.body.appendChild(tooltipContainer);
-
-            const rect = element.getBoundingClientRect();
-            tooltipContainer.style.position = 'absolute';
-            tooltipContainer.style.top = `${rect.bottom + window.scrollY + 28}px`;  // Add a slight margin below
-            tooltipContainer.style.left = `${rect.left + (rect.width / 2)}px`;
-            tooltipContainer.style.transform = 'translateX(-50%)';  // Center the tooltip
+        // close any open tips before opening the new one
+        for (const openTip of resourceToolTips.keys()) {
+            closeResourceToolTip(openTip);
         }
+
+        const tip = document.createElement('div');
+        tip.className = 'resource-gain-tooltip';
+        tip.innerHTML = calculateTooltip(resourceId);  // Get tooltip content
+
+        document.body.appendChild(tip);
+        resourceToolTips.set(resourceId, tip);
+
+        const rect = element.getBoundingClientRect();
+        tip.style.top = `${rect.bottom + window.scrollY + 28}px`;  // Add a slight margin below
+        tip.style.left = `${rect.left + (rect.width / 2)}px`;
     });
 
+    // Hide tooltip when moving away
     element.addEventListener('mouseleave', function () {
-        // Remove the tooltip only if it exists
-        if (tooltipContainer) {
-            tooltipContainer.remove();
-            tooltipContainer = null;  // Set to null to allow recreation on next hover
-        }
+        closeResourceToolTip(resourceId);
     });
 
     // For mobile: Hide tooltip when tapping elsewhere on the screen
-    document.addEventListener('touchstart', function (e) {
-        if (tooltipContainer) {
-            tooltipContainer.remove();
-            tooltipContainer = null;  // Remove and allow recreation on next hover
-        }
+    document.addEventListener('touchstart', function () {
+        closeResourceToolTip(resourceId);
     });
 });
 
@@ -3405,6 +4325,9 @@ function calculateTooltip(resourceId) {
         if (bigCrunchMultiplier !== 1) {
             tooltip += `<span style="color:#FF6347">x${formatNumber(bigCrunchMultiplier)} (Big Crunch)</span><br>`;
         }
+        if (earlyAccelerantMult !== 1) {
+            tooltip += `<span style="color:#F8C8DC">x${formatNumber(earlyAccelerantMult)} (Early Accelerant)</span><br>`;
+        }
     }
 
     // Special Big Crunch Extra for Knowledge (darker red)
@@ -3418,6 +4341,12 @@ function calculateTooltip(resourceId) {
         tooltip += `<span style="color:#008080">x${formatNumber(achievementMultiplier)} (Achievements)</span><br>`;
     }
 
+    // Mini Game Multiplier
+    if (cosmicGamekeeperMultiplier !== 1) {
+        tooltip += `<span style="color:#90EE90">x${formatNumber(cosmicGamekeeperMultiplier)} (Mini Games)</span><br>`;
+    }
+
+
     // Stellar Harvest Multiplier (for all resources, including Power, but not Serenity)
     if (resourceId !== 'serenity' && stellarHarvestMult !== 1) {
         tooltip += `<span style="color:#32CD32">x${formatNumber(stellarHarvestMult)} (Stellar Harvest)</span><br>`;
@@ -3427,15 +4356,19 @@ function calculateTooltip(resourceId) {
     if (stellarMeditationMult !== 1) {
         tooltip += `<span style="color:#ADD8E6">x${formatNumber(stellarMeditationMult)} (Stellar Meditation)</span><br>`;
     }
-    
+
 
     // Only show the amplifier multiplier if it's not Hopium, Knowledge, Power, or Serenity
     if (resourceId !== 'hopium' && resourceId !== 'knowledge' && resourceId !== 'power' && resourceId !== 'serenity') {
         if (upgradeAmplifierSkill) {
             tooltip += `<span style="color:#CD853F">x${formatNumber(purchasedUpgrades.length)} (Upgrade Amplifier)</span><br>`;
-        }        
+        }
         if (basicResourceBoost !== 1) {
             tooltip += `<span style="color:#FF00FF">x${formatNumber(basicResourceBoost)} (Basic Resource Boost)</span><br>`;
+        }
+        const loveMultiplier = loveIsEverythingSkill ? (serenity > 1.1 ? Math.log(serenity) / Math.log(1.1) : 1) : 1;
+        if (loveMultiplier !== 1) {
+            tooltip += `<span style="color:#F89880">x${formatNumber(loveMultiplier)} (Love is Everything)</span><br>`;
         }
     }
 
@@ -3443,6 +4376,12 @@ function calculateTooltip(resourceId) {
     if (resourceId === 'copium') {
         if (copiumSurgeMultiplier !== 1) {
             tooltip += `<span style="color:#9F2B68">x${formatNumber(copiumSurgeMultiplier)} (Copium Surge)</span><br>`;
+        }
+        if (beaconOfSevenSunsSkill) {
+            tooltip += `<span style="color:#FFA500">x${formatNumber(beaconOfSevenSunsMult)} (Beacon of Seven Suns)</span><br>`;
+        }
+        if (loveSizeMattersMultiplier !== 1) {
+            tooltip += `<span style="color:#8B4513">x${formatNumber(loveSizeMattersMultiplier)} (Love Size Matters)</span><br>`;
         }
     }
 
@@ -3458,6 +4397,9 @@ function calculateTooltip(resourceId) {
         if (yachtMoneySurgeMultiplier !== 1) {
             tooltip += `<span style="color:#9F2B68">x${formatNumber(yachtMoneySurgeMultiplier)} (Yacht Money Surge)</span><br>`;
         }
+        if (loveSizeMattersMultiplier !== 1) {
+            tooltip += `<span style="color:#8B4513">x${formatNumber(loveSizeMattersMultiplier)} (Love Size Matters)</span><br>`;
+        }
     }
 
     // Troll Points-specific multiplier
@@ -3468,10 +4410,13 @@ function calculateTooltip(resourceId) {
     }
 
     if (resourceId === 'hopium') {
+        if (beaconOfSevenSunsSkill) {
+            tooltip += `<span style="color:#FFA500">x${formatNumber(beaconOfSevenSunsMult)} (Beacon of Seven Suns)</span><br>`;
+        }
         if (serenityFlowSkill && serenity > 1) {
             tooltip += `<span style="color:#00BFFF">x${formatNumber(Math.sqrt(serenity))} (Serenity Flow)</span><br>`;
         }
-    }    
+    }
 
     if (resourceId === 'serenity') {
         if (serenityBoostMultiplier !== 1) {
@@ -3494,17 +4439,21 @@ function calculateTooltip(resourceId) {
             }
         });
 
-        const loveMult = Math.max(1, Math.log10(lovePoints))
+        const loveMult = Math.max(1, Math.log2(lovePoints))
         if (resonanceOfLoveSkill && loveMult > 1){
-            tooltip += `<span style="color:#E97451">x${formatNumber(loveMult)} (Resonance of Love)</span><br>`;
+            tooltip += `<span style="color:#DE3163">x${formatNumber(loveMult)} (Resonance of Love)</span><br>`;
         }
-    }    
+    }
 
     if (resourceId === 'knowledge') {
         if (knowledgeInfusionMultiplier !== 1) {
             tooltip += `<span style="color:#9F2B68">x${formatNumber(knowledgeInfusionMultiplier)} (Knowledge Infusion)</span><br>`;
         }
         
+        if (faithFueledKnowledgeSkill && hopium > 1e10) {
+            tooltip += `<span style="color:#E1C16E">x${formatNumber(Math.log10(hopium)/10)} (Faith Fueled)</span><br>`;
+        }
+
         // Diminishing multiplier for Knowledge
         const diminishingMultiplier = calculateEffectiveKnowledge() / calculateBaseKnowledge();
         if (diminishingMultiplier < 1) {
@@ -3538,6 +4487,44 @@ function throttle(func, limit) {
     };
 }
 
+// Global function to start en event
+function startEvent(startedBy) {
+    // Guard to prevent starting multiple event
+    if (eventProgression.inProgress) {
+        console.error(`${startedBy} try to start an event but an event started by ${eventProgression.startedBy} was already in progress`);
+        return false;
+    }
+
+    eventProgression.inProgress = true;
+    eventProgression.startedBy = startedBy;
+    return true;
+}
+
+// Global function to stop en event
+function stopEvent(startedBy) {
+    // Guard to prevent another event ending en event it didn't triggered
+    if (eventProgression.startedBy != startedBy) {
+        console.error(`${startedBy} try to stop an event triggered by ${eventProgression.startedBy}`);
+        return false;
+    }
+
+    eventProgression.inProgress = false;
+    eventProgression.startedBy = null;
+    return true;
+}
+
+function isEventInProgress() {
+    return eventProgression.inProgress;
+}
+
+function manageButtonAnimations(enabled) {
+    enableButtonAnimations = enabled;
+    document.querySelector(':root').style.setProperty("--glowing-animation-duration", enabled ? "2s" : "0s")
+}
+
+let delusionToggleTimes = [];
+let hopiumToggleTimes = [];
+
 // Expose functions to the global scope for use in the HTML
 window.prestige = prestige;
 window.updateDisplay = updateDisplay;
@@ -3569,7 +4556,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('tradeTenPercentButton').addEventListener('click', () => { tradeTenPercent(); });
     // Event listener to update the trade button text whenever the trade amount input changes
     document.getElementById('tradeAmount').addEventListener('input', updateTradeButtonText);
-    
+
     // Add event listener for the restart buttons
     document.getElementById('restartButton').addEventListener('click', () => restartGame(false, false));
     document.getElementById('restartPrestige').addEventListener('click', () => restartPrestige());
@@ -3579,16 +4566,16 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('prestigeButton').addEventListener('click', () => throttle(prestige(), 500));
 
     // Add event listener for the ascend button with throttling
-    document.getElementById('ascendButton').addEventListener('click', throttle(ascend, 500));
+    document.getElementById('ascendButton').addEventListener('click', () => throttle(ascend(), 500));
 
     // Add event listener for the transcend button with throttling
-    document.getElementById('transcendButton').addEventListener('click', throttle(transcend, 500));
-    
+    document.getElementById('transcendButton').addEventListener('click', () => throttle(transcend(), 500));
+
     // Add event listener for the transcend button with throttling
-    document.getElementById('bigCrunchButton').addEventListener('click', throttle(bigCrunch, 500));
-    
+    document.getElementById('bigCrunchButton').addEventListener('click', () => throttle(bigCrunch(), 500));
+
     // Add event listener for the transcend button with throttling
-    document.getElementById('infiniteEmbraceButton').addEventListener('click', throttle(infiniteEmbrace, 500));
+    document.getElementById('infiniteEmbraceButton').addEventListener('click', () => throttle(infiniteEmbrace(), 500));
 
     // Add event listener for the buy all upgrades button
     document.getElementById('buySeenButton').addEventListener('click', function() { buyAllUpgrades(8, this);});
@@ -3602,10 +4589,24 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             delusionPerSecond = -Math.abs(delusionPerSecond);
         }
+        if (!achievementsMap.get(`Can't Fix Crazy`).isUnlocked){
+            // Remove timestamps that are older than 10 seconds
+            while (delusionToggleTimes.length > 0 && delusionToggleTimes[0] < crunchTimer - 10) {
+                delusionToggleTimes.shift(); // Remove the oldest timestamp
+            }
+            // Add the current execution timestamp
+            delusionToggleTimes.push(crunchTimer);
+            // Check if there are at least 10 executions within the last 10 seconds
+            if (delusionToggleTimes.length >= 10) {
+                unlockAchievement(`Can't Fix Crazy`);
+                delusionToggleTimes.length = 0;
+            }
+        }
+
         updateEffectiveMultipliers();
         updateDisplay(); // Update the display to reflect the change
     });
-    
+
     document.getElementById('toggleHopium').addEventListener('change', function() {
         const isPositive = this.checked;
         if (isPositive) {
@@ -3613,14 +4614,75 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             hopiumPerSecond = -Math.abs(hopiumPerSecond);
         }
+        if (!achievementsMap.get(`Can't Fix Pessimism`).isUnlocked){
+            // Remove timestamps that are older than 10 seconds
+            while (hopiumToggleTimes.length > 0 && hopiumToggleTimes[0] < crunchTimer - 10) {
+                hopiumToggleTimes.shift(); // Remove the oldest timestamp
+            }
+            // Add the current execution timestamp
+            hopiumToggleTimes.push(crunchTimer);
+            // Check if there are at least 10 executions within the last 10 seconds
+            if (hopiumToggleTimes.length >= 10) {
+                unlockAchievement(`Can't Fix Pessimism`);
+                hopiumToggleTimes.length = 0;
+            }
+        }
         updateEffectiveMultipliers();
         updateDisplay(); // Update the display to reflect the change
     });
 
-    // workaround because this needs to be called before initializing skills (to set correct format for skill costs), 
+    // Copium Toggle
+    document.getElementById('toggleCopium').addEventListener('change', function() {
+        const isPositive = this.checked;
+        if (isPositive) {
+            copiumPerSecond = Math.abs(copiumPerSecond);
+        } else {
+            copiumPerSecond = -Math.abs(copiumPerSecond);
+        }
+        updateEffectiveMultipliers();
+        updateDisplay(); // Update the display to reflect the change
+    });
+
+    // YachtMoney Toggle
+    document.getElementById('toggleYachtMoney').addEventListener('change', function() {
+        const isPositive = this.checked;
+        if (isPositive) {
+            yachtMoneyPerSecond = Math.abs(yachtMoneyPerSecond);
+        } else {
+            yachtMoneyPerSecond = -Math.abs(yachtMoneyPerSecond);
+        }
+        updateEffectiveMultipliers();
+        updateDisplay(); // Update the display to reflect the change
+    });
+
+    // TrollPoints Toggle
+    document.getElementById('toggleTrollPoints').addEventListener('change', function() {
+        const isPositive = this.checked;
+        if (isPositive) {
+            trollPointsPerSecond = Math.abs(trollPointsPerSecond);
+        } else {
+            trollPointsPerSecond = -Math.abs(trollPointsPerSecond);
+        }
+        updateEffectiveMultipliers();
+        updateDisplay(); // Update the display to reflect the change
+    });
+
+
+    // workaround because this needs to be called before initializing skills (to set correct format for skill costs),
     // but loadGameState has to be called after (to enable previously bought skills)
     currentNumberFormat = JSON.parse(localStorage.getItem('currentNumberFormat')) || 'Mixed';
     document.getElementById('numberFormatButton').textContent = `Number Format: ${currentNumberFormat}`;
+
+    document.getElementById('enableQuickMode').addEventListener('change', function() {
+        enableQuickMode = this.checked;
+    });
+
+    document.getElementById('enableButtonAnimations').addEventListener('change', function() {
+        if(this.checked){
+            unlockAchievement('Animation Aficionado');
+        }
+        manageButtonAnimations(this.checked);
+    });
 
     // Library Skills -- has to happen before loadGameState!
     initializeSkills();
@@ -3631,20 +4693,51 @@ document.addEventListener('DOMContentLoaded', () => {
     // Love Sklls
     initializeLoveHallSkills();
 
-    // Load the game state from local storage 
+    // Set an interval to generate resources every second
+    resourceGenerationInterval = setInterval(generateResources, 500);
+    // Load the game state from local storage
     loadGameState();
 
     updateMultipliersDisplay();
     // Initialize effective multipliers
     updateEffectiveMultipliers();
     // Unlock mini-games based on the current game state
-    unlockMiniGames(); 
-    // Set an interval to generate resources every second
-    resourceGenerationInterval = setInterval(generateResources, 500);
+    unlockMiniGames();
     // Update the list of available upgrades
     updateUpgradeList();
     // Update the display with the current game state
     updateDisplay();
     // Save the game state when the window is about to be unloaded
     window.addEventListener('beforeunload', saveGameState);
+
+    let spentLovePoints = 0;
+    loveHallSkills.forEach(skill => {
+        if (skill.unlocked) {
+            const pairSkill = loveHallSkills.find(s => s.pair === skill.pair && s.name !== skill.name);
+            const levelMultiplier = getLevelMultiplier(skill.level);
+
+            // If both skills in the pair are unlocked
+            if (pairSkill && pairSkill.unlocked) {
+                // Refund original cost for the first skill
+                spentLovePoints += 0.5 * skill.originalCost;
+                
+                // Refund the increased cost for the paired skill (multiplied cost)
+                spentLovePoints += 0.5 * pairSkill.originalCost * levelMultiplier;
+                
+            } else {
+                // Refund original cost if only this skill is unlocked
+                spentLovePoints += skill.originalCost;
+            }
+        }
+    });
+    if (spentLovePoints + lovePoints > totalLoveHallSkillsCost + 5000){
+        
+        lovePoints -= ((spentLovePoints + lovePoints) - (totalLoveHallSkillsCost + 5000));
+        showMessageModal('The Journey Continues',
+            "You've reached an impressive milestone! With all Hall of Love skills unlocked and over 5000 Love Points stockpiled, you're among the few who have completed all current content. To maintain a balanced gameplay experience as we prepare future updates, Love Points are currently capped at 5000. "
+            + "In the meantime, feel free to go achievement hunting if you're missing any, or join us on Discord to share your feedback and stay connected with the community. "
+            + "Congratulations on your progress, and thank you for being part of this incredible journey—there's more exciting content on the horizon!"
+        );
+    }
+
 });

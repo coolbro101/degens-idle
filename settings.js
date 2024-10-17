@@ -2,6 +2,7 @@
 function openSettings() {
     // First, call saveGameState to ensure everything is saved to localStorage
     saveGameState();
+    showPopupTooltip('Game Saved', 'gray', 0.5);
 
     const settingsOverlay = document.getElementById('settingsOverlay');
     settingsOverlay.style.display = 'flex';
@@ -12,6 +13,18 @@ function openSettings() {
     setTimeout(() => {
         document.addEventListener('click', outsideClickListener);
     }, 0);
+
+    // EnableQuickMode : Use a timeout to ensure the checkbox is fully rendered before setting its state
+    setTimeout(() => {
+        const enableQuickModeSwitch = document.getElementById('enableQuickMode');
+        enableQuickModeSwitch.checked = enableQuickMode;
+    }, 0); // Adjust timeout if necessary
+
+    // EnableButtonAnimations : Use a timeout to ensure the checkbox is fully rendered before setting its state
+    setTimeout(() => {
+        const enableButtonAnimationsSwitch = document.getElementById('enableButtonAnimations');
+        enableButtonAnimationsSwitch.checked = enableButtonAnimations;
+    }, 0); // Adjust timeout if necessary
 }
 
 // Function to close the settings overlay
@@ -55,8 +68,19 @@ function outsideDonationClickListener(event) {
     }
 }
 
+// Initialize a Set to store unique export dates
+let exportDates = new Set(JSON.parse(localStorage.getItem('exportDates')) || []); // Ensure it's a Set
 
 function exportSave(fname='degens_idle_save.json') {
+    const currentDate = new Date().toISOString().split('T')[0]; // Get current date in YYYY-MM-DD format
+    const previousNumExportDates = exportDates.size; // Store the previous size of the Set
+    exportDates.add(currentDate);
+    if (exportDates.size == 50) {
+        unlockAchievement('Fifty Days of Saving');
+    } else if (exportDates.size > previousNumExportDates) {
+        showPopupTooltip(`Days with save exports: ${exportDates.size}`);
+    }
+    localStorage.setItem('exportDates', JSON.stringify([...exportDates]));
 
     unlockAchievement('Better Safe Than Sorry');
 
@@ -111,6 +135,9 @@ function importSave(event) {
 
             // Call loadGameState to apply the imported game state
             loadGameState();
+
+            // refreshing page to prevent love points from multiplying again (bug workaround)
+            window.location.reload();
         };
 
         reader.readAsText(file);
@@ -161,6 +188,7 @@ document.getElementById('discordButton').addEventListener('click', function() {
 
 // Add event listeners for donation buttons
 document.getElementById('donateSmallButton').addEventListener('click', function() {
+    unlockAchievement('Buy Me a Coffee');
     window.open('https://buymeacoffee.com/ssiatkowski', '_blank'); 
 });
 document.getElementById('donateMediumButton').addEventListener('click', function() {
@@ -181,21 +209,21 @@ function toggleAllBuyMarkers(targetState) {
         const name = upgrade.name;
         const toggleSwitch = document.getElementById(`toggle-${name}`);
         
-        if (!upgrade.isFight) {
+        if (!upgrade.isFight && !upgrade.isMeditation) {
             if (toggleSwitch) {
                 toggleSwitch.checked = targetState;
                 toggleSwitch.parentElement.style.display = 'block'; // Make the switch visible
-                
-                // Save the state to localStorage
-                localStorage.setItem(`switchState-${name}`, JSON.stringify(targetState));
+
+                // Update the switch state in the global variable
+                switchStates[name] = targetState;
             }
         } else {
             if (toggleSwitch) {
                 toggleSwitch.checked = false;
                 toggleSwitch.parentElement.style.display = 'none'; // Hide the switch for fight upgrades
                 
-                // Save the state as unchecked in localStorage for fight upgrades
-                localStorage.setItem(`switchState-${name}`, JSON.stringify(false));
+                // Update the switch state in the global variable for fight upgrades
+                switchStates[name] = false;
             }
         }
     });
@@ -209,6 +237,7 @@ document.getElementById('automationButton').addEventListener('click', function()
     const saveButton = document.getElementById('saveAutomationSettingsButton');
 
     // Clear any existing content in the automationContent section
+    Events.wipe(automationContent);
     automationContent.innerHTML = '';
 
     // Check if all features are locked (none are unlocked)
@@ -228,8 +257,8 @@ document.getElementById('automationButton').addEventListener('click', function()
                     <label for="toggleBuyMarkersSwitch" class="three-way-toggle-label">Toggle All Purchased Upgrades Buy Markers</label>
                     <div class="three-way-toggle">
                         <input type="radio" name="toggleBuyMarkers" id="toggleBuyMarkersNeutral" value="neutral" checked style="display: none;">
-                        <input type="radio" name="toggleBuyMarkers" id="toggleBuyMarkersOff" value="off" style="display: none;">
                         <input type="radio" name="toggleBuyMarkers" id="toggleBuyMarkersOn" value="on" style="display: none;">
+                        <input type="radio" name="toggleBuyMarkers" id="toggleBuyMarkersOff" value="off" style="display: none;">
                         <div class="slider"></div>
                     </div>
                 </div>
@@ -238,32 +267,50 @@ document.getElementById('automationButton').addEventListener('click', function()
 
             // Delay the event listener attachment to ensure the elements are fully rendered
             setTimeout(() => {
-                const toggleContainer = document.querySelector('.three-way-toggle-container .three-way-toggle');
+                const toggleContainer = automationContent.querySelector('.three-way-toggle-container .three-way-toggle');
                 const slider = toggleContainer.querySelector('.slider');
                 const toggleNeutral = document.getElementById('toggleBuyMarkersNeutral');
                 const toggleOff = document.getElementById('toggleBuyMarkersOff');
                 const toggleOn = document.getElementById('toggleBuyMarkersOn');
 
                 // Add click listener to the entire toggle container
-                toggleContainer.addEventListener('click', function() {
+                Events.addListener(toggleContainer, 'click', function() {
                     if (toggleNeutral.checked) {
-                        toggleOff.checked = true;
-                        slider.style.transform = 'translateX(0%)';
-                        slider.style.backgroundColor = '#dc3545'; // Red color for off
-                    } else if (toggleOff.checked) {
                         toggleOn.checked = true;
                         slider.style.transform = 'translateX(100%)';
                         slider.style.backgroundColor = '#28a745'; // Green color for on
-                    } else if (toggleOn.checked) {
+                    } else if (toggleOff.checked) {
                         toggleNeutral.checked = true;
                         slider.style.transform = 'translateX(50%)';
                         slider.style.backgroundColor = 'white'; // Neutral color
+                    } else if (toggleOn.checked) {
+                        toggleOff.checked = true;
+                        slider.style.transform = 'translateX(0%)';
+                        slider.style.backgroundColor = '#dc3545'; // Red color for off
                     }
                 });
 
                 // Debug: Log to confirm event listener is attached
                 console.log("Three-way toggle event listener attached");
             }, 0); // You can adjust the timeout duration if needed
+
+            const defaultMarkerHtml = `
+                <div style="margin-bottom: 15px;">
+                    <label for="defaultBuyMarkerStateSwitch" style="margin-right: 10px;">Default Buy Marker State</label>
+                    <label class="switch">
+                        <input type="checkbox" id="defaultBuyMarkerStateSwitch">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            `;
+            automationContent.innerHTML += defaultMarkerHtml;
+
+            // Use a timeout to ensure the checkbox is fully rendered before setting its state
+            setTimeout(() => {
+                const defaultBuyMarkerStateSwitch = document.getElementById('defaultBuyMarkerStateSwitch');
+                defaultBuyMarkerStateSwitch.checked = defaultBuyMarkerState;
+            }, 0);
+
         }
 
         // Dynamically add Auto-Buy Upgrades setting if unlocked, with space and switch
@@ -295,10 +342,24 @@ document.getElementById('automationButton').addEventListener('click', function()
                 <div style="margin-bottom: 15px;">
                     <label for="autoPrestigeThresholdInput">Auto Prestige Threshold:</label>
                     <input type="number" id="autoPrestigeThresholdInput" value="${autoPrestigeThreshold}" step="0.1" style="font-size: 16px;">
+                    <span id="prestigeWarning" style="display: none; color: red;">Disable auto prestige</span> <!-- Add the red-line warning -->
                 </div>
             `;
             automationContent.innerHTML += autoPrestigeHtml;
         }
+
+        // Dynamically add Auto-Big Crunch Threshold setting if available
+        if (autoBigCrunchThreshold !== null) {
+            const autoBigCrunchHtml = `
+                <div style="margin-bottom: 15px;">
+                    <label for="autoBigCrunchThresholdInput">Auto Big Crunch Threshold:</label>
+                    <input type="number" id="autoBigCrunchThresholdInput" value="${autoBigCrunchThreshold}" step="0.1" style="font-size: 16px;">
+                    <span id="bigCrunchWarning" style="display: none; color: red;">Disable auto big crunch</span> <!-- Add the red-line warning -->
+                </div>
+            `;
+            automationContent.innerHTML += autoBigCrunchHtml;
+        }
+
 
         // Dynamically add Auto-Ascend Threshold setting if available
         if (autoAscendThreshold !== null) {
@@ -338,7 +399,7 @@ document.getElementById('automationButton').addEventListener('click', function()
                     ascendWarning.style.display = 'inline';
                 }
 
-                autoAscendInput.addEventListener('input', function() {
+                Events.addListener(autoAscendInput, 'input', function() {
                     if (parseInt(autoAscendInput.value) === 0) {
                         autoAscendInput.style.color = 'red';
                         ascendWarning.style.display = 'inline';
@@ -356,7 +417,7 @@ document.getElementById('automationButton').addEventListener('click', function()
                     transcendWarning.style.display = 'inline';
                 }
 
-                autoTranscendInput.addEventListener('input', function() {
+                Events.addListener(autoTranscendInput, 'input', function() {
                     if (parseInt(autoTranscendInput.value) === 0) {
                         autoTranscendInput.style.color = 'red';
                         transcendWarning.style.display = 'inline';
@@ -368,17 +429,74 @@ document.getElementById('automationButton').addEventListener('click', function()
             }
         }, 0); // Ensure the inputs are rendered first
 
+        setTimeout(() => {
+            const autoPrestigeInput = document.getElementById('autoPrestigeThresholdInput');
+            const autoBigCrunchInput = document.getElementById('autoBigCrunchThresholdInput');
+            const prestigeWarning = document.getElementById('prestigeWarning');
+            const bigCrunchWarning = document.getElementById('bigCrunchWarning');
+
+            if (autoPrestigeInput) {
+                // Apply red color if autoPrestigeThreshold is 0 when reopening settings
+                if (parseInt(autoPrestigeInput.value) === 0) {
+                    autoPrestigeInput.style.color = 'red';
+                    prestigeWarning.style.display = 'inline';
+                }
+
+                Events.addListener(autoPrestigeInput, 'input', function() {
+                    if (parseInt(autoPrestigeInput.value) === 0) {
+                        autoPrestigeInput.style.color = 'red';
+                        prestigeWarning.style.display = 'inline';
+                    } else {
+                        autoPrestigeInput.style.color = '';
+                        prestigeWarning.style.display = 'none';
+                    }
+                });
+            }
+
+            if (autoBigCrunchInput) {
+                // Apply red color if autoBigCrunchThreshold is 0 when reopening settings
+                if (parseInt(autoBigCrunchInput.value) === 0) {
+                    autoBigCrunchInput.style.color = 'red';
+                    bigCrunchWarning.style.display = 'inline';
+                }
+
+                Events.addListener(autoBigCrunchInput, 'input', function() {
+                    if (parseInt(autoBigCrunchInput.value) === 0) {
+                        autoBigCrunchInput.style.color = 'red';
+                        bigCrunchWarning.style.display = 'inline';
+                    } else {
+                        autoBigCrunchInput.style.color = '';
+                        bigCrunchWarning.style.display = 'none';
+                    }
+                });
+            }
+        }, 0); // Ensure the inputs are rendered first
+
+
         // Dynamically add Auto-Fighting setting if autoFightSkill is unlocked
         if (autoFightSkill) {
-            const autoFightHtml = `
-                <div style="margin-bottom: 15px;">
-                    <label for="autoFightSwitch" style="margin-right: 10px;">Enable Auto-Fighting</label>
-                    <label class="switch">
-                        <input type="checkbox" id="autoFightSwitch">
-                        <span class="slider"></span>
-                    </label>
-                </div>
-            `;
+            let autoFightHtml;
+            if (autoMeditateSkill) {
+                autoFightHtml = `
+                    <div style="margin-bottom: 15px;">
+                        <label for="autoFightSwitch" style="margin-right: 10px;">Enable Auto-Fighting/Meditating</label>
+                        <label class="switch">
+                            <input type="checkbox" id="autoFightSwitch">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                `;
+            } else {
+                autoFightHtml = `
+                    <div style="margin-bottom: 15px;">
+                        <label for="autoFightSwitch" style="margin-right: 10px;">Enable Auto-Fighting</label>
+                        <label class="switch">
+                            <input type="checkbox" id="autoFightSwitch">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                `;
+            }
             automationContent.innerHTML += autoFightHtml;
 
             // Use a timeout to ensure the checkbox is fully rendered before setting its state
@@ -422,7 +540,24 @@ document.getElementById('automationButton').addEventListener('click', function()
     }
 
     document.getElementById('automationOverlay').style.display = 'flex';
+
+    // Add a listener for clicking outside the overlay to close it
+    setTimeout(() => {
+        document.addEventListener('click', outsideAutomationClickListener);
+    }, 0);
 });
+
+// Function to handle clicks outside the automation overlay
+function outsideAutomationClickListener(event) {
+    const automationContent = document.getElementById('automationContent');
+    const automationOverlay = document.getElementById('automationOverlay');
+    
+    // Close the overlay if the click is outside the automation content
+    if (!automationContent.contains(event.target)) {
+        automationOverlay.style.display = 'none';
+        document.removeEventListener('click', outsideAutomationClickListener); // Remove listener after closing
+    }
+}
 
 // Save the automation settings and close the overlay
 document.getElementById('saveAutomationSettingsButton').addEventListener('click', function() {
@@ -431,8 +566,19 @@ document.getElementById('saveAutomationSettingsButton').addEventListener('click'
         const thresholdInput = document.getElementById('autoPrestigeThresholdInput').value;
         autoPrestigeThreshold = parseFloat(thresholdInput);
 
-        if (isNaN(autoPrestigeThreshold) || autoPrestigeThreshold <= 0) {
+        if (isNaN(autoPrestigeThreshold) || autoPrestigeThreshold < 0) {
             showImmediateMessageModal('Invalid Number', 'Please enter a valid positive number for the Auto Prestige Threshold.');
+            return; // Prevent closing if there's an error
+        }
+    }
+
+    // Auto Prestige Threshold
+    if (autoBigCrunchThreshold !== null) {
+        const thresholdInput = document.getElementById('autoBigCrunchThresholdInput').value;
+        autoBigCrunchThreshold = parseFloat(thresholdInput);
+
+        if (isNaN(autoBigCrunchThreshold) || autoBigCrunchThreshold < 0) {
+            showImmediateMessageModal('Invalid Number', 'Please enter a valid positive number for the Auto Big Crunch Threshold.');
             return; // Prevent closing if there's an error
         }
     }
@@ -472,7 +618,7 @@ document.getElementById('saveAutomationSettingsButton').addEventListener('click'
         if (autoBuyUpgradesSwitch.checked) {
             // Enable auto-buy if it’s not already running
             if (autobuyIntervalId === null) {
-                autobuyIntervalId = setInterval(autobuyUpgrades, fasterAutobuyerskill ? 250 : 1500);
+                autobuyIntervalId = setInterval(autobuyUpgrades, chronoMagnetizerSkill && fasterAutobuyerskill ? 125 : (fasterAutobuyerskill ? 250 : 1500));
                 console.log("Auto-buy started"); // Debug log
             }
         } else {
@@ -497,9 +643,11 @@ document.getElementById('saveAutomationSettingsButton').addEventListener('click'
         } else if (toggleBuyMarkersOn) {
             toggleAllBuyMarkers(true);
         } // Neutral does nothing, so no action needed
+
+        defaultBuyMarkerState = document.getElementById('defaultBuyMarkerStateSwitch').checked;
     }
 
-    // Handle auto-fighting only if the skill is unlocked
+    // Handle auto-fighting only if the skill is unlocked and write autoFightEnabled to localstorage
     if (autoFightSkill) {
         const autoFightSwitch = document.getElementById('autoFightSwitch');
         console.log("Auto-fight switch state at save:", autoFightSwitch.checked); // Debug log
@@ -509,6 +657,7 @@ document.getElementById('saveAutomationSettingsButton').addEventListener('click'
         } else {
             autoFightEnabled = false;
         }
+        localStorage.setItem('autoFightEnabled', autoFightEnabled);
     }
 
     // Handle auto-buy upgrades only if the skill is unlocked
@@ -535,6 +684,8 @@ document.getElementById('saveAutomationSettingsButton').addEventListener('click'
     // Close the overlay
     document.getElementById('automationOverlay').style.display = 'none';
     showImmediateMessageModal('Automation Settings Saved', 'Your automation settings have been saved successfully.');
+    
+    unlockAchievement('Automation Optimizer');
 });
 
 
@@ -552,16 +703,43 @@ document.getElementById('exitAutomationOverlayButton').addEventListener('click',
 });
 
 
+let numberFormatClickCount = 0;
+let numberFormatClickTimer;
+
 document.getElementById('numberFormatButton').addEventListener('click', function() {
+    // Increment click count
+    numberFormatClickCount++;
+
+    // Start a timer if it's the first click within the timeframe
+    if (!numberFormatClickTimer) {
+        numberFormatClickTimer = setTimeout(function() {
+            // After 1 minute, reset the count and the timer
+            numberFormatClickCount = 0;
+            clearTimeout(numberFormatClickTimer);
+            numberFormatClickTimer = null;
+        }, 60000); // 1 minute in milliseconds
+    }
+
+
+
+    // Your existing logic for changing the number format
     if (currentNumberFormat === "Mixed") {
         currentNumberFormat = "Scientific";
     } else if (currentNumberFormat === "Scientific") {
         currentNumberFormat = "Suffixes";
+    } else if (currentNumberFormat === "Suffixes") {
+        currentNumberFormat = "Engineering";
     } else {
         currentNumberFormat = "Mixed";
     }
     this.textContent = `Number Format: ${currentNumberFormat}`;
     
     localStorage.setItem('currentNumberFormat', JSON.stringify(currentNumberFormat));
-    window.location.reload();
+
+
+    if (numberFormatClickCount > 18) {
+        unlockAchievement('Nerdy Career Path');
+    } else {
+        showPopupTooltip('Number Format Requires Page Reload to Take Full Effect', 'red', 5);
+    }
 });

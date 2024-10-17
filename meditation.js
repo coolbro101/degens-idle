@@ -13,18 +13,32 @@ let turnRadius;
 let ballSize;
 let ballSizeDelta;
 let respawnTime;
-let windSpeed = 0;
+let windSpeed;
+let windDirection;
+let deismDoubled = false;
+
+let fullFocusPreserved = true;
+
+let skepticismRandomnessFactor = 3;
+
+let respawnFactor;
+let livesPerBall;
+
+const windDirections = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
 
 // Define the meditation challenges
 const meditationChallenges = {
     "Yin and Yang": {
-        duration: 15,
+        duration: 13.5,
         focus: 2,
         ballCount: 2,
         arenaSize: 600,
         ballSize: 30,
         ballSizeDelta: 3,
-        velocity: 1,
+        velocity: 1.1,
+        wind: 0,
+        respawnFactor: 1,
+        livesPerBall: 1,
     },
     "Existentialism": {
         duration: 10,
@@ -33,50 +47,246 @@ const meditationChallenges = {
         arenaSize: 450,
         ballSize: 50,
         ballSizeDelta: 5,
-        velocity: 1.05,
+        velocity: 1.15,
+        wind: 0,
+        respawnFactor: 1,
+        livesPerBall: 1,
     },
     "Altruism": {
-        duration: 16,
+        duration: 17,
         focus: 1,
-        ballCount: 15,
+        ballCount: 16,
         arenaSize: 600,
-        ballSize: 12,
-        ballSizeDelta: 2,
-        velocity: 0.85,
+        ballSize: 22,
+        ballSizeDelta: 3,
+        velocity: 1.05,
+        wind: 0,
+        respawnFactor: 1,
+        livesPerBall: 1.4,
     },
     "Rastafarianism": {
-        duration: 12,
-        focus: 12,
+        duration: 13,
+        focus: 11,
         ballCount: 5,
         arenaSize: 420,
-        ballSize: 42,
+        ballSize: 52,
         ballSizeDelta: 4.2,
+        velocity: 3.3,
+        wind: 0,
+        respawnFactor: 1,
+        livesPerBall: 1,
+    },
+    "Dualism": {
+        duration: 12,
+        focus: 1,
+        ballCount: 4,
+        arenaSize: 350,
+        ballSize: 155,
+        ballSizeDelta: 5,
+        velocity: 1.55,
+        wind: 0,
+        respawnFactor: 1,
+        livesPerBall: 1,
+    },
+    "Libertarianism": {
+        duration: 20,
+        focus: 8,
+        ballCount: 5,
+        arenaSize: 520,
+        ballSize: 110,
+        ballSizeDelta: 30,
+        velocity: 9,
+        wind: 5,
+        respawnFactor: 1,
+        livesPerBall: 1,
+    },
+    "Hinduism": {
+        duration: 32,
+        focus: 50,
+        ballCount: 25,
+        arenaSize: 400,
+        ballSize: 55,
+        ballSizeDelta: 15,
+        velocity: 3.5,
+        wind: 2,
+        respawnFactor: 1,
+        livesPerBall: 1.2,
+    },
+    "Shinto": {
+        duration: 21,
+        focus: 1,
+        ballCount: 1,
+        arenaSize: 275,
+        ballSize: 100,
+        ballSizeDelta: 0,
         velocity: 3,
+        wind: 14,
+        respawnFactor: 0.5,
+        livesPerBall: 1,
+    },
+    "Stoicism": {
+        duration: 36,
+        focus: 10,
+        ballCount: 12,
+        arenaSize: 700,
+        ballSize: 150,
+        ballSizeDelta: 20,
+        velocity: 4.8,
+        wind: 2,
+        respawnFactor: 1,
+        livesPerBall: 5,
+    },
+    "Deism": {
+        duration: 66,
+        focus: 1,
+        ballCount: 7,
+        arenaSize: 500,
+        ballSize: 300,
+        ballSizeDelta: 0,
+        velocity: 12.2,
+        wind: 0,
+        respawnFactor: 1,
+        livesPerBall: 2.5,
+    },
+    "Skepticism": {
+        duration: 125,
+        focus: 10,
+        ballCount: 8,
+        arenaSize: 450,
+        ballSize: 200,
+        ballSizeDelta: 10,
+        velocity: 13,
+        wind: 2,
+        respawnFactor: 1,
+        livesPerBall: 1,
+    },
+    "Buddhism": {
+        duration: 380,
+        focus: 100,
+        ballCount: 12,
+        arenaSize: 800,
+        ballSize: 360,
+        ballSizeDelta: 0,
+        velocity: 50,
+        wind: 0,
+        respawnFactor: 1,
+        livesPerBall: 8,
+    },
+    "Christianity": {
+        duration: 500,
+        focus: -10,
+        ballCount: 9,
+        arenaSize: 550,
+        ballSize: 400,
+        ballSizeDelta: 0,
+        velocity: 56,
+        wind: 0,
+        respawnFactor: 0.1,
+        livesPerBall: 3,
+    },
+    "Epicureanism": {
+        duration: 1300,
+        focus: 1000,
+        ballCount: 20,
+        arenaSize: 600,
+        ballSize: 600,
+        ballSizeDelta: 20,
+        velocity: 88,
+        wind: 10,
+        respawnFactor: 5.9,
+        livesPerBall: 1,
+    },
+    "Agnosticism": {
+        duration: 2000,
+        focus: 1,
+        ballCount: 1,
+        arenaSize: 364,
+        ballSize: 800,
+        ballSizeDelta: 0,
+        velocity: 88,
+        wind: 0,
+        respawnFactor: 1,
+        livesPerBall: 101,
     },
 };
 
 // Function to initialize the meditation game
-function startMeditationGame(challengeName, backgroundImage) {
+function startMeditationGame(challengeName, backgroundImage, stageNumber = 1, preservedFocus = null, stageVelocityIncrease = 1, stageArenaSizeChange = 1, stageExtraLivesPerBall = 0) {
     return new Promise((resolve) => {
         resolveFunction = resolve; // Store the resolve function
         // Set the current challenge based on the challengeName
         const challenge = meditationChallenges[challengeName];
         currentChallengeName = challengeName;
         // Use the calculateTimerReduction function to adjust the duration
-        meditationTimer = challenge.duration * calculateTimerReduction(yachtMoney);
+        meditationTimer = (challenge.duration - studyAcceleratorReduction) * calculateTimerReduction(yachtMoney);
         
-        meditationFocus = challenge.focus + Math.max(0, Math.floor(Math.log10(serenity))); // Serenity gives additional focus (log10)
+        meditationFocus = preservedFocus !== null ? preservedFocus : challenge.focus + Math.max(0, Math.floor(Math.log10(serenity))); // Preserve focus if passed
         ballCount = Math.max(1, challenge.ballCount - calculateBallCountReduction()); // Hopium reduces ball count
-        arenaSize = challenge.arenaSize;
+        arenaSize = Math.floor((spaceContinuumStretchSkill ? challenge.arenaSize * 1.1 : challenge.arenaSize) * stageArenaSizeChange);
         ballSize = challenge.ballSize;
         ballSize = calculateBallSize();
         ballSizeDelta = challenge.ballSizeDelta;
         baseVelocity = challenge.velocity * calculateVelocityReduction();
+        if (stageNumber > 1) {
+            baseVelocity *= stageVelocityIncrease;
+        }
         turnRadius = calculateTurnRadius();
         respawnTime = 100;
+        respawnFactor = challenge.respawnFactor;
         respawnTime = calculateRespawnTime();
         gravityStrength = calculateGravity();
         balls = []; // Reset balls array
+        windSpeed = masterOfElementsSkill ? challenge.wind / 2 : challenge.wind; // Set wind speed from the challenge
+        windDirection = windDirections[Math.floor(Math.random() * windDirections.length)]; // Pick a random direction
+
+        fullFocusPreserved = true;
+        livesPerBall = Math.max(challenge.livesPerBall - (steadyFocusSkill ? 1 : 0) , 1) + stageExtraLivesPerBall;
+
+        let arenaMessage = '';
+        let fontColor = 'green';
+        let fontSize = '24px';
+
+        if (currentChallengeName === 'Dualism' && ballCount == 1) {
+            ballCount = 2;
+        }
+        if (currentChallengeName === 'Buddhism' && !purchasedUpgradesSet.has("Kung Fu Bunny")) {
+            unlockAchievement('Buddhist Bunny');
+            respawnTime += 500;
+            livesPerBall = Math.max(livesPerBall - 1, 1);
+            arenaMessage = 'The Bunny helps you by making balls respawn 0.5s faster and reduces focus loss by 1 per ball.';
+            fontColor = '#C04000';
+            fontSize = '38px';
+        } else if (currentChallengeName === 'Christianity' && !purchasedUpgradesSet.has("Christian Logic")) {
+            unlockAchievement('Theological Reasoning');
+            livesPerBall = Math.max(livesPerBall - 1, 1);
+            baseVelocity *= 0.9;
+            arenaMessage = 'Through appying logic, you lose 1 less life per ball and reduce ball velocity by 10%.';
+            fontSize = '32px';
+        } else if (currentChallengeName === 'Epicureanism' && !purchasedUpgradesSet.has("First Pizza Meme") && !purchasedUpgradesSet.has("Second Pizza Meme")) {
+            unlockAchievement('Slice of Euphoria');
+            ballCount = Math.max(ballCount - 2, 1);
+            respawnFactor += 1;
+            arenaMessage = 'Pizzas remove 2 balls and increase the respawn time by 1 second';
+            fontColor = 'purple';
+            fontSize = '38px';
+        } else if (currentChallengeName === 'Skepticism' && purchasedUpgradesSet.has("Religious Books") && stageNumber === 2) {
+            unlockAchievement('Cured Skepticism');
+            skepticismRandomnessFactor = 2.5;
+            arenaMessage = 'Religious books help you find order in chaos, reducing randomness.';
+        }else if (currentChallengeName === 'Agnosticism') {
+            const isWisdomPattern = ['W', 'I', 'S', 'D', 'O', 'M'].every((letter, index) =>
+                availableUpgrades[index] && availableUpgrades[index].name.startsWith(letter)
+            );
+            
+            // Do something if the pattern matches "WISDOM"
+            if (isWisdomPattern) {
+                unlockAchievement('Apply Wisdom');
+                turnRadius *= 1.3;
+                arenaMessage = 'Wisdom improves your turn radius by 30%.';
+                fontSize = '34px';
+            }
+
+        }
 
         // Show the meditation overlay
         const meditationOverlay = document.getElementById('meditationOverlay');
@@ -92,17 +302,27 @@ function startMeditationGame(challengeName, backgroundImage) {
         }
 
         // Initialize the meditation arena and balls
-        setupMeditationArena();
+        setupMeditationArena(stageNumber);
 
-        // Start the meditation game loop, updating every 25ms
-        meditationInterval = setInterval(() => {
-            updateMeditationGame(resolve);
-        }, 25); // Update every 25ms for smooth animation
+        if (arenaMessage !== '') {
+            showArenaMessage(arenaMessage, fontColor, fontSize).then(() => {
+                meditationInterval = setInterval(() => {
+                    updateMeditationGame(resolve, stageNumber);
+                }, 25); // Update every 25ms for smooth animation
+            });
+        } else {
+            meditationInterval = setInterval(() => {
+                updateMeditationGame(resolve, stageNumber);
+            }, 25); // Update every 25ms for smooth animation
+        }
+        
     });
 }
 
+
+
 // Function to set up the meditation arena
-function setupMeditationArena() {
+function setupMeditationArena(stageNumber) {
     // Clear the arena
     const arena = document.getElementById('arena');
     if (arena) {
@@ -111,9 +331,10 @@ function setupMeditationArena() {
         arena.style.height = `${arenaSize}px`;
     }
 
+
     // Create balls in the arena, spaced near the center
     for (let i = 0; i < ballCount; i++) {
-        createBall(i);
+        createBall(i, stageNumber);
     }
 
     // Update meditation info (e.g., challenge name, timer, focus)
@@ -122,13 +343,26 @@ function setupMeditationArena() {
     scaleArena();
 }
 
+const pastelColors = [
+    '#FFB3BA', // Pastel pink
+    '#FFDFBA', // Pastel orange
+    '#FFFFBA', // Pastel yellow
+    '#BAFFB3', // Pastel green
+    '#BAE1FF', // Pastel blue
+    '#FFBAFF', // Pastel purple
+    '#FFC3A0', // Light peach
+    '#D5AAFF', // Lavender
+    '#C9D5B5', // Sage green
+    '#F6D6B2'  // Light tan
+];
+
 // Function to create a ball with no overlap and random velocity/direction
-function createBall(index) {
+function createBall(index, stageNumber) {
     const ball = document.createElement('div');
     ball.classList.add('meditation-ball');
  
     // Add random variation within the delta range
-    const thisBallSize = Math.max(Math.round(ballSize + (Math.random() * 2 * ballSizeDelta - ballSizeDelta)), 5);
+    const thisBallSize = Math.max(Math.round(ballSize + (Math.random() * 2 * ballSizeDelta - ballSizeDelta)), 15);
 
     // Calculate position for each ball in a circular pattern around the center
     const angle = (index / ballCount) * 2 * Math.PI; // Evenly space balls around a circle
@@ -141,6 +375,19 @@ function createBall(index) {
     ball.style.height = `${thisBallSize}px`;
     ball.style.left = `${centerX - thisBallSize / 2}px`; // Adjust for ball size
     ball.style.top = `${centerY - thisBallSize / 2}px`;
+
+    // Set the color of the balls based on the stage
+    if (stageNumber === 2) {
+        ball.style.backgroundColor = 'red';
+    } else {
+        if (currentChallengeName === 'Buddhism') {
+            // Choose a random color from the pastelColors array
+            const randomColor = pastelColors[Math.floor(Math.random() * pastelColors.length)];
+            ball.style.backgroundColor = randomColor; // Set the background color to the random pastel color          
+        } else{
+            ball.style.backgroundColor = 'orange'; // Assuming blue or any other color for stage 1
+        }
+    }
 
     // Set initial direction (random angle) and velocity
     const direction = Math.random() * 2 * Math.PI; // Random angle in radians
@@ -158,33 +405,79 @@ function createBall(index) {
     document.getElementById('arena').appendChild(ball);
 }
 
+
 // Function to update meditation info
 function updateMeditationInfo() {
     document.getElementById('meditationChallengeName').innerText = currentChallengeName;
     document.getElementById('meditationTimer').innerText = meditationTimer.toFixed(1);
-    document.getElementById('meditationFocus').innerText = meditationFocus;
+    document.getElementById('meditationFocus').innerText = formatNumber(meditationFocus);
     document.getElementById('meditationBallCount').innerText = ballCount;
     document.getElementById('meditationBallSize').innerText = ballSize; // Ball size (diameter)
     document.getElementById('meditationArenaSize').innerText = arenaSize;
     document.getElementById('meditationVelocity').innerText = baseVelocity.toFixed(2);
     document.getElementById('meditationTurnRadius').innerText = turnRadius.toFixed(2);
     document.getElementById('meditationGravity').innerText = gravityStrength.toFixed(2); // Display current gravity value
-    document.getElementById('meditationRespawnTime').innerText = (respawnTime/1000).toFixed(3); // Display respawn time
-    document.getElementById('meditationWind').innerText = windSpeed.toFixed(2) + ' m/s'; // Display wind speed
+    document.getElementById('meditationRespawnTime').innerText = (respawnTime / 1000).toFixed(3); // Display respawn time
+
+    // Conditionally display Wind, Respawn Factor, and Lives Per Ball
+    const windDisplay = document.getElementById('meditationWindRow');
+    if (windSpeed !== 0) {
+        windDisplay.style.display = 'block';
+        document.getElementById('meditationWind').innerText = `${formatNumber(windSpeed)} ${windDirection}`;
+    } else {
+        windDisplay.style.display = 'none';
+    }
+
+    const respawnFactorDisplay = document.getElementById('meditationRespawnFactorRow');
+    if (respawnFactor !== 1) {
+        respawnFactorDisplay.style.display = 'block';
+        document.getElementById('meditationRespawnFactor').innerText = formatNumber(respawnFactor);
+    } else {
+        respawnFactorDisplay.style.display = 'none';
+    }
+
+    const livesPerBallDisplay = document.getElementById('meditationLivesPerBallRow');
+    if (livesPerBall !== 1 || currentChallengeName === 'Epicureanism') {
+        livesPerBallDisplay.style.display = 'block';
+        document.getElementById('meditationLivesPerBall').innerText = formatNumber(livesPerBall);
+    } else {
+        livesPerBallDisplay.style.display = 'none';
+    }
 }
 
-// Function to update the meditation game state
-function updateMeditationGame(resolve) {
+
+function updateMeditationGame(resolve, stageNumber) {
     // Update the timer
     meditationTimer -= 0.025; // Reduce time every 25ms
     document.getElementById('meditationTimer').innerText = meditationTimer.toFixed(1); // Update the timer display
 
     // Check for end conditions
     if (meditationTimer <= 0 && meditationFocus > 0) {
-        clearInterval(meditationInterval);
-        resolve(true); // Player wins the challenge
-        stopMeditationGame();
-        return;
+        if (currentChallengeName === 'Deism' && stageNumber === 1) {
+            // Flash "Not So Fast" message and then restart the game
+            clearInterval(meditationInterval); // Stop the current game loop
+            showArenaMessage('Not So Fast').then(() => {
+                startMeditationGame(currentChallengeName, document.getElementById('arena').style.backgroundImage, 2, meditationFocus, 2).then(resolve);
+            });
+            return;
+        } else if (currentChallengeName === 'Skepticism' && stageNumber === 1) {
+            // Flash "Not So Fast" message and then restart the game
+            clearInterval(meditationInterval); // Stop the current game loop
+            showArenaMessage('Experience Randomness').then(() => {
+                startMeditationGame(currentChallengeName, document.getElementById('arena').style.backgroundImage, 2, meditationFocus, 1 + (Math.random() * skepticismRandomnessFactor), parseFloat(((Math.floor(Math.random() * 60) + 40) / 100).toFixed(2)), parseFloat((Math.random() * (skepticismRandomnessFactor - 0.01) + 0.01).toFixed(2))).then(resolve);
+            });
+            return;
+        } else {
+            clearInterval(meditationInterval);
+            resolve(true); // Player wins the challenge
+            stopMeditationGame();
+            showPopupTooltip(`Successful Meditation: ${currentChallengeName}`, color='#4682B4', 1);
+            if (fullFocusPreserved ) {
+                if (currentChallengeName === 'Altruism') { unlockAchievement('The Giver'); }
+                else if (currentChallengeName === 'Rastafarianism') { unlockAchievement('Tamed Lion'); }
+            }
+            return;
+        }
     }
 
     if (meditationFocus <= 0) {
@@ -200,8 +493,25 @@ function updateMeditationGame(resolve) {
     checkOutOfBounds();
 }
 
-// Function to move the balls according to their velocity, direction, and gravity towards the center
+
+
+// Function to move the balls according to their velocity, direction, wind, and gravity towards the center
 function moveBalls() {
+    // Convert wind direction to x and y components
+    let windX = 0;
+    let windY = 0;
+
+    switch (windDirection) {
+        case 'N': windY = -1; break;
+        case 'NE': windX = 1; windY = -1; break;
+        case 'E': windX = 1; break;
+        case 'SE': windX = 1; windY = 1; break;
+        case 'S': windY = 1; break;
+        case 'SW': windX = -1; windY = 1; break;
+        case 'W': windX = -1; break;
+        case 'NW': windX = -1; windY = -1; break;
+    }
+
     balls.forEach((ball) => {
         // Calculate the angle toward the center of the arena
         const angleToCenter = Math.atan2((arenaSize / 2) - ball.y, (arenaSize / 2) - ball.x);
@@ -226,12 +536,12 @@ function moveBalls() {
         const deltaYToCenter = (arenaSize / 2) - ball.y;
         
         // Normalize the pull to be small and proportional
-        const pullX = gravityStrength * (deltaXToCenter / arenaSize);
-        const pullY = gravityStrength * (deltaYToCenter / arenaSize);
+        const pullX = gravityStrength * (deltaXToCenter / arenaSize / 4);
+        const pullY = gravityStrength * (deltaYToCenter / arenaSize / 4);
         
         // Adjust ball velocity based on the gravitational pull
-        const deltaX = ball.velocity * Math.cos(ball.direction) + pullX;
-        const deltaY = ball.velocity * Math.sin(ball.direction) + pullY;
+        const deltaX = ball.velocity * Math.cos(ball.direction) + pullX + windSpeed * windX;
+        const deltaY = ball.velocity * Math.sin(ball.direction) + pullY + windSpeed * windY;
 
         // Update ball's position
         ball.x += deltaX;
@@ -246,9 +556,10 @@ function moveBalls() {
 
 
 
+
 // Function to check if a ball leaves the arena and decrement a life if so, with a respawn delay
 function checkOutOfBounds() {
-    // If game has ended (focus are zero or below), do nothing
+    // If game has ended (focus is zero or below), do nothing
     if (meditationFocus <= 0) return;
 
     balls.forEach((ball) => {
@@ -265,53 +576,80 @@ function checkOutOfBounds() {
             // Set the ball as respawning to avoid further out-of-bounds checks
             ball.isRespawning = true;
 
-            // Decrement a life when out of bounds
-            meditationFocus--;
-            document.getElementById('meditationFocus').innerText = meditationFocus; // Update focus display
-
-            // Hide the ball temporarily and reset after the respawn delay
-            ball.element.style.display = 'none'; // Hide the ball
-
-            // Delay the respawn by respawnTime
-            setTimeout(() => {
-                // If the game has ended during the respawn delay, do nothing
-                if (meditationFocus <= 0) return;
-
-                // Reset the ball to a new position close to the center, avoiding overlap
-                let newX, newY;
-                let overlap;
-                do {
-                    const angle = Math.random() * 2 * Math.PI; // Random angle
-                    const radius = 30 + Math.random() * 50; // Respawn close to the center (radius between 30px and 80px)
-                    newX = arenaSize / 2 + radius * Math.cos(angle);
-                    newY = arenaSize / 2 + radius * Math.sin(angle);
-
-                    overlap = balls.some(
-                        (otherBall) =>
-                            otherBall !== ball &&
-                            Math.sqrt(Math.pow(newX - otherBall.x, 2) + Math.pow(newY - otherBall.y, 2)) < ball.radius * 2
-                    );
-                } while (overlap); // Ensure no overlap with other balls
-
-                ball.x = newX;
-                ball.y = newY;
-                ball.direction = Math.random() * 2 * Math.PI; // New random direction
-                ball.velocity = baseVelocity; // Reset velocity to the starting value
-                ball.isRespawning = false; // Reset the respawning flag
-
-                // Show the ball again and update its position
-                ball.element.style.display = 'block'; // Show the ball
-                ball.element.style.left = `${ball.x - ball.radius}px`; // Center the ball
-                ball.element.style.top = `${ball.y - ball.radius}px`; // Center the ball
-
-                // Check if focus are zero and stop the game
-                if (meditationFocus <= 0) {
-                    clearInterval(meditationInterval);
-                    stopMeditationGame(); // End the game
-                }
-            }, respawnTime); // 0.1-second respawn delay
+            // Decrement focus when out of bounds
+            handleOutOfBounds(ball);
         }
     });
+}
+
+// Function to handle what happens when a ball goes out of bounds (or can't be placed)
+function handleOutOfBounds(ball) {
+    // Decrement a life when out of bounds
+    meditationFocus -= livesPerBall;
+
+    if (currentChallengeName === 'Epicureanism') {
+        livesPerBall += 1;
+        document.getElementById('meditationLivesPerBall').innerText = formatNumber(livesPerBall);
+    }
+
+    fullFocusPreserved = false;
+    if (currentChallengeName === 'Dualism' && ballCount == 2){
+        unlockAchievement('Out of Body Experience');
+    }
+    document.getElementById('meditationFocus').innerText = formatNumber(meditationFocus); // Update focus display
+
+    // Hide the ball temporarily and reset after the respawn delay
+    ball.element.style.display = 'none'; // Hide the ball
+
+    // Delay the respawn by respawnTime
+    setTimeout(() => {
+        // If the game has ended during the respawn delay, do nothing
+        if (meditationFocus <= 0) return;
+
+        // Add a limit to the number of attempts to place the ball
+        let attempts = 0;
+        const maxAttempts = 200; // Limit the number of placement attempts
+
+        let newX, newY;
+        let overlap;
+        do {
+            const angle = Math.random() * 2 * Math.PI; // Random angle
+            const radius = ballSize/4 + Math.random() * arenaSize/5; // Respawn close to the center (radius between 30px and 80px)
+            newX = arenaSize / 2 + radius * Math.cos(angle);
+            newY = arenaSize / 2 + radius * Math.sin(angle);
+
+            overlap = balls.some(
+                (otherBall) =>
+                    otherBall !== ball &&
+                    Math.sqrt(Math.pow(newX - otherBall.x, 2) + Math.pow(newY - otherBall.y, 2)) < ball.radius * 2
+            );
+            attempts++;
+        } while (overlap && attempts < maxAttempts); // Ensure no overlap with other balls, but limit attempts
+
+        if (attempts >= maxAttempts) {
+            showPopupTooltip(`No Space For Ball - Losing Focus`, color='#FF5733', 1.5);
+            // Treat as out of bounds, reduce focus, and restart respawn
+            handleOutOfBounds(ball);
+            return;
+        }
+
+        ball.x = newX;
+        ball.y = newY;
+        ball.direction = Math.random() * 2 * Math.PI; // New random direction
+        ball.velocity = baseVelocity; // Reset velocity to the starting value
+        ball.isRespawning = false; // Reset the respawning flag
+
+        // Show the ball again and update its position
+        ball.element.style.display = 'block'; // Show the ball
+        ball.element.style.left = `${ball.x - ball.radius}px`; // Center the ball
+        ball.element.style.top = `${ball.y - ball.radius}px`; // Center the ball
+
+        // Check if focus is zero and stop the game
+        if (meditationFocus <= 0) {
+            clearInterval(meditationInterval);
+            stopMeditationGame(); // End the game
+        }
+    }, respawnTime); // 0.1-second respawn delay
 }
 
 
@@ -404,25 +742,20 @@ document.getElementById('meditationStopButton').addEventListener('click', () => 
 
 // Function to calculate ball size based on Copium
 function calculateBallSize() {
-    // Calculate the scaling factor based on Copium, starting at 1e100
-    let scalingFactor = 1 - (Math.max(0, Math.log10(copium) - 100) / 200);
-
-    // Apply the scaling factor to the base ball size
-    let newBallSize = Math.round(ballSize * scalingFactor);
-
-    // Ensure the ball size is at least 5 (to avoid balls being too small)
-    newBallSize = Math.max(newBallSize, 5);
-
+    if (copium < 0) {return ballSize;}
+    let intervals = Math.max(0, (Math.log10(copium) - 100) / 20);
+    let newBallSize = Math.max(Math.round(ballSize * Math.pow(0.5, intervals)), 15);
     return newBallSize;
 }
 
 // Function to calculate turn radius based on Delusion
 function calculateTurnRadius() {
+    if (delusion < 0) {return 0.25;}
     // Calculate the scaling factor based on Delusion, starting at 1e100
-    let scalingFactor = 1 + (Math.max(0, Math.log10(delusion) - 100) * 0.05);
+    let scalingFactor = 1 + (Math.max(0, Math.log10(delusion) - 100) * 0.1);
 
     // Apply the scaling factor to the base turn radius
-    let newTurnRadius = 0.25 * scalingFactor;
+    let newTurnRadius = 0.26 * scalingFactor;
 
     return newTurnRadius;
 }
@@ -430,18 +763,20 @@ function calculateTurnRadius() {
 
 // Calculate the reduction factor based on yachtMoney
 function calculateTimerReduction() {
+    if (yachtMoney <= 10) {return 1;}
     const logValue = Math.log10(yachtMoney); // Get the logarithmic value of yachtMoney
-    const reductionFactor = Math.max(0.01, Math.min(1, 1 - ((logValue - 100) / 200)));
-    return reductionFactor;
+    const reductionFactor = Math.pow(2, -(logValue - 100) / 15); // Scales the reduction by 50% for every increase of 15 in log value
+    return Math.max(0.000001, Math.min(1, reductionFactor)); // Ensure the reduction factor is between 0.000001 and 1
 }
 
 // Function to calculate respawn time based on trollPoints
 function calculateRespawnTime() {
-    // Calculate the scaling factor based on trollPoints, starting at 1e100
-    let scalingFactor = 1 + (Math.max(0, Math.log10(trollPoints) - 100) / 10);
+    if (yachtMoney < 0) {return respawnTime;}
+    // Calculate the scaling factor: double the respawn time for every 20-log interval after 100
+    let scalingFactor = Math.pow(2, Math.max(0, (Math.log10(trollPoints) - 100) / 20));
 
     // Calculate the new respawn time by applying the scaling factor
-    let newRespawnTime = respawnTime * scalingFactor;
+    let newRespawnTime = respawnTime * scalingFactor * respawnFactor;
 
     return newRespawnTime;
 }
@@ -455,26 +790,28 @@ function calculateBallCountReduction() {
     return lookPastDistractions; // No reduction if hopium is <= 1e100
 }
 
-// Function to calculate velocity based on knowledge
+// Function to calculate velocity reduction based on knowledge
 function calculateVelocityReduction() {
     if (knowledge <= 1e75) {
         return 1; // Base velocity for knowledge <= 1e75
     } else {
-        // Calculate the reduction factor based on knowledge (halves every 25 orders of magnitude starting at 1e100)
-        let reductionFactor = Math.pow(0.5, (Math.log10(knowledge) - 100) / 25);
+        // Calculate the number of 20-OOM intervals past 1e75
+        let intervals = (Math.log10(knowledge) - 75) / 20;
         
-        // Ensure velocity doesn't exceed 1
-        return Math.max(0.5 * reductionFactor * temporalDragReduction, 0);
+        // Calculate the reduction factor by halving for each 20-OOM interval
+        let reductionFactor = Math.pow(0.5, intervals);
+        
+        return reductionFactor * temporalDragReduction;
     }
 }
 
 // Function to calculate gravity based on power
 function calculateGravity() {
-    if (power <= 1e20) {
-        return 0; // Gravity is 0 if power is <= 1e20
+    if (power <= 1e18) {
+        return 0; // Gravity is 0 if power is <= 1e18
     } else {
-        // Calculate gravity based on power, increasing by 1 for every 20 orders of magnitude starting from 1e40
-        return (Math.log10(power) - 40) / 20 + 1;
+        // Calculate gravity based on power, increasing by 1 for every 15 orders of magnitude starting from 1e18
+        return Math.max(0, (Math.log10(power) - 33) / 15 + 1);
     }
 }
 
@@ -505,4 +842,28 @@ function scaleArena() {
         // Optional: You can still apply `transformOrigin` if needed
         // meditationWrapper.style.transformOrigin = 'top left';
     }
+}
+
+function showArenaMessage(messageContent, fontColor = 'red', fontSize = '48px') {
+    return new Promise((resolve) => {
+        const arena = document.getElementById('arena');
+        const message = document.createElement('div');
+        message.innerText = messageContent;
+        message.style.position = 'absolute';
+        message.style.top = '50%';
+        message.style.left = '50%';
+        message.style.transform = 'translate(-50%, -50%)';
+        message.style.color = fontColor;
+        message.style.fontSize = fontSize;
+        message.style.fontWeight = 'bold';
+        message.style.zIndex = '1000'; // Make sure it appears on top
+        message.style.textAlign = 'center';
+
+        arena.appendChild(message);
+
+        setTimeout(() => {
+            arena.removeChild(message);
+            resolve();
+        }, 1000); // Display message for 1 second
+    });
 }

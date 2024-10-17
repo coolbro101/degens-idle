@@ -46,11 +46,11 @@
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.9.0/localforage.min.js"></script> -->
     <link rel="icon" type="image/x-icon" href="imgs/textures/favicon.ico"> <!-- For older browsers -->
     <link rel="icon" type="image/png" sizes="32x32" href="imgs/textures/favicon_32.png"> <!-- For modern browsers -->
-    <link rel="icon" type="image/png" sizes="16x16" href="imgs/textures/favicon_64.png">    
+    <link rel="icon" type="image/png" sizes="16x16" href="imgs/textures/favicon_64.png">
     <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="library.css">    
-    <link rel="stylesheet" href="powerhall.css">    
-    <link rel="stylesheet" href="lovehall.css">    
+    <link rel="stylesheet" href="library.css">
+    <link rel="stylesheet" href="powerhall.css">
+    <link rel="stylesheet" href="lovehall.css">
     <link rel="stylesheet" href="settings.css">
     <link rel="stylesheet" href="fighting.css">
     <link rel="stylesheet" href="meditation.css">
@@ -71,12 +71,12 @@
                 <button id="modalCancelButton">Cancel</button>
             </div>
             <div id="ascendUpgradeSelection">
-                <h3>Choose the upgrade you want to use as your ascension focal point - this will permanently enhance it to be 10x as strong:</h3>
+                <h3>Select your upgrade(s):</h3>
                 <div id="ascendUpgradeList"></div>
                 <button id="upgradeConfirmButton" style="display:none;">Confirm Selection</button>
             </div>
         </div>
-    </div>      
+    </div>
     <!-- Immediate Message Modal -->
     <div id="immediateMessageModal" class="modal">
         <div class="modal-content">
@@ -92,16 +92,33 @@
                 <!-- Background image is now handled via CSS -->
             </div>
             <div id="button-container">
-                <button id="settingsButton">Settings</button>
+                <button id="automationButton" class="automation-button">
+                    Automation
+                    <div class="square"></div>
+                    <div class="square"></div>
+                    <div class="square"></div>
+                    <div class="square"></div>
+                    <div class="square"></div>
+                    <div class="square"></div>
+                    <div class="square"></div>
+                    <div class="square"></div>
+                    <div class="square"></div>
+                    <div class="square"></div>
+                </button>
                 <button id="achievementsButton">Achievements</button>
+                <button id="settingsButton">Settings</button>
                 <button id="restartPrestige">Restart This Prestige</button>
-                <button id="restartButton">Restart Entire Game</button>
             </div>
         </div>
         <div id="game">
             <div class="resource">
                 <p><b>C</b>opium: <span id="copium" class="resource-value">0</span></p>
-                <p class="per-second">Copium per second: <span id="cps">0</span></p>
+                <p class="per-second">Copium per second: <span id="cps">0</span>
+                    <label class="switch hidden" id="toggleCopiumLabel">
+                        <input type="checkbox" id="toggleCopium">
+                        <span class="slider"></span>
+                    </label>
+                </p>
                 <div class="buttons">
                     <button id="collectCopiumButton" class="collect-button">Collect Copium</button>
                     <button id="speedGame" class="game-button">
@@ -128,7 +145,12 @@
             </div>
             <div class="resource">
                 <p><b>Y</b>acht <b>M</b>oney: <span id="yachtMoney" class="resource-value">0</span></p>
-                <p class="per-second">Yacht Money per second: <span id="ymps">0</span></p>
+                <p class="per-second">Yacht Money per second: <span id="ymps">0</span>
+                    <label class="switch hidden" id="toggleYachtMoneyLabel">
+                        <input type="checkbox" id="toggleYachtMoney">
+                        <span class="slider"></span>
+                    </label>
+                </p>
                 <div class="buttons">
                     <button id="collectYachtMoneyButton" class="collect-button">Collect Yacht Money</button>
                     <button id="mathGame" class="game-button">
@@ -139,7 +161,12 @@
             </div>
             <div class="resource">
                 <p><b>T</b>roll <b>P</b>oints: <span id="trollPoints" class="resource-value">0</span></p>
-                <p class="per-second">Troll Points per second: <span id="tpps">0</span></p>
+                <p class="per-second">Troll Points per second: <span id="tpps">0</span>
+                    <label class="switch hidden" id="toggleTrollPointsLabel">
+                        <input type="checkbox" id="toggleTrollPoints">
+                        <span class="slider"></span>
+                    </label>
+                </p>
                 <div class="buttons">
                     <button id="collectTrollPointsButton" class="collect-button">Collect Troll Points</button>
                     <button id="luckGame" class="game-button">
@@ -171,11 +198,22 @@
                 <p class="per-second">Serenity per second: <span id="sps">0</span></p>
             </div>
             <div id="cookieButtonContainer">
-                <button id="cookieButton" style="display:none;">
+                <!-- Cookie Button -->
+                <button id="cookieButton">
                     <img src="imgs/cookie.jpg" alt="Cookie">
                     <span class="cookieTooltip">Each cookie click counts as 10 clicks on collect buttons for Copium, Delusion, Yacht Money, and Troll Points!</span>
                 </button>
+            
+                <!-- Warp Time Button -->
+                <div id="warpTimeButtonContainer">
+                    <button id="warpTimeButton" class="game-button" style="display: none;">
+                        <span class="button-content"></span>
+                        <div class="overlay-circle"></div> <!-- Overlay that will mask the progress -->
+                    </button>
+                    <span class="cookieTooltip">Warp Time!</span>
+                </div>         
             </div>
+                 
             <p class="stellar-harvest-text" id="stellar-harvest-display" style="display:none;">Stellar Harvest Mult x1.00</p>
             <button id="prestigeButton" style="display:none;" class="custom-button">Prestige</button>
             <p class="prestige-multiplier-text" id="prestige-multiplier">Prestige: x1.00 mult</p>
@@ -187,8 +225,8 @@
             <p class="big-crunch-text" id="big-crunch-display" style="display:none;">Big Crunch Power 1e-7 (x1.00 mult)</p>
             <button id="infiniteEmbraceButton" style="display:none;" class="custom-button">Infinite Embrace</button>
             <button id="libraryButton">Hall of Knowledge</button>
-            <button id="powerHallButton" style="display:none;">Hall of Power</button>     
-            <button id="loveHallButton" style="display:none;">Hall of Love</button>         
+            <button id="powerHallButton" style="display:none;">Hall of Power</button>
+            <button id="loveHallButton" style="display:none;">Hall of Love</button>
         </div>
         <div id="upgrades">
             <h2>Upgrades</h2>
@@ -210,7 +248,7 @@
                     <option value="yachtMoney">Yacht Money</option>
                     <option value="trollPoints">Troll Points</option>
                 </select>
-                
+
                 <label for="fromResource">To:</label>
                 <select id="toResource" onchange="updateTradeRatio()">
                     <option value="copium">Copium</option>
@@ -220,13 +258,24 @@
                     <option value="hopium">Hopium</option> <!-- Add Hopium as a tradeable resource -->
                 </select>
                 <label for="tradeAmount">Amount:</label>
-                <input type="text" id="tradeAmount" value="" placeholder="Enter (e.g. 1.5M or 50%)" style="font-size: 16px;">                
+                <input type="text" id="tradeAmount" value="" placeholder="Enter (e.g. 1.5M or 50%)" style="font-size: 16px;">
                 <p id="tradeRatioDisplay">Trade ratio is 10:1</p>
                 <button id="tradeButton">Trade</button>
                 <button id="tradeTenPercentButton">Trade 10%</button>
             </div>
             <div id="purchasedUpgrades">
-                <h2>Purchased Upgrades</h2>
+                <div id="purchasedUpgradesHeader" class="multibuy-buttons-container">
+                    <h2>Purchased Upgrades </h2>
+                    <h2 id="numPurchasedUpgradesStart" style="display: none;">(</h2>
+                    <h2 id="numPurchasedNormalUpgrades" style="display: none;">123</h2>
+                    <h2 id="numPurchasedSepOne" style="display: none;">|</h2>
+                    <h2 id="numPurchasedGodModeUpgrades" style="display: none;">123</h2>
+                    <h2 id="numPurchasedSepTwo"style="display: none;">|</h2>
+                    <h2 id="numPurchasedPUGodModeUpgrades" style="display: none;">123</h2>
+                    <h2 id="numPurchasedSepThree"style="display: none;">|</h2>
+                    <h2 id="numPurchasedDoubleGodModeUpgrades" style="display: none;">123</h2>
+                    <h2 id="numPurchasedUpgradesEnd" style="display: none;">)</h2>
+                </div>
                 <div id="purchasedList" class="grid">
                     <!-- Purchased upgrades will be shown here with images -->
                 </div>
@@ -241,16 +290,46 @@
             <!-- Player Stats and Image -->
             <div class="player-section">
                 <div class="stats">
-                    <p>Max Health: <span id="playerHealthStat"></span></p>
-                    <p>Dmg: <span id="playerDamageStat"></span></p>
-                    <p>Speed: <span id="playerAttackSpeedStat"></span></p>
-                    <p>Defense: <span id="playerDefenseStat"></span></p>
-                    <p id="playerCritChanceContainer">Crit: <span id="playerCritChanceStat"></span></p>
-                    <p id="playerCritDamageContainer">Crit Dmg: <span id="playerCritDamageStat"></span></p>
-                    <p id="playerDodgeContainer">Dodge: <span id="playerDodgeStat"></span></p>
-                    <p id="playerNonCritDodgeContainer">Non-Crit Dodge: <span id="playerNonCritDodgeStat"></span></p>
-                    <p id="playerStunContainer">Stun: <span id="playerStunStat"></span></p>
-                    <p id="playerAbsorbContainer">Absorb: <span id="playerAbsorbStat"></span></p>
+                    <div class="STAT">
+                        <div>Max HP:</div>
+                        <div id="playerHealthStat"></div>
+                    </div>
+                    <div class="STAT">
+                        <span>Damage:</span>
+                        <span id="playerDamageStat"></span>
+                    </div>
+                    <div class="STAT">
+                        <span>Speed:</span>
+                        <span id="playerAttackSpeedStat"></span>
+                    </div>
+                    <div class="STAT">
+                        <span>Defense:</span>
+                        <span id="playerDefenseStat"></span>
+                    </div>
+                    <div id="playerCritChanceContainer" class="STAT">
+                        <span>Crit:</span>
+                        <span id="playerCritChanceStat"></span>
+                    </div>
+                    <div id="playerCritDamageContainer" class="STAT">
+                        <span>Crit Dmg:</span>
+                        <span id="playerCritDamageStat"></span>
+                    </div>
+                    <div id="playerDodgeContainer" class="STAT">
+                        <span>Dodge:</span>
+                        <span id="playerDodgeStat"></span>
+                    </div>
+                    <div id="playerNonCritDodgeContainer" class="STAT">
+                        <span>Non-Crit Dodge:</span>
+                        <span id="playerNonCritDodgeStat"></span>
+                    </div>
+                    <div id="playerStunContainer" class="STAT">
+                        <span>Stun:</span>
+                        <span id="playerStunStat"></span>
+                    </div>
+                    <div id="playerAbsorbContainer" class="STAT">
+                        <span>Absorb:</span>
+                        <span id="playerAbsorbStat"></span>
+                    </div>
                 </div>
                 <div id="playerImageContainer"></div>
                 <div class="health-bar">
@@ -266,16 +345,46 @@
             <!-- Enemy Stats and Image -->
             <div class="enemy-section">
                 <div class="stats">
-                    <p>Health: <span id="enemyHealthStat"></span></p>
-                    <p>Dmg: <span id="enemyDamageStat"></span></p>
-                    <p>Speed: <span id="enemyAttackSpeedStat"></span></p>
-                    <p>Defense: <span id="enemyDefenseStat"></span></p>
-                    <p id="enemyCritChanceContainer">Crit: <span id="enemyCritChanceStat"></span></p>
-                    <p id="enemyCritDamageContainer">Crit Dmg: <span id="enemyCritDamageStat"></span></p>
-                    <p id="enemyDodgeContainer">Dodge: <span id="enemyDodgeStat"></span></p>
-                    <p id="enemyNonCritDodgeContainer">Non-Crit Dodge: <span id="enemyNonCritDodgeStat"></span></p>
-                    <p id="enemyStunContainer">Stun: <span id="enemyStunStat"></span></p>
-                    <p id="enemyAbsorbContainer">Absorb: <span id="enemyAbsorbStat"></span></p>
+                    <div class="STAT">
+                        <div>Max HP:</div>
+                        <div id="enemyHealthStat"></div>
+                    </div>
+                    <div class="STAT">
+                        <div>Damage:</div>
+                        <div id="enemyDamageStat"></div>
+                    </div>
+                    <div class="STAT">
+                        <div>Speed:</div>
+                        <div id="enemyAttackSpeedStat"></div>
+                    </div>
+                    <div class="STAT">
+                        <div>Defense:</div>
+                        <div id="enemyDefenseStat"></div>
+                    </div>
+                    <div id="enemyCritChanceContainer" class="STAT">
+                        <div>Crit:</div>
+                        <div id="enemyCritChanceStat"></div>
+                    </div>
+                    <div id="enemyCritDamageContainer" class="STAT">
+                        <div>Crit Dmg:</div>
+                        <div id="enemyCritDamageStat"></div>
+                    </div>
+                    <div id="enemyDodgeContainer" class="STAT">
+                        <div>Dodge:</div>
+                        <div id="enemyDodgeStat"></div>
+                    </div>
+                    <div id="enemyNonCritDodgeContainer" class="STAT">
+                        <div>Non-Crit Dodge:</div>
+                        <div id="enemyNonCritDodgeStat"></div>
+                    </div>
+                    <div id="enemyStunContainer" class="STAT">
+                        <div>Stun:</div>
+                        <div id="enemyStunStat"></div>
+                    </div>
+                    <div id="enemyAbsorbContainer" class="STAT">
+                        <div>Absorb:</div>
+                        <div id="enemyAbsorbStat"></div>
+                    </div>
                 </div>
                 <div id="enemyImageContainer"></div>
                 <div class="health-bar">
@@ -286,7 +395,7 @@
 
         <!-- Fight Log -->
         <div id="fightLog" class="fight-log"></div>
-        
+
         <!-- Forfeit Button -->
         <button id="forfeitButton" class="forfeit-button">Forfeit</button>
     </div>
@@ -297,12 +406,12 @@
                 <div class="meditation-arena">
                     <div id="arena" class="arena"></div>
                 </div>
-    
+
                 <!-- Meditation Info Section -->
                 <div class="meditation-info">
                     <h2 id="meditationChallengeName">Meditation Challenge</h2>
                 </div>
-    
+
                 <!-- Updated Meditation Stats Section -->
                 <div id="meditationStats" class="meditation-info">
                     <div class="stat-row">
@@ -323,24 +432,29 @@
                     </div>
                     <div class="stat-row">
                         <p>Respawn Time: <span id="meditationRespawnTime" class="stat-value"></span>s</p>
-                        <p>Wind: <span id="meditationWind" class="stat-value"></span></p>
+                        <p id="meditationWindRow" style="display: none;">Wind: <span id="meditationWind" class="stat-value"></span></p>
+                    </div>
+                    <div class="stat-row">
+                        <p id="meditationRespawnFactorRow" style="display: none;">Respawn Factor: <span id="meditationRespawnFactor" class="stat-value"></span></p>
+                        <p id="meditationLivesPerBallRow" style="display: none;">Focus Per Ball: <span id="meditationLivesPerBall" class="stat-value"></span></p>
                     </div>
                 </div>
-                
-    
+
                 <!-- Stop Meditation Button -->
                 <button id="meditationStopButton" class="meditation-stop-button">Stop Meditation</button>
             </div>
         </div>
     </div>
-    
-      
+
+
+
+
     <!-- Include the Library overlay HTML -->
     <div id="libraryOverlay" class="library-overlay" style="display: none;">
         <div class="library-overlay-content">
             <span class="close-button" id="closeLibraryOverlay">&times;</span>
             <h1>Hall of Knowledge</h1>
-            <h4>Welcome to the illustrious Hall of Knowledge, a revered sanctuary where the wisdom of ages is preserved and shared. Within these hallowed halls, you will discover an array of skills and insights, each meticulously curated to empower your journey.<br><br>Every skill you acquire here is a beacon of enlightenment, and its benefits are everlasting. These skills are designed to endure, persisting across all prestiges, ascensions, and whatever challenges or triumphs the future may hold. Embrace the permanence of your newfound wisdom, for it will remain with you as a steadfast guide, lighting your path through every stage of your odyssey.</h4>
+            <h4>Welcome to the illustrious Hall of Knowledge, a revered sanctuary where the wisdom of ages is preserved and shared. Within these hallowed halls, you will unlock a wealth of skills and insights, each meticulously curated to empower your journey.<br><br>Every skill you acquire here is a beacon of enlightenment, enduring through prestiges, ascensions, and beyond—though some forces may still challenge their permanence. Embrace the journey and let your wisdom guide you through every stage of your odyssey.</h4>
             <div id="librarySkills">
                 <!-- Skills will be dynamically added here -->
             </div>
@@ -351,7 +465,7 @@
         <div class="powerhall-overlay-content">
             <span class="close-button" id="closePowerHallOverlay">&times;</span>
             <h1>HALL OF POWER</h1>
-            <h4>Welcome to the Hall of Power, a place where the strongest beings from countless realities converge. Nestled between the threads of the megaverse, this market of might is unlike anything you've ever encountered. Here, the air crackles with energy as warriors, sorcerers, and cosmic entities barter and trade not for trinkets, but for raw power itself.<br><br>                Each skill you master within these hallowed grounds is a key to unlocking the primordial forces that bind the megaverse together. As you hone your abilities, you’ll find yourself ascending through challenges that test the limits of your strength, pushing you ever closer to the ultimate power that echoes through every universe and dimension.</h4>
+            <h4>Welcome to the Hall of Power, a place where the strongest beings from countless realities converge. Nestled between the threads of the megaverse, this market of might is unlike anything you've ever encountered. Here, the air crackles with energy as warriors, sorcerers, and cosmic entities barter and trade not for trinkets, but for raw power itself.<br><br>Each skill you master within these hallowed grounds is a key to unlocking the primordial forces that bind the megaverse together. As you hone your abilities, you’ll find yourself ascending through challenges that test the limits of your strength, pushing you ever closer to the ultimate power that echoes through every universe and dimension.</h4>
             <div id="powerHallSkills">
                 <!-- Power skills will be dynamically added here -->
             </div>
@@ -378,19 +492,22 @@
             </div>
 
             <button id="closeLoveHallButton">Exit</button>
+            <button id="respecButton" style="background-color: red; color: white;">
+                Respec and Restart Embrace
+            </button>
         </div>
-    </div>    
+    </div>
     <!-- Settings Overlay -->
     <div id="settingsOverlay" class="settings-overlay" style="display: none;">
         <div class="settings-overlay-content">
             <span class="close-button" id="closeSettingsOverlay">&times;</span>
             <h1>Settings</h1>
-            <h4>Degens Idle v0.916</h4>
-            
+            <h4>Degens Idle v0.9308</h4>
+
             <div class="settings-section">
                 <h3>Save Management</h3>
                 <p>
-                    Exporting your game will save a file to your Downloads folder. (Currently does not work on mobile)
+                    Exporting your game will save a file to your Downloads folder. (Currently may have issues on mobile)
                 </p>
                 <div class="settings-buttons">
                     <button id="exportSaveButton">
@@ -406,29 +523,32 @@
                     <label for="createBackupOnImport">Create Save Backup on Import</label>
                 </div>
             </div>
-            
-            
+
+
+
             <div class="settings-section">
                 <h3>Gameplay Options</h3>
                 <div class="settings-buttons">
-                    <button id="automationButton" class="automation-button">
-                        Automation
-                        <div class="square"></div>
-                        <div class="square"></div>
-                        <div class="square"></div>
-                        <div class="square"></div>
-                        <div class="square"></div>
-                        <div class="square"></div>
-                        <div class="square"></div>
-                        <div class="square"></div>
-                        <div class="square"></div>
-                        <div class="square"></div>
-                    </button>
                     <button id="howToPlayButton"><i class="icon-info"></i> How to Play?</button>
                     <button id="numberFormatButton" class="full-width-button">Number Format: Mixed</button>
                 </div>
+                <div class="settings-switch" style="margin-bottom: 10px;">
+                    <label for="enableQuickMode">Quick mode : Skip all confirmation pop-ups</label>
+                    <label class="switch">
+                        <input type="checkbox" id="enableQuickMode">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="settings-switch" style="margin-bottom: 10px;">
+                    <label for="enableButtonAnimations">Glowing Animations (CPU intensive)</label>
+                    <label class="switch">
+                        <input type="checkbox" id="enableButtonAnimations">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <button id="restartButton">Restart Entire Game</button>
             </div>
-            
+
             <div class="settings-section">
                 <h3>Community & Support</h3>
                 <div class="settings-note">
@@ -440,7 +560,7 @@
                 </button>
                 <button id="donateButton"><i class="icon-donate"></i> Donate</button>
             </div>
-            
+
             <button id="closeSettingsButton">Exit</button>
         </div>
     </div>
@@ -450,7 +570,7 @@
         <div class="automation-overlay-content">
             <span class="close-button" id="closeAutomationOverlay">&times;</span>
             <h1>Automation Settings</h1>
-            
+
             <!-- Content will be dynamically updated by JavaScript -->
             <div id="automationContent">
                 <!-- Placeholder content, will be replaced by JS -->
@@ -467,12 +587,27 @@
             <span class="close-button" id="closeAchievementsOverlay">&times;</span>
             <h1>Achievements</h1>
             <div id="achievements-info">Achievements Unlocked: 0/100 | Multiplier: 1.00x (to ALL RESOURCES)</div>
+
+            <!-- Tabs for Achievement Categories -->
+            <div id="achievementTabs" class="achievement-tabs">
+                <button class="tab-button active" data-type="all">All</button>
+                <button class="tab-button" data-type="progression">Progression</button>
+                <button class="tab-button" data-type="freebie">Freebie</button>
+                <button class="tab-button" data-type="puzzle">Puzzle</button>
+                <button class="tab-button" data-type="skill">Skill</button>
+            </div>
+
+            <!-- Info box to display count of unlocked achievements in current tab -->
+            <div id="achievementCount" class="achievement-count">Unlocked: 0/0</div>
+
             <div id="achievements-grid">
                 <!-- Achievements will be dynamically added here -->
             </div>
             <button id="closeAchievementsButton">Exit</button>
         </div>
     </div>
+
+
 
     <!-- Donation Overlay -->
     <div id="donationOverlay" class="donation-overlay" style="display: none;">
@@ -488,6 +623,7 @@
     </div>
     <!-- Hidden file input for importing save file -->
     <input type="file" id="importFileInput" style="display: none;">
+    <script src="htmlutils.js"></script>
     <script src="upgrades.js"></script>
     <script src="script.js"></script>
     <script src="library.js"></script>
