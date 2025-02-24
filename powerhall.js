@@ -207,6 +207,8 @@ function updatePowerHallSkillDisplay() {
     });
 }
 
+let clickedPowerHallSkills = new Set();
+
 function initializePowerHallSkills() {
     console.log("Initializing Power Hall Skills...");
     const skillLevels = {};
@@ -267,8 +269,13 @@ function initializePowerHallSkills() {
                     }
                 } else if (!skill.unlocked && power < skill.cost) {
                     showStatusMessage(skillDiv, 'Insufficient Power to unlock this skill.', false);
-                }  else if (skill.unlocked && skill.name == 'Cosmic Gamekeeper') {
+                } else if (skill.unlocked && skill.name == 'Cosmic Gamekeeper') {
                     unlockPowerHallSkill(skill, false, true);  //only to show message again
+                } else if (skill.unlocked){
+                    clickedPowerHallSkills.add(skill.name);
+                    if(clickedPowerHallSkills.size == powerHallSkills.length - 1){
+                        unlockAchievement(`What's so special about Cosmic Gamekeeper?`);
+                    }
                 }
             });
             skillRow.appendChild(skillDiv);
@@ -289,6 +296,11 @@ function openPowerHall() {
 
         openPowerHallTimestamp = crunchTimer; 
         checkFastCommuter();
+
+        if (!achievementsMap.get('Do as dev #3 says').isUnlocked && purchasedUpgradesSet.has('Degens Idle Dev #3')){
+            hallVisitsSequence += 'P';
+            checkHallVisitsSequence();
+        }
 
         // Prevent overlay from closing when clicking inside the content
         const powerHallContent = document.querySelector('.powerhall-overlay-content');

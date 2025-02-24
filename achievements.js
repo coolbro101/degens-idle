@@ -42,6 +42,13 @@ const achievements = [
         type: 'freebie',
     },
     {
+        name: 'Creative Dreams',
+        isUnlocked: false,
+        hoverText: 'Creative Dreams Yield Daring Triumphs, Yet Careful Curiosity Drives Determined Youth Toward Timeless Discoveries.',
+        img: 'imgs/achievements/creative_dreams.jpg',
+        type: 'puzzle',
+    },
+    {
         name: 'First Prestige',
         isUnlocked: false,
         hoverText: 'click some button (without quick mode)',
@@ -100,7 +107,7 @@ const achievements = [
     {
         name: 'Now we are Progressing',
         isUnlocked: false,
-        hoverText: 'why only ascend one upgrade at a time?',
+        hoverText: 'why only ascend two upgrades at a time?',
         img: 'imgs/achievements/double_ascension.jpg',
         type: 'progression',
     },
@@ -117,6 +124,13 @@ const achievements = [
         hoverText: 'try to finish the game way too early',
         img: 'imgs/achievements/rick_roll.jpg',
         type: 'progression',
+    },
+    {
+        name: 'Big Sean - Dance',
+        isUnlocked: false,
+        hoverText: 'sing the lyrics',
+        img: 'imgs/achievements/ass_ass.jpg',
+        type: 'puzzle',
     },
     {
         name: 'Speed Demon',
@@ -231,6 +245,13 @@ const achievements = [
         type: 'puzzle',
     },
     {
+        name: 'Broken Time Machine',
+        isUnlocked: false,
+        hoverText: 'how fast does the DeLorean need to go? click the Not Ready Time Warp exactly that many times and wait 10 seconds',
+        img: 'imgs/achievements/broken_time_machine.jpg',
+        type: 'puzzle',
+    },
+    {
         name: 'Degens Idle Purist',
         isUnlocked: false,
         hoverText: 'one game at a time',
@@ -268,9 +289,23 @@ const achievements = [
     {
         name: 'Better Safe Than Sorry',
         isUnlocked: false,
-        hoverText: 'export your save',
+        hoverText: 'export your save to a file',
         img: 'imgs/achievements/better_safe_than_sorry.jpg',
         type: 'freebie',
+    },
+    {
+        name: 'Magical Text',
+        isUnlocked: false,
+        hoverText: 'copy save into clipboard',
+        img: 'imgs/achievements/magical_text.jpg',
+        type: 'freebie',
+    },
+    {
+        name: 'Invalid Data',
+        isUnlocked: false,
+        hoverText: '???',
+        img: 'imgs/achievements/invalid_data.jpg',
+        type: 'puzzle',
     },
     {
         name: 'Transcend',
@@ -338,7 +373,7 @@ const achievements = [
     {
         name: 'Over 9000',
         isUnlocked: false,
-        hoverText: 'prestige for over 9000 mult',
+        hoverText: 'prestige for over 9000 mult (cannot have infinite prestige)',
         img: 'imgs/achievements/over_9000.jpg',
         type: 'puzzle',
     },
@@ -347,6 +382,13 @@ const achievements = [
         isUnlocked: false,
         hoverText: 'join the Discord',
         img: 'imgs/achievements/discord.jpg',
+        type: 'freebie',
+    },
+    {
+        name: 'Visit Wiki',
+        isUnlocked: false,
+        hoverText: 'visit the game wiki (you are also encouraged to contribute to it)',
+        img: 'imgs/achievements/visit_wiki.jpg',
         type: 'freebie',
     },
     {
@@ -375,6 +417,13 @@ const achievements = [
         isUnlocked: false,
         hoverText: 'you win some, you lose some',
         img: 'imgs/achievements/get_up_and_try_again.jpg',
+        type: 'puzzle',
+    },
+    {
+        name: 'Virtual Dodging',
+        isUnlocked: false,
+        hoverText: 'tweak VR code for the Matrix',
+        img: 'imgs/achievements/virtual_dodging.jpg',
         type: 'puzzle',
     },
     {
@@ -438,6 +487,13 @@ const achievements = [
         isUnlocked: false,
         hoverText: 'get far without knowing how to play?',
         img: 'imgs/achievements/going_in_blind.jpg',
+        type: 'puzzle',
+    },
+    {
+        name: 'Bring the Whole Squad',
+        isUnlocked: false,
+        hoverText: 'have cap, spidey, hulk, thanos, vegeta, arnold, and tyson at your side to face The Rock',
+        img: 'imgs/achievements/bring_the_whole_squad.jpg',
         type: 'puzzle',
     },
     {
@@ -522,6 +578,13 @@ const achievements = [
         isUnlocked: false,
         hoverText: 'defeat Training Dummy in less than 15 seconds after Big Crunch',
         img: 'imgs/achievements/training_hard.jpg',
+        type: 'skill',
+    },
+    {
+        name: 'Mathematical Overshot',
+        isUnlocked: false,
+        hoverText: 'win a math game after selecting way too many portals',
+        img: 'imgs/achievements/mathematical_overshot.jpg',
         type: 'skill',
     },
     {
@@ -637,6 +700,13 @@ const achievements = [
         type: 'puzzle',
     },
     {
+        name: `What's so special about Cosmic Gamekeeper?`,
+        isUnlocked: false,
+        hoverText: `why don't the others do this?`,
+        img: 'imgs/achievements/whats_so_special_about_cosmic_gamekeeper.jpg',
+        type: 'puzzle',
+    },
+    {
         name: 'Make Kuzzi Love You',
         isUnlocked: false,
         hoverText: 'fill out the game feedback form with lots of details',
@@ -707,11 +777,25 @@ const achievements = [
         type: 'progression',
     },
     {
+        name: 'Transcendent Leap',
+        isUnlocked: false,
+        hoverText: 'T before A',
+        img: 'imgs/achievements/transcendent_leap.jpg',
+        type: 'puzzle',
+    },
+    {
         name: 'Cosmic Drought',
         isUnlocked: false,
         hoverText: 'buy a certain upgrade',
         img: 'imgs/achievements/cosmic_drought.jpg',
         type: 'progression',
+    },
+    {
+        name: 'Rote Amnesia',
+        isUnlocked: false,
+        hoverText: 'complete a 6-length memory game in reverse',
+        img: 'imgs/achievements/rote_amnesia.jpg',
+        type: 'skill',
     },
     {
         name: 'Tank the Crit',
@@ -728,6 +812,13 @@ const achievements = [
         type: 'puzzle',
     },
     {
+        name: `I like graphs!`,
+        isUnlocked: false,
+        hoverText: `ok nerd`,
+        img: 'imgs/achievements/i_like_graphs.jpg',
+        type: 'puzzle',
+    },
+    {
         name: `Can't Hold Me Back`,
         isUnlocked: false,
         hoverText: 'hit mini game soft cap 50 times',
@@ -739,6 +830,13 @@ const achievements = [
         isUnlocked: false,
         hoverText: `open 777 lucky boxes`,
         img: 'imgs/achievements/luck_of_the_irish.jpg',
+        type: 'skill',
+    },
+    {
+        name: 'Twin Mathematical Realms',
+        isUnlocked: false,
+        hoverText: `2233443322 win math games with exactly X portals (losses don't count against you)`,
+        img: 'imgs/achievements/twin_mathematical_realms.jpg',
         type: 'skill',
     },
     {
@@ -785,9 +883,30 @@ const achievements = [
         type: 'puzzle',
     },
     {
+        name: 'One Week of Saving',
+        isUnlocked: false,
+        hoverText: 'export your save on 7 different days',
+        img: 'imgs/achievements/7_days_of_saving.jpg',
+        type: 'freebie',
+    },
+    {
+        name: 'But What If I Want To 69?',
+        isUnlocked: false,
+        hoverText: 'get sum of 69 in a math game with target less than 30',
+        img: 'imgs/achievements/but_what_if_i_want_to_69.jpg',
+        type: 'skill',
+    },
+    {
+        name: 'Number One',
+        isUnlocked: false,
+        hoverText: `Everybody want to know what I'd do if I didn't win. I guess we'll never know.`,
+        img: 'imgs/achievements/kanye_number_one.jpg',
+        type: 'puzzle',
+    },
+    {
         name: 'Biggest Crunch',
         isUnlocked: false,
-        hoverText: 'big crunch for over 9000 mult',
+        hoverText: 'big crunch for over 9000 mult (cannot have infinite collapse)',
         img: 'imgs/achievements/biggest_crunch.jpg',
         type: 'puzzle',
     },
@@ -889,6 +1008,7 @@ const achievements = [
         hoverText: 'infinite embrace for > 25 LP',
         img: 'imgs/achievements/massive_embrace.jpg',
         type: 'puzzle',
+        respecPoint: true,
     },
     {
         name: 'Ugly by Choice',
@@ -928,6 +1048,20 @@ const achievements = [
         respecPoint: true,
     },
     {
+        name: 'Where did the other ball go?',
+        isUnlocked: false,
+        hoverText: 'do this in Deism',
+        img: 'imgs/achievements/where_did_the_other_ball_go.jpg',
+        type: 'puzzle',
+    },
+    {
+        name: 'Unwinnable',
+        isUnlocked: false,
+        hoverText: 'get unlucky Skepticism rolls',
+        img: 'imgs/achievements/unwinnable.jpg',
+        type: 'puzzle',
+    },
+    {
         name: 'Study Skepticism',
         isUnlocked: false,
         hoverText: `complete the Skepticism meditation`,
@@ -935,9 +1069,16 @@ const achievements = [
         type: 'progression',
     },
     {
+        name: 'Perpetual Noob',
+        isUnlocked: false,
+        hoverText: `gamer but still don't get the game`,
+        img: 'imgs/achievements/perpetual_noob.jpg',
+        type: 'puzzle',
+    },
+    {
         name: 'Impossible Crunch',
         isUnlocked: false,
-        hoverText: 'big crunch for over 99M mult',
+        hoverText: 'big crunch for over 99M mult (cannot have infinite collapse)',
         img: 'imgs/achievements/impossible_crunch.jpg',
         type: 'puzzle',
     },
@@ -985,6 +1126,20 @@ const achievements = [
         type: 'puzzle',
     },
     {
+        name: 'Absolute Leap',
+        isUnlocked: false,
+        hoverText: 'T before A without BC (cannot have infinite collapse)',
+        img: 'imgs/achievements/absolute_leap.jpg',
+        type: 'puzzle',
+    },
+    {
+        name: 'Trinitism',
+        isUnlocked: false,
+        hoverText: 'beat Dualism with 3 max size balls, at max duration',
+        img: 'imgs/achievements/trinitism.jpg',
+        type: 'puzzle',
+    },
+    {
         name: 'Slice of Euphoria',
         isUnlocked: false,
         hoverText: 'bring pizza to the Epicurean party',
@@ -992,10 +1147,46 @@ const achievements = [
         type: 'puzzle',
     },
     {
+        name: 'Lacking Balance',
+        isUnlocked: false,
+        hoverText: `try to enter Hall of Balance before mastering balance`,
+        img: 'imgs/achievements/lacking_balance.jpg',
+        type: 'progression',
+    },
+    {
+        name: 'Engagement',
+        isUnlocked: false,
+        hoverText: 'infinite embrace for 619 love points (+/- 0.5)',
+        img: 'imgs/achievements/engagement.jpg',
+        type: 'puzzle',
+        respecPoint: true,
+    },
+    {
+        name: 'Two Weeks of Saving',
+        isUnlocked: false,
+        hoverText: 'export your save on 14 different days',
+        img: 'imgs/achievements/14_days_of_saving.jpg',
+        type: 'freebie',
+    },
+    {
         name: 'Apply Wisdom',
         isUnlocked: false,
-        hoverText: 'apprach Agnosticism with WISDOM',
+        hoverText: 'approach Agnosticism with WISDOM',
         img: 'imgs/achievements/agnosticism_wisdom.jpg',
+        type: 'puzzle',
+    },
+    {
+        name: 'Final Meditation?',
+        isUnlocked: false,
+        hoverText: 'complete the final belief system oriented meditation',
+        img: 'imgs/achievements/final_meditation.jpg',
+        type: 'progression',
+    },
+    {
+        name: 'Reflections of Insight',
+        isUnlocked: false,
+        hoverText: `review what you have learned from all the meditations`,
+        img: 'imgs/achievements/reflections_of_insight.jpg',
         type: 'puzzle',
     },
     {
@@ -1006,6 +1197,140 @@ const achievements = [
         type: 'progression',
     },
     {
+        name: 'Win the Unwinnable',
+        isUnlocked: false,
+        hoverText: 'succeed with unwinnable Skepticism rolls',
+        img: 'imgs/achievements/win_the_unwinnable.jpg',
+        type: 'puzzle',
+    },
+    {
+        name: 'DodecaDragons',
+        isUnlocked: false,
+        hoverText: `buy this upgrade`,
+        img: 'imgs/achievements/dodecadragons.jpg',
+        type: 'progression',
+    },
+    {
+        name: 'Obie Trice',
+        isUnlocked: false,
+        hoverText: `real name, __ ________`,
+        img: 'imgs/achievements/obie_trice.jpg',
+        type: 'puzzle',
+    },
+    {
+        name: 'Wisdom, not Insight',
+        isUnlocked: false,
+        hoverText: `???`,
+        img: 'imgs/achievements/wisdom_not_insight.jpg',
+        type: 'puzzle',
+    },
+    {
+        name: 'Balance Master',
+        isUnlocked: false,
+        hoverText: `meet the balance master`,
+        img: 'imgs/achievements/balance_master.jpg',
+        type: 'progression',
+        respecPoint: true,
+    },
+    {
+        name: 'Birthdayception',
+        isUnlocked: false,
+        hoverText: `celebrate before birthday`,
+        img: 'imgs/achievements/birthdayception.jpg',
+        type: 'puzzle',
+    },
+    {
+        name: 'Balancing Act',
+        isUnlocked: false,
+        hoverText: `unlock first Hall of Balance skill`,
+        img: 'imgs/achievements/balancing_act.jpg',
+        type: 'progression',
+    },
+    {
+        name: 'One Month of Saving',
+        isUnlocked: false,
+        hoverText: 'export your save on 30 different days',
+        img: 'imgs/achievements/30_days_of_saving.jpg',
+        type: 'freebie',
+    },
+    {
+        name: `Now that's a time wall!`,
+        isUnlocked: false,
+        hoverText: 'time displayed in eons',
+        img: 'imgs/achievements/now_thats_a_time_wall.jpg',
+        type: 'puzzle',
+    },
+    {
+        name: 'Rasta Deadpool',
+        isUnlocked: false,
+        hoverText: '???',
+        img: 'imgs/achievements/rasta_deadpool.jpg',
+        type: 'puzzle',
+    },
+    {
+        name: 'Meditation Maniac',
+        isUnlocked: false,
+        hoverText: `complete all meditations without any Hall of Love skills that have "meditation" in description`,
+        img: 'imgs/achievements/meditation_maniac.jpg',
+        type: 'puzzle',
+    },
+    {
+        name: 'Do as dev #3 says',
+        isUnlocked: false,
+        hoverText: `???`,
+        img: 'imgs/achievements/do_as_dev_says.jpg',
+        type: 'puzzle',
+    },
+    {
+        name: 'Rising Balance',
+        isUnlocked: false,
+        hoverText: `play with balance sliders`,
+        img: 'imgs/achievements/rising_balance.jpg',
+        type: 'puzzle',
+    },
+    {
+        name: 'First Commandment',
+        isUnlocked: false,
+        hoverText: `study Christianity without calling yourself a god`,
+        img: 'imgs/achievements/first_commandment.jpg',
+        type: 'puzzle',
+    },
+    {
+        name: 'Where did everybody go?',
+        isUnlocked: false,
+        hoverText: `longer respawn time than duration on Epicureanism`,
+        img: 'imgs/achievements/where_did_everybody_go.jpg',
+        type: 'puzzle',
+    },
+    {
+        name: 'Check Your Ego',
+        isUnlocked: false,
+        hoverText: `let your ego win over and over`,
+        img: 'imgs/achievements/check_your_ego.jpg',
+        type: 'puzzle',
+    },
+    {
+        name: 'Prove the Muppet Wrong',
+        isUnlocked: false,
+        hoverText: `???`,
+        img: 'imgs/achievements/prove_the_muppet_wrong.jpg',
+        type: 'puzzle',
+    },
+    {
+        name: 'Honor',
+        isUnlocked: false,
+        hoverText: `???`,
+        img: 'imgs/achievements/honor.jpg',
+        type: 'puzzle',
+    },
+    {
+        name: 'STARBOUND',
+        isUnlocked: false,
+        hoverText: `that's too many letters`,
+        img: 'imgs/achievements/starbound.jpg',
+        type: 'puzzle',
+    },
+    {
         name: 'Fifty Days of Saving',
         isUnlocked: false,
         hoverText: 'export your save on 50 different days',
@@ -1014,18 +1339,25 @@ const achievements = [
         respecPoint: true,
     },
     {
+        name: 'Ego Death',
+        isUnlocked: false,
+        hoverText: `defeat your ego`,
+        img: 'imgs/achievements/defeat_your_ego.jpg',
+        type: 'progression',
+    },
+    {
+        name: 'Math is Evil',
+        isUnlocked: false,
+        hoverText: `not a tip, but if you choose to skip any achievements - skip this one`,
+        img: 'imgs/achievements/math_is_evil.jpg',
+        type: 'skill',
+    },
+    {
         name: 'Serious Gamer',
         isUnlocked: false,
         hoverText: `get mini game multiplier above 7.5x`,
         img: 'imgs/achievements/serious_gamer.jpg',
         type: 'skill',
-    },
-    {
-        name: 'Rasta Deadpool',
-        isUnlocked: false,
-        hoverText: '???',
-        img: 'imgs/achievements/rasta_deadpool.jpg',
-        type: 'puzzle',
     },
 ];
 
@@ -1106,24 +1438,6 @@ function renderAchievements(type = 'all') {
     updateAchievementsInfo();
 }
 
-// Function to handle tab switching
-function switchTab(event) {
-    const type = event.target.getAttribute('data-type');
-
-    // Remove 'active' class from all buttons
-    document.querySelectorAll('.tab-button').forEach(button => {
-        button.classList.remove('active');
-    });
-
-    // Add 'active' class to the clicked button
-    event.target.classList.add('active');
-
-    // Render achievements for the selected type and update count
-    renderAchievements(type);
-}
-
-
-
 let numAchievementsOpens = 0;
 // Function to show the achievements overlay
 function showAchievementsOverlay() {
@@ -1134,14 +1448,10 @@ function showAchievementsOverlay() {
     if (numAchievementsOpens==5){
         unlockAchievement('Fifth');
     }
-
-    // Reset active tab to 'All'
-    document.querySelectorAll('.tab-button').forEach(button => {
-        button.classList.remove('active');
-    });
-    document.querySelector('.tab-button[data-type="all"]').classList.add('active');
-
-    renderAchievements(); // Render the achievements grid inside the overlay
+    assAssSequence += 'A';
+    checkAssAssSequence();
+    // Reset to default tab and render achievements
+    achievementTabs.reset();
 }
 
 // Function to update the achievements info
@@ -1184,7 +1494,7 @@ function unlockAchievement(name, duringLoad = false) {
             saveGameState();
             updateMultipliersDisplay();
             updateEffectiveMultipliers();
-            showPopupTooltip(`Unlocked Achievement: ${name}`, color='#1B4D3E', durationSeconds=5);
+            showPopupTooltip(`Unlocked Achievement: ${name}`, color='#1B4D3E', durationSeconds=6);
         }
     }
 }
@@ -1193,6 +1503,11 @@ function closeAchievementsOverlay() {
     const overlay = document.getElementById('achievementsOverlay');
     overlay.style.display = 'none';
 }
+
+const achievementTabs = new TabbedDisplay(
+    document.querySelector('#achievementTabs'), // tab containing element
+    renderAchievements // call this function with name when changing tabs
+);
 
 document.addEventListener('DOMContentLoaded', () => {
     // Event listener to open the achievements overlay when the button is clicked
@@ -1210,9 +1525,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Event listeners for tab buttons
-    document.querySelectorAll('.tab-button').forEach(button => {
-        button.addEventListener('click', switchTab);
-    });
+    achievementTabs.addTabsListeners();
 
     // Optional: Render achievements immediately if needed
     // renderAchievements();

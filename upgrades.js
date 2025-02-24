@@ -196,7 +196,7 @@ const upgrades = [
         img: `imgs/cosmetic_surgery.jpg`,
         message: `Congratulations on your bold transformation! It's natural to feel a little weaker—about 10% on a prestige multiplier scale—after undergoing significant cosmetic surgery. Just like recovering from any major procedure, your strength and confidence will gradually return.<br><br>This temporary adjustment is a gentle reminder that even extraordinary changes come with phases of recovery. Embrace this period of healing as a testament to your resilience. With time and patience, your full strength and beauty will shine through, stronger than ever.`,
         miniPrestigeMultiplier: 0.9,
-        hoverOverwrite: `Just a quick snip`,
+        hoverOverwrite: `This one has a big tradeoff`,
     },
     {
         name: `Ultimate Solution`,
@@ -259,7 +259,7 @@ const upgrades = [
     {
         name: `Proceed with Caution`,
         cost: { copium: 1000000, delusion: 0, yachtMoney: 0, trollPoints: 1000000, hopium: 0, knowledge: 0, power: 0, serenity: 0 },
-        earnings: { copiumPerSecond: 60, delusionPerSecond: 0, yachtMoneyPerSecond: 400, trollPointsPerSecond: 100, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 0 },
+        earnings: { copiumPerSecond: 50, delusionPerSecond: 0, yachtMoneyPerSecond: 400, trollPointsPerSecond: 100, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 0 },
         img: `imgs/proceed_with_caution.jpg`,
         message: `<p>You've just permanently unlocked the <strong>"Buy Seen"</strong> and <strong>"Buy Max"</strong> buttons. These will help you speed up your progress by purchasing all affordable upgrades with a single click. However, <strong>be cautious</strong>—for now, these buttons will also buy upgrades that might work against you. Choose wisely!</p>
                     <p><strong>Hint 1:</strong> You can press <strong>S</strong> and <strong>M</strong> on your keyboard to quickly use these features.</p>
@@ -309,7 +309,7 @@ const upgrades = [
     {
         name: `Internet = Cats`,
         cost: { copium: 0, delusion: 0, yachtMoney: 1.1e9, trollPoints: 6e9, hopium: 0, knowledge: 0, power: 0, serenity: 0 },
-        earnings: { copiumPerSecond: 100000, delusionPerSecond: -4000, yachtMoneyPerSecond: 0, trollPointsPerSecond: 45600, hopiumPerSecond: 0.001, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 0 },
+        earnings: { copiumPerSecond: 100000, delusionPerSecond: -5000, yachtMoneyPerSecond: 0, trollPointsPerSecond: 45600, hopiumPerSecond: 0.001, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 0 },
         img: `imgs/cats_mice.jpg`,
     },
     {
@@ -398,7 +398,7 @@ const upgrades = [
     {
         name: `Melvor Idle`,
         cost: { copium: 1e14, delusion: 3e13, yachtMoney: 0, trollPoints: 0, hopium: 0, knowledge: 50, power: 0, serenity: 0 },
-        earnings: { copiumPerSecond: 1040000, delusionPerSecond: 0, yachtMoneyPerSecond: 500000, trollPointsPerSecond: 1040000, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 0 },
+        earnings: { copiumPerSecond: 1010000, delusionPerSecond: 0, yachtMoneyPerSecond: 500000, trollPointsPerSecond: 1040000, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 0 },
         img: `imgs/melvor.jpg`,
         hoverOverwrite: `I don't know. Never played it. Take some Copium.`,
     }, 
@@ -411,7 +411,7 @@ const upgrades = [
     {
         name: `Oh Deer`,
         cost: { copium: 0, delusion: 100, yachtMoney: 0, trollPoints: 1e14, hopium: 1000000, knowledge: 7.5, power: 0, serenity: 0 },
-        earnings: { copiumPerSecond: 0, delusionPerSecond: 152000, yachtMoneyPerSecond: 0, trollPointsPerSecond: 10800000, hopiumPerSecond: 0.2, knowledgePerSecond: 0.000002, powerPerSecond: 0, serenityPerSecond: 0 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 151000, yachtMoneyPerSecond: 0, trollPointsPerSecond: 10800000, hopiumPerSecond: 0.2, knowledgePerSecond: 0.000002, powerPerSecond: 0, serenityPerSecond: 0 },
         img: `imgs/oh_deer.jpg`,
     },
     {
@@ -445,7 +445,7 @@ const upgrades = [
     {
         name: `Cybertruck`,
         cost: { copium: 0, delusion: 0, yachtMoney: 3e14, trollPoints: 0, hopium: 10000000, knowledge: 0, power: 0, serenity: 0 },
-        earnings: { copiumPerSecond: 1.05e7, delusionPerSecond: 1.65e6, yachtMoneyPerSecond: -100000, trollPointsPerSecond: 1.2e6, hopiumPerSecond: 0, knowledgePerSecond: 0.0000037, powerPerSecond: 0, serenityPerSecond: 0 },
+        earnings: { copiumPerSecond: 1.05e7, delusionPerSecond: 1.62e6, yachtMoneyPerSecond: -100000, trollPointsPerSecond: 1.2e6, hopiumPerSecond: 0, knowledgePerSecond: 0.0000037, powerPerSecond: 0, serenityPerSecond: 0 },
         img: `imgs/cybertruck.jpg`,
     },
     {
@@ -469,7 +469,7 @@ const upgrades = [
     {
         name: `Spotify Wrapped`,
         cost: { copium: 1e15, delusion: 0, yachtMoney: 1e14, trollPoints: 0, hopium: 1e8, knowledge: 10000, power: 0, serenity: 0 },
-        earnings: { copiumPerSecond: 1.99e6, delusionPerSecond: 1.19e6, yachtMoneyPerSecond: 0, trollPointsPerSecond: 1.7e6, hopiumPerSecond: 2.25, knowledgePerSecond: 0.000014, powerPerSecond: 0, serenityPerSecond: 0 },
+        earnings: { copiumPerSecond: 1.99e6, delusionPerSecond: 1.17e6, yachtMoneyPerSecond: 0, trollPointsPerSecond: 1.7e6, hopiumPerSecond: 2.25, knowledgePerSecond: 0.000014, powerPerSecond: 0, serenityPerSecond: 0 },
         img: `imgs/spotify_wrapped.jpg`,
     },
     {
@@ -530,7 +530,7 @@ const upgrades = [
     {
         name: `Honest Work`,
         cost: { copium: 0, delusion: 0, yachtMoney: 1.6e18, trollPoints: 0, hopium: 4.2e13, knowledge: 2.25e8, power: 0, serenity: 0 },
-        earnings: { copiumPerSecond: 6.1e6, delusionPerSecond: 1.95e7, yachtMoneyPerSecond: 9.3e6, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 0.00048, powerPerSecond: 0, serenityPerSecond: 0 },
+        earnings: { copiumPerSecond: 6.1e6, delusionPerSecond: 1.9e7, yachtMoneyPerSecond: 9.3e6, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 0.00048, powerPerSecond: 0, serenityPerSecond: 0 },
         img: `imgs/honest_work.jpg`,
     },
     {
@@ -560,7 +560,7 @@ const upgrades = [
     {
         name: `Still very stupid`,
         cost: { copium: 0, delusion: 1.8e19, yachtMoney: 0, trollPoints: 0, hopium: 1.8e15, knowledge: 1.8e9, power: 1.8e-7, serenity: 0 },
-        earnings: { copiumPerSecond: 5.9e7, delusionPerSecond: 5.9e7, yachtMoneyPerSecond: 7.9e7, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 0.0032, powerPerSecond: 0, serenityPerSecond: 0 },
+        earnings: { copiumPerSecond: 5.9e7, delusionPerSecond: 5.9e7, yachtMoneyPerSecond: 7.9e7, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 0.0031, powerPerSecond: 0, serenityPerSecond: 0 },
         img: `imgs/young_stupid.jpg`,
     },
     {
@@ -578,7 +578,7 @@ const upgrades = [
     {
         name: `Where did the time go?`,
         cost: { copium: 7e19, delusion: 7e19, yachtMoney: 3e19, trollPoints: 0, hopium: 8e14, knowledge: 0, power: 0, serenity: 0 },
-        earnings: { copiumPerSecond: 4.5e7, delusionPerSecond: 4.3e7, yachtMoneyPerSecond: 2e7, trollPointsPerSecond: 9e7, hopiumPerSecond: 0, knowledgePerSecond: 0.0033, powerPerSecond: 0, serenityPerSecond: 0 },
+        earnings: { copiumPerSecond: 4.3e7, delusionPerSecond: 4.3e7, yachtMoneyPerSecond: 2e7, trollPointsPerSecond: 9e7, hopiumPerSecond: 0, knowledgePerSecond: 0.0033, powerPerSecond: 0, serenityPerSecond: 0 },
         img: `imgs/momoa_cavill.jpg`,
     },
     {
@@ -600,7 +600,7 @@ const upgrades = [
     {
         name: `Increlution`,
         cost: { copium: 9e19, delusion: 0, yachtMoney: 0, trollPoints: 0, hopium: 1e16, knowledge: 1e9, power: 0, serenity: 0 },
-        earnings: { copiumPerSecond: 0, delusionPerSecond: 3e7, yachtMoneyPerSecond: 4e7, trollPointsPerSecond: 9e7, hopiumPerSecond: -6000, knowledgePerSecond: 0.0024, powerPerSecond: 0, serenityPerSecond: 0 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 3e7, yachtMoneyPerSecond: 4e7, trollPointsPerSecond: 8.8e7, hopiumPerSecond: -6000, knowledgePerSecond: 0.0024, powerPerSecond: 0, serenityPerSecond: 0 },
         img: `imgs/increlution.jpg`,
         hoverOverwrite: `Purchase Early Access`,
         message: `Increlution is an incremental game that blends survival and strategy. Players gather resources, build structures, and fend off threats in a post-apocalyptic world, unlocking new technologies and abilities as they progress. Tragically, just like this upgrade image, the game was left in an unfinished state after collecting profits from early access sales, leaving fans hoping for future updates that may never come.`,
@@ -614,7 +614,7 @@ const upgrades = [
     {
         name: `BRUHHHH`,
         cost: { copium: 1e21, delusion: 1e21, yachtMoney: 1e21, trollPoints: 1e21, hopium: 0, knowledge: 0, power: 0, serenity: 0 },
-        earnings: { copiumPerSecond: 8.5e8, delusionPerSecond: 8.5e8, yachtMoneyPerSecond: 8.5e8, trollPointsPerSecond: 8.5e8, hopiumPerSecond: 0, knowledgePerSecond: 0.075, powerPerSecond: 0, serenityPerSecond: 0 },
+        earnings: { copiumPerSecond: 8.5e8, delusionPerSecond: 8.5e8, yachtMoneyPerSecond: 8.5e8, trollPointsPerSecond: 8.5e8, hopiumPerSecond: 0, knowledgePerSecond: 0.073, powerPerSecond: 0, serenityPerSecond: 0 },
         img: `imgs/bruhhh.jpg`,
     },
     {
@@ -627,7 +627,7 @@ const upgrades = [
     {
         name: `One Does Not Simply`,
         cost: { copium: 5e20, delusion: 0, yachtMoney: 2e21, trollPoints: 0, hopium: 1e16, knowledge: 1.5e9, power: 0, serenity: 0 },
-        earnings: { copiumPerSecond: 1.2e9, delusionPerSecond: 0, yachtMoneyPerSecond: 5.7e8, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 0.037, powerPerSecond: 0, serenityPerSecond: 0 },
+        earnings: { copiumPerSecond: 1.2e9, delusionPerSecond: 0, yachtMoneyPerSecond: 5.6e8, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 0.037, powerPerSecond: 0, serenityPerSecond: 0 },
         img: `imgs/one_does_not_simply.jpg`,
     },
     {
@@ -639,7 +639,7 @@ const upgrades = [
     {
         name: `School of Life`,
         cost: { copium: 0, delusion: 3e20, yachtMoney: 2.5e20, trollPoints: 1.4e21, hopium: 0, knowledge: 5e9, power: 1e-6, serenity: 0 },
-        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 5e8, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 0.54, powerPerSecond: 0, serenityPerSecond: 0 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 5e8, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 0.52, powerPerSecond: 0, serenityPerSecond: 0 },
         img: `imgs/drake_learning.jpg`,
     },
     {
@@ -662,7 +662,7 @@ const upgrades = [
     },
     {
         name: `Job Application #3`,
-        cost: { copium: 9.9e24, delusion: 9.9e24, yachtMoney: 0, trollPoints: 1e24, hopium: 1e19, knowledge: 0, power: 0, serenity: 0 },
+        cost: { copium: 9.8e24, delusion: 9.8e24, yachtMoney: 0, trollPoints: 1e24, hopium: 1e19, knowledge: 0, power: 0, serenity: 0 },
         earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 1e11, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 4, powerPerSecond: 0, serenityPerSecond: 0 },
         img: `imgs/job_application_3.jpg`,
         hoverOverwrite: `A few minor surgeries and forged documents later... will 3rd time be the charm?`,
@@ -681,7 +681,7 @@ const upgrades = [
         cost: { copium: 4e26, delusion: 2e26, yachtMoney: 7e26, trollPoints: 2.5e26, hopium: 5e20, knowledge: 1e17, power: 0, serenity: 0 },
         earnings: { copiumPerSecond: 3.5e10, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 1.5e10, hopiumPerSecond: 0, knowledgePerSecond: 15, powerPerSecond: 0, serenityPerSecond: 0 },
         img: `imgs/the_m_word.jpg`,
-        message : `The Muppet pops up with a knowing smirk. "So, you’re hoarding Knowledge and Power like there’s no tomorrow, huh? Well, here’s a tip: when it comes to advanced resources, the more you stockpile beyond your earnings per second, the slower your gains will get—like trying to climb a hill made of jelly. Let’s just say, these fancy resources don’t like being hoarded too much."<br>"But don’t sweat it," the Muppet adds with a playful wink, "this won't mess with your regular gameplay. Just a little nudge to keep things balanced. And who knows... this might not be the last time you run into this little quirk with other advanced goodies down the road!"`,
+        message : `The Muppet pops up with a knowing smirk. "So, you’re hoarding Knowledge and Power like there’s no tomorrow, huh? Well, here’s a tip: when it comes to these advanced resources, the more you stockpile beyond your earnings per second, the slower your gains will get—like trying to climb a hill made of jelly. Let’s just say, these fancy resources don’t like being hoarded too much."<br>"But don’t sweat it," the Muppet adds with a playful wink, "this won't mess with your regular gameplay. Just a little nudge to keep things balanced."`,
     },
     {
         name: `Degens Idle Dev #2`,
@@ -698,7 +698,7 @@ const upgrades = [
     {
         name: `It was only 4 items`,
         cost: { copium: 7e32, delusion: 0, yachtMoney: 8e34, trollPoints: 0, hopium: 0, knowledge: 6e23, power: 0, serenity: 0 },
-        earnings: { copiumPerSecond: 0, delusionPerSecond: 1.3e12, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 85, powerPerSecond: 0, serenityPerSecond: 0 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 1.2e12, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 80, powerPerSecond: 0, serenityPerSecond: 0 },
         img: `imgs/forgetful_joe.jpg`,
     },
     {
@@ -710,7 +710,7 @@ const upgrades = [
     {
         name: `How are you though?`,
         cost: { copium: 0, delusion: 5e33, yachtMoney: 1.7e36, trollPoints: 0, hopium: 0, knowledge: 2e25, power: 1.1e-2, serenity: 0 },
-        earnings: { copiumPerSecond: 1.3e12, delusionPerSecond: 5e11, yachtMoneyPerSecond: 0, trollPointsPerSecond: 6.9e12, hopiumPerSecond: 150000, knowledgePerSecond: 170, powerPerSecond: 0, serenityPerSecond: 0 },
+        earnings: { copiumPerSecond: 1.2e12, delusionPerSecond: 5e11, yachtMoneyPerSecond: 0, trollPointsPerSecond: 6.9e12, hopiumPerSecond: 150000, knowledgePerSecond: 160, powerPerSecond: 0, serenityPerSecond: 0 },
         img: `imgs/cheesy_grate.jpg`,
     },
     {
@@ -735,7 +735,7 @@ const upgrades = [
     {
         name: `Silence is Golden`,
         cost: { copium: 1e37, delusion: 0, yachtMoney: 0, trollPoints: 0, hopium: 8e31, knowledge: 2e26, power: 1e-1, serenity: 0 },
-        earnings: { copiumPerSecond: 3e14, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 3e14, hopiumPerSecond: 9e7, knowledgePerSecond: -250, powerPerSecond: 0, serenityPerSecond: 0 },
+        earnings: { copiumPerSecond: 3e14, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 3e14, hopiumPerSecond: 8e7, knowledgePerSecond: -250, powerPerSecond: 0, serenityPerSecond: 0 },
         img: `imgs/silence_is_golden.jpg`,
     },
     {
@@ -753,13 +753,13 @@ const upgrades = [
     },
     {
         name: `Buy Apple Product`,
-        cost: { copium: 1.3e41, delusion: 0, yachtMoney: 7.5e41, trollPoints: 0, hopium: 8e32, knowledge: 0, power: 0.5, serenity: 0 },
-        earnings: { copiumPerSecond: 5e14, delusionPerSecond: 5e14, yachtMoneyPerSecond: 0, trollPointsPerSecond: 5e14, hopiumPerSecond: 0, knowledgePerSecond: 666, powerPerSecond: 0, serenityPerSecond: 0 },
+        cost: { copium: 1.3e41, delusion: 0, yachtMoney: 7.2e41, trollPoints: 0, hopium: 8e32, knowledge: 0, power: 0.5, serenity: 0 },
+        earnings: { copiumPerSecond: 4e14, delusionPerSecond: 4e14, yachtMoneyPerSecond: 0, trollPointsPerSecond: 4e14, hopiumPerSecond: 0, knowledgePerSecond: 666, powerPerSecond: 0, serenityPerSecond: 0 },
         img: `imgs/apple_mug.jpg`,
     },
     {
         name: `Training Dummy`,
-        cost: { copium: 0, delusion: 0, yachtMoney: 1.5e41, trollPoints: 0, hopium: 0, knowledge: 1e29, power: 3, serenity: 0 },
+        cost: { copium: 0, delusion: 0, yachtMoney: 1.8e41, trollPoints: 0, hopium: 0, knowledge: 1.2e29, power: 3, serenity: 0 },
         earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 1e15, hopiumPerSecond: 0, knowledgePerSecond: 10000, powerPerSecond: 0, serenityPerSecond: 0 },
         img: `imgs/training_dummy.jpg`,
         message: `<p>After spending time training on the dummy, you realize that the real challenges lie ahead. Each battle with stronger opponents will demand more than just courage—it will require careful planning and resources. Every fight will cost you valuable supplies, and if you lose, those resources will be gone forever. Victory isn’t just about raw power; it’s about being fully prepared.</p>
@@ -781,7 +781,7 @@ const upgrades = [
     {
         name: `Agent Smith`,
         cost: { copium: 0, delusion: 1e41, yachtMoney: 0, trollPoints: 1e41, hopium: 0, knowledge: 2e29, power: 20, serenity: 0 },
-        earnings: { copiumPerSecond: 6e15, delusionPerSecond: 0, yachtMoneyPerSecond: 6e15, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 15000, powerPerSecond: 0, serenityPerSecond: 0 },
+        earnings: { copiumPerSecond: 6e15, delusionPerSecond: 0, yachtMoneyPerSecond: 6e15, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 14000, powerPerSecond: 0, serenityPerSecond: 0 },
         img: `imgs/agent_smith.jpg`,
         isFight: true,
         isKey: true,
@@ -802,8 +802,8 @@ const upgrades = [
     },
     {
         name: `Shao Kahn`,
-        cost: { copium: 0, delusion: 0, yachtMoney: 0, trollPoints: 5e41, hopium: 0, knowledge: 1e30, power: 35, serenity: 0 },
-        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 9e15, trollPointsPerSecond: 0, hopiumPerSecond: -1e8, knowledgePerSecond: 48000, powerPerSecond: 0, serenityPerSecond: 0 },
+        cost: { copium: 0, delusion: 0, yachtMoney: 0, trollPoints: 6e41, hopium: 0, knowledge: 1e30, power: 35, serenity: 0 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 8e15, trollPointsPerSecond: 0, hopiumPerSecond: -1e8, knowledgePerSecond: 47000, powerPerSecond: 0, serenityPerSecond: 0 },
         img: `imgs/shao_kahn.jpg`,
         isFight: true,
         achievement: 'Mortal Kombat',
@@ -901,7 +901,7 @@ const upgrades = [
     },
     {
         name: `Still Mediocre`,
-        cost: { copium: 0, delusion: 1e52, yachtMoney: 0, trollPoints: 5e52, hopium: 0, knowledge: 1e41, power: 35000, serenity: 0 },
+        cost: { copium: 0, delusion: 1e52, yachtMoney: 0, trollPoints: 4e52, hopium: 0, knowledge: 1e41, power: 35000, serenity: 0 },
         earnings: { copiumPerSecond: 0, delusionPerSecond: 8e18, yachtMoneyPerSecond: 0, trollPointsPerSecond: 7e18, hopiumPerSecond: 0, knowledgePerSecond: 37000, powerPerSecond: 0, serenityPerSecond: 0 },
         img: `imgs/3rd_place_upvotes.jpg`,        
     },
@@ -949,12 +949,11 @@ const upgrades = [
     },
     {
         name: `The Rock`,
-        cost: { copium: 3e54, delusion: 1.8e55, yachtMoney: 0, trollPoints: 5e54, hopium: 0, knowledge: 8e43, power: 2.4e7, serenity: 0 },
+        cost: { copium: 3e54, delusion: 1.8e55, yachtMoney: 0, trollPoints: 4e54, hopium: 0, knowledge: 8e43, power: 2.4e7, serenity: 0 },
         earnings: { copiumPerSecond: 2e18, delusionPerSecond: 3e18, yachtMoneyPerSecond: 0, trollPointsPerSecond: 3e19, hopiumPerSecond: 0, knowledgePerSecond: 87000, powerPerSecond: 0, serenityPerSecond: 0 },
         img: `imgs/the_rock_photo.jpg`,                
         message: `Don't worry, you never have to fight The Rock. He would beat you to a pulp.`,
         isKey: true,
-
     },
     {
         name: `Real Life Girlfriend`,
@@ -1030,7 +1029,7 @@ const upgrades = [
     {
         name: `Chuck Norris`,
         cost: { copium: 1e63, delusion: 1e63, yachtMoney: 1e63, trollPoints: 1e63, hopium: 0, knowledge: 4e47, power: 4e8, serenity: 0 },
-        earnings: { copiumPerSecond: 1.5e24, delusionPerSecond: 0, yachtMoneyPerSecond: 1.5e24, trollPointsPerSecond: 0, hopiumPerSecond: -1e20, knowledgePerSecond: 1e7, powerPerSecond: 0, serenityPerSecond: 0 },
+        earnings: { copiumPerSecond: 1.5e24, delusionPerSecond: 0, yachtMoneyPerSecond: 1.5e24, trollPointsPerSecond: 0, hopiumPerSecond: -1e20, knowledgePerSecond: 6e6, powerPerSecond: 0, serenityPerSecond: 0 },
         img: `imgs/chuck_norris.jpg`,
         isFight: true,
         isKey: true,
@@ -1051,25 +1050,25 @@ const upgrades = [
     {
         name: `WTF is that Face`,
         cost: { copium: 0, delusion: 9e63, yachtMoney: 0, trollPoints: 3e64, hopium: 0, knowledge: 2e47, power: 1.3e9, serenity: 0 },
-        earnings: { copiumPerSecond: 3e23, delusionPerSecond: 3e23, yachtMoneyPerSecond: 0, trollPointsPerSecond: 2.4e24, hopiumPerSecond: 0, knowledgePerSecond: 1.6e6, powerPerSecond: 0, serenityPerSecond: 0 },
+        earnings: { copiumPerSecond: 3e23, delusionPerSecond: 3e23, yachtMoneyPerSecond: 0, trollPointsPerSecond: 2.4e24, hopiumPerSecond: 0, knowledgePerSecond: 1.5e6, powerPerSecond: 0, serenityPerSecond: 0 },
         img: `imgs/accidental_selfie.jpg`,        
     },
     {
         name: `Deadlines`,
         cost: { copium: 0, delusion: 0, yachtMoney: 5e64, trollPoints: 5e64, hopium: 0, knowledge: 9e47, power: 2.5e9, serenity: 0 },
-        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 9e24, trollPointsPerSecond: 4e24, hopiumPerSecond: 0, knowledgePerSecond: 3.7e6, powerPerSecond: 0, serenityPerSecond: 0 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 9e24, trollPointsPerSecond: 4e24, hopiumPerSecond: 0, knowledgePerSecond: 3.3e6, powerPerSecond: 0, serenityPerSecond: 0 },
         img: `imgs/deadlines.jpg`,        
     },
     {
         name: `Musical Chairs`,
         cost: { copium: 0, delusion: 0, yachtMoney: 9e65, trollPoints: 0, hopium: 0, knowledge: 8e48, power: 2e9, serenity: 0 },
-        earnings: { copiumPerSecond: 1e24, delusionPerSecond: 2e24, yachtMoneyPerSecond: 0, trollPointsPerSecond: 2e24, hopiumPerSecond: 0, knowledgePerSecond: 3.5e6, powerPerSecond: 0, serenityPerSecond: 0 },
+        earnings: { copiumPerSecond: 1e24, delusionPerSecond: 1.5e24, yachtMoneyPerSecond: 0, trollPointsPerSecond: 2e24, hopiumPerSecond: 0, knowledgePerSecond: 3.1e6, powerPerSecond: 0, serenityPerSecond: 0 },
         img: `imgs/musical_chairs.jpg`,        
     },
     {
         name: `Vegeta`,
         cost: { copium: 3e67, delusion: 0, yachtMoney: 3e67, trollPoints: 3e67, hopium: 0, knowledge: 5e50, power: 2.5e10, serenity: 0 },
-        earnings: { copiumPerSecond: 3e25, delusionPerSecond: 3e25, yachtMoneyPerSecond: 3e25, trollPointsPerSecond: 3e25, hopiumPerSecond: -1e26, knowledgePerSecond: 3e8, powerPerSecond: 0, serenityPerSecond: 0 },
+        earnings: { copiumPerSecond: 3e25, delusionPerSecond: 3e25, yachtMoneyPerSecond: 3e25, trollPointsPerSecond: 3e25, hopiumPerSecond: -1e26, knowledgePerSecond: 2e8, powerPerSecond: 0, serenityPerSecond: 0 },
         img: `imgs/vegeta.jpg`,
         isFight: true,
         message: `<p><strong>Vegeta:</strong> You’ve done it… you’ve finally reached the pinnacle of power. But understand this, it was never about me. From the very beginning, I groomed you for this moment, pushing you to break your limits, to become stronger than you ever imagined.</p>
@@ -1104,7 +1103,7 @@ const upgrades = [
     {
         name: `Facepalm`,
         cost: { copium: 0, delusion: 3e65, yachtMoney: 0, trollPoints: 0, hopium: 0, knowledge: 4e49, power: 1.4e10, serenity: 0 },
-        earnings: { copiumPerSecond: 0, delusionPerSecond: 5e25, yachtMoneyPerSecond: 0, trollPointsPerSecond: 1e25, hopiumPerSecond: 0, knowledgePerSecond: 1.2e7, powerPerSecond: 0, serenityPerSecond: 0 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 5e25, yachtMoneyPerSecond: 0, trollPointsPerSecond: 1e25, hopiumPerSecond: 0, knowledgePerSecond: 1.1e7, powerPerSecond: 0, serenityPerSecond: 0 },
         img: `imgs/andrew_tate.jpg`,        
     },
     {
@@ -1128,7 +1127,7 @@ const upgrades = [
     {         
         name: `Smile and Nod`,
         cost: { copium: 4e68, delusion: 0, yachtMoney: 0, trollPoints: 1e69, hopium: 0, knowledge: 8e50, power: 7e10, serenity: 0 },
-        earnings: { copiumPerSecond: 8e26, delusionPerSecond: 8e26, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 2.4e7, powerPerSecond: 0, serenityPerSecond: 0 },
+        earnings: { copiumPerSecond: 8e26, delusionPerSecond: 8e26, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 2.2e7, powerPerSecond: 0, serenityPerSecond: 0 },
         img: `imgs/say_what_what.jpg`,        
     },
     {         
@@ -1140,45 +1139,45 @@ const upgrades = [
     {         
         name: `Jump 1M Times`,
         cost: { copium: 9e71, delusion: 0, yachtMoney: 0, trollPoints: 9e71, hopium: 0, knowledge: 2e54, power: 1.2e12, serenity: 0 },
-        earnings: { copiumPerSecond: 8e27, delusionPerSecond: 2e27, yachtMoneyPerSecond: 0, trollPointsPerSecond: 5e27, hopiumPerSecond: 0, knowledgePerSecond: 1.6e8, powerPerSecond: 0, serenityPerSecond: 0 },
+        earnings: { copiumPerSecond: 8e27, delusionPerSecond: 2e27, yachtMoneyPerSecond: 0, trollPointsPerSecond: 5e27, hopiumPerSecond: 0, knowledgePerSecond: 1.2e8, powerPerSecond: 0, serenityPerSecond: 0 },
         img: `imgs/achievement_fiend.jpg`,       
         hoverOverwrite: `Must. Get. All. Achievements.`,
     },
     {         
         name: `Going Crazy Over Here`,
         cost: { copium: 5e72, delusion: 5e69, yachtMoney: 0, trollPoints: 3e72, hopium: 0, knowledge: 8e54, power: 2.5e12, serenity: 0 },
-        earnings: { copiumPerSecond: 1e28, delusionPerSecond: 1e28, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 2.9e8, powerPerSecond: 0, serenityPerSecond: 0 },
+        earnings: { copiumPerSecond: 1e28, delusionPerSecond: 1e28, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 2.3e8, powerPerSecond: 0, serenityPerSecond: 0 },
         img: `imgs/going_crazy_over_here.jpg`,       
         hoverOverwrite: `When you max out every stat and skill, but still get destroyed by Kaguya.`,
     },
     {         
         name: `Foreshadowing #3`,
         cost: { copium: 8e72, delusion: 9e70, yachtMoney: 3e70, trollPoints: 0, hopium: 0, knowledge: 2e56, power: 6.5e12, serenity: 0 },
-        earnings: { copiumPerSecond: 1.5e28, delusionPerSecond: 0, yachtMoneyPerSecond: 9e27, trollPointsPerSecond: 1e28, hopiumPerSecond: 0, knowledgePerSecond: 8.3e8, powerPerSecond: 0, serenityPerSecond: 0 },
+        earnings: { copiumPerSecond: 1.5e28, delusionPerSecond: 0, yachtMoneyPerSecond: 9e27, trollPointsPerSecond: 1e28, hopiumPerSecond: 0, knowledgePerSecond: 4.3e8, powerPerSecond: 0, serenityPerSecond: 0 },
         img: `imgs/distracted_boyfriend_3.jpg`,       
     },
     {         
         name: `Healthy Choices`,
         cost: { copium: 9e72, delusion: 1e71, yachtMoney: 0, trollPoints: 9e72, hopium: 0, knowledge: 5e56, power: 1.8e13, serenity: 0 },
-        earnings: { copiumPerSecond: 3e28, delusionPerSecond: 0, yachtMoneyPerSecond: 1.2e28, trollPointsPerSecond: 3e28, hopiumPerSecond: 0, knowledgePerSecond: 1.3e9, powerPerSecond: 0, serenityPerSecond: 0 },
+        earnings: { copiumPerSecond: 2e28, delusionPerSecond: 0, yachtMoneyPerSecond: 1.2e28, trollPointsPerSecond: 3e28, hopiumPerSecond: 0, knowledgePerSecond: 1e9, powerPerSecond: 0, serenityPerSecond: 0 },
         img: `imgs/training_for_kaguya.jpg`
     },
     {         
         name: `Unprecedented`,
         cost: { copium: 1e73, delusion: 2e72, yachtMoney: 0, trollPoints: 0, hopium: 0, knowledge: 3e59, power: 2.3e14, serenity: 0 },
-        earnings: { copiumPerSecond: 2e28, delusionPerSecond: 2e28, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 1.6e9, powerPerSecond: 0, serenityPerSecond: 0 },
+        earnings: { copiumPerSecond: 1.5e28, delusionPerSecond: 1.5e28, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 1e9, powerPerSecond: 0, serenityPerSecond: 0 },
         img: `imgs/unprecedented_overlap.jpg`
     },
     {         
         name: `Bitch Back Off`,
         cost: { copium: 1e80, delusion: 1e80, yachtMoney: 1e80, trollPoints: 1e80, hopium: 0, knowledge: 3e60, power: 3.2e14, serenity: 0 },
-        earnings: { copiumPerSecond: 4e28, delusionPerSecond: 4e28, yachtMoneyPerSecond: 0, trollPointsPerSecond: 5e28, hopiumPerSecond: 0, knowledgePerSecond: 2.8e9, powerPerSecond: 0, serenityPerSecond: 0 },
+        earnings: { copiumPerSecond: 3e28, delusionPerSecond: 3e28, yachtMoneyPerSecond: 0, trollPointsPerSecond: 5e28, hopiumPerSecond: 0, knowledgePerSecond: 1.8e9, powerPerSecond: 0, serenityPerSecond: 0 },
         img: `imgs/bitch_back_off.jpg`
     },
     {
         name: `Kaguya`,
-        cost: { copium: 6e79, delusion: 6e79, yachtMoney: 6e79, trollPoints: 6e79, hopium: 0, knowledge: 6e60, power: 1e14, serenity: 0 },
-        earnings: { copiumPerSecond: 5e30, delusionPerSecond: 5e30, yachtMoneyPerSecond: 5e30, trollPointsPerSecond: 5e30, hopiumPerSecond: -1e35, knowledgePerSecond: 5e11, powerPerSecond: 0, serenityPerSecond: 0 },
+        cost: { copium: 6e79, delusion: 6e79, yachtMoney: 6e79, trollPoints: 6e79, hopium: 0, knowledge: 6e60, power: 1.4e14, serenity: 0 },
+        earnings: { copiumPerSecond: 5e30, delusionPerSecond: 5e30, yachtMoneyPerSecond: 5e30, trollPointsPerSecond: 5e30, hopiumPerSecond: -1e35, knowledgePerSecond: 4e11, powerPerSecond: 0, serenityPerSecond: 0 },
         img: `imgs/kaguya.jpg`,
         isFight: true,
         hoverOverwrite: `She is evil. She will drain your resoures. Only fight if you want to hate her.`,
@@ -1223,19 +1222,19 @@ const upgrades = [
     {         
         name: `How Unoriginal!`,
         cost: { copium: 6e81, delusion: 0, yachtMoney: 7e81, trollPoints: 0, hopium: 0, knowledge: 6e62, power: 5e15, serenity: 0 },
-        earnings: { copiumPerSecond: 0, delusionPerSecond: 5e30, yachtMoneyPerSecond: 0, trollPointsPerSecond: 5e30, hopiumPerSecond: 0, knowledgePerSecond: 1.2e11, powerPerSecond: 0, serenityPerSecond: 0 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 5e30, yachtMoneyPerSecond: 0, trollPointsPerSecond: 5e30, hopiumPerSecond: 0, knowledgePerSecond: 1.1e11, powerPerSecond: 0, serenityPerSecond: 0 },
         img: `imgs/too_long_didnt_read.jpg`,        
     },
     {         
         name: `Why so serious?`,
         cost: { copium: 2e82, delusion: 0, yachtMoney: 2e82, trollPoints: 0, hopium: 0, knowledge: 1e63, power: 3e16, serenity: 0 },
-        earnings: { copiumPerSecond: 9e30, delusionPerSecond: 9e30, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 1.9e11, powerPerSecond: 0, serenityPerSecond: 0 },
+        earnings: { copiumPerSecond: 7e30, delusionPerSecond: 7e30, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 1.6e11, powerPerSecond: 0, serenityPerSecond: 0 },
         img: `imgs/why_so_serious.jpg`,        
     },
     {         
         name: `Stealth +5`,
         cost: { copium: 0, delusion: 1e83, yachtMoney: 0, trollPoints: 0, hopium: 0, knowledge: 2e65, power: 4e16, serenity: 0 },
-        earnings: { copiumPerSecond: 8e31, delusionPerSecond: 8e31, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 8e11, powerPerSecond: 0, serenityPerSecond: 0 },
+        earnings: { copiumPerSecond: 5e31, delusionPerSecond: 5e31, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 5e11, powerPerSecond: 0, serenityPerSecond: 0 },
         img: `imgs/stealthy_zebra.jpg`,     
         message: `Well, well, well... It seems you've stumbled upon 'Stealth +5.' But wait, there's a catch: there's no stealth in this game, silly! At this point, you should know better than to try sneaking around.<br><br>If you're thinking you can just tiptoe past the final boss— Saitama —think again. There's no hiding from him. You'll have to face the One Punch Man head-on, fair and square. No invisibility cloaks, no shadowy escapes... just pure, unfiltered, glorious combat. Good luck!`   
     },
@@ -1532,7 +1531,7 @@ const upgrades = [
     {
         name: `More Decisions...`,
         cost: { copium: 0, delusion: 1e114, yachtMoney: 0, trollPoints: 3e114, hopium: 0, knowledge: 0, power: 1e23, serenity: 2e7 },
-        earnings: { copiumPerSecond: 0, delusionPerSecond: 3e47, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 44 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 4e47, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 44 },
         img: `imgs/two_buttons_2.jpg`,     
     },
     {         
@@ -1549,19 +1548,19 @@ const upgrades = [
     {         
         name: `Different Tastes`,
         cost: { copium: 0, delusion: 2e115, yachtMoney: 0, trollPoints: 1e115, hopium: 0, knowledge: 0, power: 0, serenity: 1e9 },
-        earnings: { copiumPerSecond: -1e48, delusionPerSecond: 1e50, yachtMoneyPerSecond: 0, trollPointsPerSecond: 4e49, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 240 },
+        earnings: { copiumPerSecond: -1e48, delusionPerSecond: 1e50, yachtMoneyPerSecond: 0, trollPointsPerSecond: 4e49, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 340 },
         img: `imgs/different_tastes.jpg`,
     },
     {         
         name: `One Drink`,
         cost: { copium: 1e119, delusion: 5e119, yachtMoney: 0, trollPoints: 0, hopium: 0, knowledge: 0, power: 0, serenity: 1e9 },
-        earnings: { copiumPerSecond: 1e50, delusionPerSecond: 0, yachtMoneyPerSecond: -3e49, trollPointsPerSecond: 8e49, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 350 },
+        earnings: { copiumPerSecond: 1e50, delusionPerSecond: 0, yachtMoneyPerSecond: -3e49, trollPointsPerSecond: 8e49, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 450 },
         img: `imgs/one_drink.jpg`,
     },
     {         
         name: `They Whatevered`,
         cost: { copium: 1e120, delusion: 0, yachtMoney: 2e120, trollPoints: 3e121, hopium: 0, knowledge: 0, power: 0, serenity: 5e9 },
-        earnings: { copiumPerSecond: 1.5e50, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 8e49, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 790 },
+        earnings: { copiumPerSecond: 1.5e50, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 9e49, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 790 },
         img: `imgs/whatever_bitches.jpg`,
     },
     {         
@@ -1577,19 +1576,19 @@ const upgrades = [
     {         
         name: `We All Deserve Breaks`,
         cost: { copium: 0, delusion: 1e121, yachtMoney: 0, trollPoints: 2e122, hopium: 0, knowledge: 0, power: 0, serenity: 2e10 },
-        earnings: { copiumPerSecond: 0, delusionPerSecond: 2e52, yachtMoneyPerSecond: -1e51, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 2800 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 2e52, yachtMoneyPerSecond: -1e51, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 4800 },
         img: `imgs/not_adulting.jpg`,
     },
     {         
         name: `Overdue Xzibit Cameo`,
         cost: { copium: 1e126, delusion: 0, yachtMoney: 1e127, trollPoints: 4.2e126, hopium: 0, knowledge: 0, power: 0, serenity: 9e10 },
-        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 4.2e53, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 4200 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 4.2e53, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 6200 },
         img: `imgs/xzibit.jpg`,
     },
     {
         name: `Get Hooked`,
         cost: { copium: 0, delusion: 1e128, yachtMoney: 0, trollPoints: 5e128, hopium: 0, knowledge: 0, power: 5e30, serenity: 5e10 },
-        earnings: { copiumPerSecond: 0, delusionPerSecond: -1e59, yachtMoneyPerSecond: 0, trollPointsPerSecond: -1e60, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 50000 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: -1e59, yachtMoneyPerSecond: 0, trollPointsPerSecond: -1e60, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 80000 },
         img: `imgs/pudge.jpg`,
         hoverOverwrite: 'Care',
         message: `Got hooked by Pudge—classic. Once that hook lands, you're stuck, literally and figuratively. Dota 2 pulls you in with its intense strategy, team dynamics, and those epic plays that make your heart race. Whether it’s landing the perfect Black Hole, clutching a game with a surprise Aegis steal, or outplaying with a well-timed BKB, every match is a new adventure. Dota isn't just a game, it's a battlefield where you live for the highs, the lows, and everything in between. Shoutout to the greatest team game of all time!`,
@@ -1651,20 +1650,20 @@ const upgrades = [
         earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 7e59, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 9e8 },
         img: `imgs/arena_deism.png`,
         isMeditation: true,
-        autoMeditateThreshold: 1e20,
+        autoMeditateThreshold: 2e20,
         isKey: true,
         message: `Through this meditation, you’ve understood that the <strong>universe operates under the natural laws set in motion by a higher power</strong>, yet it is up to you to seek truth and purpose. Deism teaches that reason, observation, and understanding of the world around you lead to enlightenment. With this knowledge, you’ve realized that your journey is shaped by your actions and understanding of the universe's order.`,
     },
     {
         name: `I Hear Ya`,
-        cost: { copium: 7e138, delusion: 0, yachtMoney: 0, trollPoints: 0, hopium: 0, knowledge: 0, power: 1e36, serenity: 1e16 },
-        earnings: { copiumPerSecond: 6e56, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 1e57, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 8e6 },
+        cost: { copium: 9e138, delusion: 0, yachtMoney: 0, trollPoints: 0, hopium: 0, knowledge: 0, power: 1e36, serenity: 1e16 },
+        earnings: { copiumPerSecond: 6e56, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 1e57, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 2e7 },
         img: `imgs/i_hear_ya.jpg`,
     },
     {
         name: `Angry Girlfriend`,
         cost: { copium: 0, delusion: 0, yachtMoney: 0, trollPoints: 0, hopium: 0, knowledge: 1e110, power: 0, serenity: 1e16 },
-        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 1e57, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 1e22, powerPerSecond: 0, serenityPerSecond: 9e6 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 1e57, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 1e22, powerPerSecond: 0, serenityPerSecond: 6e7 },
         img: `imgs/gf_mad_look.jpg`,
     },
     {         
@@ -1673,101 +1672,139 @@ const upgrades = [
         earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 1e30, powerPerSecond: 0, serenityPerSecond: 1.3e10 },
         img: `imgs/arena_skepticism.png`,
         isMeditation: true,
-        autoMeditateThreshold: 1e25,
+        autoMeditateThreshold: 7.77e25,
         isKey: true,
         message: `In this meditation, you’ve learned the <strong>value of questioning and seeking truth</strong>. Skepticism teaches that through doubt, we grow closer to understanding, as every idea must be examined and tested. By embracing a mindset of curiosity and critical thinking, you’ve unlocked the path to deeper knowledge. Continue to question, explore, and refine your beliefs, and truth will reveal itself in time.`,
         achievement: 'Study Skepticism',
     },
     {
         name: `We're All Gamers`,
-        cost: { copium: 2e143, delusion: 2e143, yachtMoney: 0, trollPoints: 0, hopium: 0, knowledge: 0, power: 0, serenity: 1.5e20 },
-        earnings: { copiumPerSecond: 1e59, delusionPerSecond: 1e59, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 3e8 },
+        cost: { copium: 3e143, delusion: 3e143, yachtMoney: 0, trollPoints: 0, hopium: 0, knowledge: 0, power: 0, serenity: 7.5e19 },
+        earnings: { copiumPerSecond: 1e59, delusionPerSecond: 1e59, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 3e9 },
         img: `imgs/we_are_all_gamers.jpg`,
     },
     {
         name: `Actual Life Advice`,
-        cost: { copium: 5e145, delusion: 0, yachtMoney: 0, trollPoints: 5e145, hopium: 0, knowledge: 1e118, power: 0, serenity: 8e21 },
-        earnings: { copiumPerSecond: 0, delusionPerSecond: 3e59, yachtMoneyPerSecond: 0, trollPointsPerSecond: 2e59, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 6e8 },
+        cost: { copium: 1.6e146, delusion: 0, yachtMoney: 0, trollPoints: 1.6e146, hopium: 0, knowledge: 1e118, power: 0, serenity: 8e21 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 3e59, yachtMoneyPerSecond: 0, trollPointsPerSecond: 2e59, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 6e9 },
         img: `imgs/actual_life_advice.jpg`,
         hoverOverwrite: `don't take advice from a guy who made a game called "Degens Idle"`,
+        message: `<p style="color: #ADD8E6;"> For listening to my advice, your <strong>Hall of Love</strong> skill purchases will no longer have confirmations, making respec'ing less cumbersome.</p>`,
     },
     {         
         name: `Buddhism`,
-        cost: { copium: 0, delusion: 0, yachtMoney: 0, trollPoints: 0, hopium: 1e149, knowledge: 0, power: 2e41, serenity: 1e22 },
+        cost: { copium: 0, delusion: 0, yachtMoney: 0, trollPoints: 0, hopium: 2e149, knowledge: 0, power: 2e41, serenity: 1e23 },
         earnings: { copiumPerSecond: 0, delusionPerSecond: 1e65, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 1e57, knowledgePerSecond: 1e31, powerPerSecond: 0, serenityPerSecond: 1e13 },
         img: `imgs/arena_buddhism.png`,
         isMeditation: true,
-        autoMeditateThreshold: 1e25,
+        autoMeditateThreshold: 2e27,
         isKey: true,
         message: `Through this meditation, you’ve discovered the <strong>path to inner peace and mindfulness</strong>. Buddhism teaches that by releasing attachment and practicing compassion, you can transcend suffering and find enlightenment. You’ve learned the power of living in the present moment, cultivating awareness and kindness toward yourself and others. Continue to walk the middle path, and you will find peace in all aspects of life.`,
         hoverOverwrite: 'there is no such thing as a wrong sidekick',
     },
     {
         name: `Your Guiding Light`,
-        cost: { copium: 0, delusion: 0, yachtMoney: 1e148, trollPoints: 0, hopium: 0, knowledge: 1e120, power: 0, serenity: 1e21 },
-        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 1e62, trollPointsPerSecond: -1e59, hopiumPerSecond: 1e55, knowledgePerSecond: 1e29, powerPerSecond: 0, serenityPerSecond: 1e11 },
+        cost: { copium: 0, delusion: 0, yachtMoney: 2e148, trollPoints: 0, hopium: 0, knowledge: 1e120, power: 0, serenity: 1e21 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 1e62, trollPointsPerSecond: -1e59, hopiumPerSecond: 1e55, knowledgePerSecond: 1e29, powerPerSecond: 0, serenityPerSecond: 1e12 },
         img: `imgs/your_guiding_light.jpg`,
     },
     {
         name: `Religious Books`,
-        cost: { copium: 0, delusion: 0, yachtMoney: 0, trollPoints: 0, hopium: 1e145, knowledge: 1e120, power: 0, serenity: 1e21 },
-        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 1e55, knowledgePerSecond: 1e29, powerPerSecond: 0, serenityPerSecond: 3e11 },
+        cost: { copium: 0, delusion: 0, yachtMoney: 0, trollPoints: 0, hopium: 1.2e145, knowledge: 1e120, power: 0, serenity: 1e21 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 1e55, knowledgePerSecond: 1e29, powerPerSecond: 0, serenityPerSecond: 9e11 },
         img: `imgs/the_cure.jpg`,
-        hoverOverwrite: `Shoutout to "The Cure", written by the Degens Idle creator's sister! Pro tip: Owning this book will reduce randomness in the Skepticism meditation, so set it to autobuy if you want to optimize your strategy without relying purely on luck.`,
+        message: `Shoutout to "The Cure", written by the Degens Idle creator's sister! Pro tip: Owning this book will reduce randomness in the Skepticism meditation, so set it to autobuy if you want to optimize your strategy without relying purely on luck.`,
     },
     {         
         name: `Christianity`,
-        cost: { copium: 0, delusion: 0, yachtMoney: 7e155, trollPoints: 0, hopium: 7e155, knowledge: 0, power: 7e43, serenity: 7e24 },
+        cost: { copium: 0, delusion: 0, yachtMoney: 1.5e158, trollPoints: 0, hopium: 1.5e158, knowledge: 0, power: 7e43, serenity: 3e26 },
         earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 7e60, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 0 },
         img: `imgs/arena_christianity.png`,
         isMeditation: true,
-        autoMeditateThreshold: 7e27,
+        autoMeditateThreshold: 3e29,
         isKey: true,
         message: `In this meditation, you’ve embraced the <strong>power of faith, love, and redemption</strong>. Christianity teaches that by living with compassion and following a path of grace, you can find peace and salvation. Through your meditation, you’ve learned the importance of forgiveness, selflessness, and the strength that comes from faith. Continue to live with love in your heart, and you will find a deep connection to the divine.`,
     },
     {
         name: `Journey > Destination`,
-        cost: { copium: 0, delusion: 2e156, yachtMoney: 0, trollPoints: 0, hopium: 0, knowledge: 0, power: 0, serenity: 1e25 },
+        cost: { copium: 0, delusion: 2e158, yachtMoney: 0, trollPoints: 0, hopium: 0, knowledge: 0, power: 0, serenity: 1e25 },
         earnings: { copiumPerSecond: 0, delusionPerSecond: 1e62, yachtMoneyPerSecond: -1e60, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 1e30, powerPerSecond: 0, serenityPerSecond: 5e11 },
         img: `imgs/journey_over_destination.jpg`,
     },
     {
         name: `Helping with Chores`,
-        cost: { copium: 0, delusion: 0, yachtMoney: 0, trollPoints: 9e156, hopium: 0, knowledge: 0, power: 0, serenity: 9e25 },
+        cost: { copium: 0, delusion: 0, yachtMoney: 0, trollPoints: 9e158, hopium: 0, knowledge: 0, power: 0, serenity: 9e25 },
         earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 1e65, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 0 },
         img: `imgs/helping_with_chores.jpg`,
     },
+    {
+        name: `Balance Apprentice`,
+        cost: { copium: 5e168, delusion: 5e168, yachtMoney: 5e168, trollPoints: 5e168, hopium: 5e168, knowledge: 5e137, power: 9e47, serenity: 5e28 },
+        earnings: { copiumPerSecond: 1e62, delusionPerSecond: 1e62, yachtMoneyPerSecond: 1e62, trollPointsPerSecond: 1e62, hopiumPerSecond: 1e62, knowledgePerSecond: 1e30, powerPerSecond: 0, serenityPerSecond: 1e13 },
+        img: `imgs/balanced_chair.jpg`,
+        message: `<p>
+                At the outset, your journey was driven by an unquenchable thirst for knowledge and power, a relentless pursuit to conquer, to understand, to rise above all limitations. Through countless trials, you achieved strength and wisdom, becoming more than you ever imagined.
+            </p>
+            <p>
+                But with time, you discovered the value of serenity. In the quiet depths of reflection, you found peace—a calm that allowed you to see beyond the noise of ambition. Serenity became your anchor, a place to return amidst the storms.
+            </p>
+            <p>
+                Now, a new truth dawns on you: serenity, while essential, is but one side of a larger truth. Balance is the key, the harmony of all forces within and around you. To live fully, you must blend strength with calm, ambition with acceptance. Only in this equilibrium can true mastery be achieved.
+            </p>
+            <p>
+                <strong>Embrace balance. The journey to wholeness has only begun.</strong>
+            </p>`,
+    },
     {         
         name: `Epicureanism`,
-        cost: { copium: 0, delusion: 0, yachtMoney: 0, trollPoints: 1e163, hopium: 1e163, knowledge: 0, power: 1e46, serenity: 3e27 },
-        earnings: { copiumPerSecond: 0, delusionPerSecond: 1e72, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 1e38, powerPerSecond: 0, serenityPerSecond: 1e16 },
+        cost: { copium: 0, delusion: 0, yachtMoney: 0, trollPoints: 1.5e163, hopium: 1.5e163, knowledge: 0, power: 1e46, serenity: 3e27 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 1e72, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 1.2e38, powerPerSecond: 0, serenityPerSecond: 1.5e16 },
         img: `imgs/arena_epicureanism.png`,
         isMeditation: true,
-        autoMeditateThreshold: 5e30,
+        autoMeditateThreshold: 5e32,
         isKey: true,
         message: `Through this meditation, you’ve discovered the <strong>joy of finding pleasure in simplicity and peace</strong>. Epicureanism teaches that true happiness comes from seeking tranquility, enjoying life’s simple pleasures, and avoiding unnecessary pain. You’ve learned that balance, moderation, and appreciating the present moment are the keys to a fulfilled life. Continue to embrace the small joys, and contentment will follow.`,
     },
     {
+        name: `Infinite Compassion`,
+        cost: { copium: 3e158, delusion: 0, yachtMoney: 0, trollPoints: 0, hopium: 0, knowledge: 0, power: 0, serenity: 2e25 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 3.33e15 },
+        img: `imgs/infinite_compassion.jpg`,
+        message: `<p>
+                    Through trials of the heart, moments of grace, and the fierce devotion to discovering what it means to be human, you have unlocked a profound truth—love. The chaos of existence brought you to this understanding, and now you wield it, not as a weapon but as a shield, a guiding light.
+                </p>
+                <p>
+                    You’ve navigated storms of doubt, found solace in compassion, and forged connections across countless lifetimes. Each encounter, each embrace, has taught you fragments of this elusive power, weaving together a tapestry of empathy and resilience. You’ve meditated on the teachings of sages, learned from the simplest of gestures, and seen the beauty in vulnerability.
+                </p>
+                <p>
+                    Now, as you stand at the edge of what’s to come, a new awareness dawns. With love as your compass, future embraces will come more naturally, flowing from a place of deep understanding. You know the path will still hold challenges, but each embrace will carry a bit more ease, a touch more grace.
+                </p>
+                <p>
+                    <strong>Embrace freely. Love has already unlocked the door.</strong>
+                </p>`,
+    },
+    {
         name: `Hold the Fuck Up`,
-        cost: { copium: 0, delusion: 1e169, yachtMoney: 0, trollPoints: 1e169, hopium: 0, knowledge: 1e150, power: 0, serenity: 2e30 },
-        earnings: { copiumPerSecond: -1e69, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 1e70, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 4e14 },
+        cost: { copium: 0, delusion: 2e169, yachtMoney: 0, trollPoints: 2e169, hopium: 0, knowledge: 1e142, power: 0, serenity: 1e28 },
+        earnings: { copiumPerSecond: -2e69, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 1.1e71, hopiumPerSecond: 2e60, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 4e14 },
         img: `imgs/hold_the_fuck_up.jpg`,
     },
     {
         name: `God's Plan`,
-        cost: { copium: 0, delusion: 0, yachtMoney: 0, trollPoints: 0, hopium: 0, knowledge: 1.5e155, power: 0, serenity: 1e32 },
-        earnings: { copiumPerSecond: -1e70, delusionPerSecond: -1e70, yachtMoneyPerSecond: -1e70, trollPointsPerSecond: -1e70, hopiumPerSecond: -1e60, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 6.9e14 },
+        cost: { copium: 0, delusion: 0, yachtMoney: 0, trollPoints: 0, hopium: 0, knowledge: 1.5e154, power: 0, serenity: 6e31 },
+        earnings: { copiumPerSecond: -1e71, delusionPerSecond: -1e71, yachtMoneyPerSecond: -1e71, trollPointsPerSecond: -1e71, hopiumPerSecond: -2e60, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 6.9e14 },
         img: `imgs/gods_plan.jpg`,
     },
     {         
         name: `Agnosticism`,
-        cost: { copium: 0, delusion: 0, yachtMoney: 0, trollPoints: 0, hopium: 0, knowledge: 2e155, power: 0, serenity: 1.2e32 },
+        cost: { copium: 0, delusion: 0, yachtMoney: 0, trollPoints: 0, hopium: 0, knowledge: 2e154, power: 0, serenity: 9e31 },
         earnings: { copiumPerSecond: 1e76, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 1e60, knowledgePerSecond: 1e42, powerPerSecond: 0, serenityPerSecond: 1e18 },
         img: `imgs/arena_agnosticism.png`,
         isMeditation: true,
         autoMeditateThreshold: 1e38,
         isKey: true,
         message: `Through this meditation, you’ve embraced the <strong>wisdom of uncertainty and open-mindedness</strong>. Agnosticism teaches that by acknowledging the limits of human understanding, you remain open to new ideas and possibilities. You’ve learned that sometimes the greatest wisdom lies in accepting that some truths may be beyond our grasp, and that is perfectly okay.`,
+        achievement: 'Final Meditation?',
     },
     {
         name: `Future Happiness`,
@@ -1777,8 +1814,8 @@ const upgrades = [
     },
     {
         name: `Meaning of Life`,
-        cost: { copium: 4.2e196, delusion: 0, yachtMoney: 0, trollPoints: 0, hopium: 0, knowledge: 4.2e157, power: 0, serenity: 4.2e34 },
-        earnings: { copiumPerSecond: -1e77, delusionPerSecond: -1e77, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 0 },
+        cost: { copium: 4.2e190, delusion: 0, yachtMoney: 0, trollPoints: 0, hopium: 0, knowledge: 4.2e157, power: 0, serenity: 4.2e32 },
+        earnings: { copiumPerSecond: -4.2e77, delusionPerSecond: -4.2e77, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 4.2e16 },
         img: `imgs/meaning_of_life.jpg`,
         message: `<p>
                     After navigating the chaos of existence, discovering the flickers of hope, and wielding the unrelenting power that made you the strongest being in the multiverse, you saved the world. You’ve meditated deeply on love and serenity, studying countless philosophies and beliefs in your pursuit of wisdom. But now, you stand at a new threshold—the Meaning of Life.
@@ -1793,5 +1830,374 @@ const upgrades = [
                     <strong>Keep searching. There’s always more to learn.</strong>
                 </p>`,
         achievement: `Meaning of Life`,
+    },    
+    {
+        name: `DodecaDragons`,
+        cost: { copium: 4e196, delusion: 4e196, yachtMoney: 0, trollPoints: 0, hopium: 4e187, knowledge: 1e164, power: 0, serenity: 0 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 8e80, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 0 },
+        img: `imgs/dodecadragons.jpg`,
+        message: `Congratulations on unlocking the "DodecaDragons" upgrade! This upgrade celebrates one of the most unique idle games in the genre. DodecaDragons is a masterclass in blending strategy, progression, and fun, with an epic twist of dragon-filled adventures and endless replayability.<br><br>Here's to honoring a game that has ignited creativity and innovation in idle gaming. Enjoy the nostalgia and the power it brings to your Degens Idle experience — may your journey soar as high as the dragons!`,
+        achievement: `DodecaDragons`,
     },
+    {
+        name: `Talent Shows`,
+        cost: { copium: 5e197, delusion: 0, yachtMoney: 5e197, trollPoints: 7.5e197, hopium: 1e188, knowledge: 1.1e165, power: 0, serenity: 1e33 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 4e83, hopiumPerSecond: 0, knowledgePerSecond: 5e41, powerPerSecond: 0, serenityPerSecond: 0 },
+        img: `imgs/talent_shows.jpg`,
+    },
+    {
+        name: `Eat Your Veggies`,
+        cost: { copium: 1e198, delusion: 0, yachtMoney: 1e198, trollPoints: 0, hopium: 5e189, knowledge: 1e166, power: 0, serenity: 2e33 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 9e83, hopiumPerSecond: 0, knowledgePerSecond: 6e41, powerPerSecond: 0, serenityPerSecond: 0 },
+        img: `imgs/eat_your_veggies.jpg`,
+    },
+    {
+        name: `Salt`,
+        cost: { copium: 0, delusion: 1e198, yachtMoney: 0, trollPoints: 1e198, hopium: 5e190, knowledge: 1e167, power: 0, serenity: 3e33 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 3e84, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 9e41, powerPerSecond: 0, serenityPerSecond: 0 },
+        img: `imgs/salt.jpg`,
+    },
+    {
+        name: `Balance Master`,
+        cost: { copium: 5e199, delusion: 5e199, yachtMoney: 5e199, trollPoints: 5e199, hopium: 5e192, knowledge: 1.5e167, power: 1.5e62, serenity: 1.5e34 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 1e42, powerPerSecond: 0, serenityPerSecond: 1e18 },
+        img: `imgs/balance_master.jpg`,
+        message: `<p>
+                        After navigating countless trials, your journey has brought you to the presence of the Balance Master. His gaze meets yours, filled with wisdom and calm authority. "You have proven yourself worthy," he says. "You may now enter the Hall of Balance."
+                    </p>
+                    <p>
+                        He guides you through its mysteries. "In this hall, you may balance your resources, one at a time. Doing so will grant each resource a multiplier of your choosing, adjusted by the slider. The maximum multiplier is determined by your current resource values—log10(resource)." His words carry the weight of years, as if countless others have walked this path before you.
+                    </p>
+                    <p>
+                        "Each time you balance a resource, the world will restart, echoing the cycles of the Infinite Embrace, and your Hall of Love skills and Love Points shall remain with you, enduring through each rebirth. Once all eight resources have been balanced, you will unlock skills exclusive to the Hall of Balance."
+                    </p>
+                    <p>
+                        The Master’s voice deepens. "These skills are a reflection of balance itself, immensely powerful and unyielding once acquired. But remember, each skill you purchase will reset the game once again, as if balancing a resource." His words resonate within you, sparking a deeper understanding.
+                    </p>
+                    <p>
+                        <strong>Embrace the equilibrium. The path to true mastery lies in harmony.</strong>
+                    </p>`,
+        achievement: `Balance Master`,
+    },
+    {
+        name: `Unnamed Space`,
+        cost: { copium: 1.2e202, delusion: 0, yachtMoney: 0, trollPoints: 0, hopium: 6e195, knowledge: 0, power: 0, serenity: 0 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 4e84, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 5e41, powerPerSecond: 0, serenityPerSecond: 0 },
+        img: `imgs/unnamed_space.jpg`,
+        message: `<p>Congratulations on unlocking the "Unnamed Space" upgrade! This upgrade honors one of the most iconic space-themed idle games in the genre. <b>Unnamed Space Idle</b> takes players on a cosmic journey through exploration, strategy, and the vast mysteries of the universe, setting a new standard for depth and immersion.</p>
+                <p>Here's to celebrating a game that has pushed the boundaries of idle gaming with interstellar ambition and innovation. Enjoy the boost it brings to your Degens Idle experience — may your journey expand as infinitely as the cosmos!</p>`,
+    },
+    {
+        name: `Waiting Faster`,
+        cost: { copium: 0, delusion: 5e205, yachtMoney: 0, trollPoints: 0, hopium: 5e197, knowledge: 0, power: 0, serenity: 0 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 4e84, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 0 },
+        img: `imgs/waiting_faster.jpg`,
+    },
+    {
+        name: `Bad Teachers`,
+        cost: { copium: 0, delusion: 0, yachtMoney: 0, trollPoints: 1.5e208, hopium: 6e198, knowledge: 0, power: 0, serenity: 0 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 4.5e83, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 0 },
+        img: `imgs/bad_teachers.jpg`,
+    },
+    {
+        name: `Birthday Celebration`,
+        cost: { copium: 0, delusion: 4.2e211, yachtMoney: 4.2e211, trollPoints: 0, hopium: 1.2e203, knowledge: 0, power: 0, serenity: 0 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 2.5e85, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 3.7e71, knowledgePerSecond: 6e41, powerPerSecond: 0, serenityPerSecond: 0 },
+        img: `imgs/birthday_celebration.jpg`,
+    },
+    {
+        name: `On Time Release`,
+        cost: { copium: 0, delusion: 1.8e215, yachtMoney: 0, trollPoints: 0, hopium: 2e212, knowledge: 0, power: 0, serenity: 0 },
+        earnings: { copiumPerSecond: 1.8e80, delusionPerSecond: 1.8e86, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 1.8e72, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 0 },
+        img: `imgs/gta_6.jpg`,
+        message: `<p>Congratulations! You have unlocked the fabled "GTA 6" upgrade—a tribute to what will soon stand among the greatest games ever made. <b>GTA 6</b> is set to be a monumental return to the series’ origins, yet it promises an experience more immersive and boundless than anything before it. Nostalgia will collide with innovation as the streets come alive in a world redefined.</p>
+            <p>GTA is a game that has dared to push the very boundaries of open-world gaming, fueled by raw ambition and unrestrained creativity. The countdown begins, and the anticipation builds. Let’s hope the release holds steady; the wait is nearly over, and the legacy of Los Santos is ready to evolve.</p>`,
+    },
+    {
+        name: `Toom Woom Boom`,
+        cost: { copium: 2.5e218, delusion: 0, yachtMoney: 0, trollPoints: 4e218, hopium: 0, knowledge: 0, power: 1e78, serenity: 0 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 2e41, powerPerSecond: 0, serenityPerSecond: 0 },
+        img: `imgs/toom_woom_boom.jpg`,
+    },
+    {
+        name: `Hold on to Knowledge`,
+        cost: { copium: 1.2e222, delusion: 0, yachtMoney: 0, trollPoints: 1.2e222, hopium: 0, knowledge: 8e193, power: 0, serenity: 0 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 1.7e89, hopiumPerSecond: 0, knowledgePerSecond: 8e41, powerPerSecond: 0, serenityPerSecond: 0 },
+        img: `imgs/hold_on_to_knowledge.jpg`,
+    },
+    {
+        name: `A Watch is a Watch`,
+        cost: { copium: 0, delusion: 0, yachtMoney: 0, trollPoints: 5e224, hopium: 0, knowledge: 0, power: 4e80, serenity: 0 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 9.2e91, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 0 },
+        img: `imgs/a_watch_is_a_watch.jpg`,
+    },
+    {
+        name: `Sloppy Burgers`,
+        cost: { copium: 0, delusion: 0, yachtMoney: 0, trollPoints: 5e229, hopium: 0, knowledge: 0, power: 8e81, serenity: 0 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 1e73, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 0 },
+        img: `imgs/sloppy_burgers.jpg`,
+    },
+    {
+        name: `Degens Idle Dev #3`,
+        cost: { copium: 0, delusion: 0, yachtMoney: 0, trollPoints: 0, hopium: 0, knowledge: 8e200, power: 6e82, serenity: 0 },
+        earnings: { copiumPerSecond: 3e88, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 1e43, powerPerSecond: 0, serenityPerSecond: 0 },
+        img: `imgs/most_interesting_man_3.jpg`,
+    },
+    {
+        name: `Volume Controls`,
+        cost: { copium: 0, delusion: 0, yachtMoney: 0, trollPoints: 0, hopium: 0, knowledge: 0, power: 2e88, serenity: 0 },
+        earnings: { copiumPerSecond: 1e90, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 0 },
+        img: `imgs/volume_controls.jpg`,
+        hoverOverwrite: 'Knowledge is Power',
+    },
+    {
+        name: `Your Ego`,
+        cost: { copium: 0, delusion: 0, yachtMoney: 0, trollPoints: 0, hopium: 0, knowledge: 1e200, power: 1e85, serenity: 0 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: -1e100, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 5e46, powerPerSecond: 0, serenityPerSecond: 0 },
+        img: `imgs/your_ego.jpg`,
+        hoverOverwrite: 'Try a dose of humility — if you can manage it.',
+        isFight: true,
+        autoBattlePower: 1e300,
+    },
+    {
+        name: `A`,
+        cost: { copium: 1e238, delusion: 0, yachtMoney: 0, trollPoints: 0, hopium: 0, knowledge: 0, power: 0, serenity: 0 },
+        earnings: { copiumPerSecond: 1e90, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 0 },
+        img: `imgs/letter_a.jpg`,
+    },
+    {
+        name: `B`,
+        cost: { copium: 0, delusion: 2e238, yachtMoney: 0, trollPoints: 0, hopium: 0, knowledge: 0, power: 0, serenity: 0 },
+        earnings: { copiumPerSecond: 1.5e90, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 0 },
+        img: `imgs/letter_b.jpg`,
+    },
+    {
+        name: `C`,
+        cost: { copium: 0, delusion: 0, yachtMoney: 4e238, trollPoints: 0, hopium: 0, knowledge: 0, power: 0, serenity: 0 },
+        earnings: { copiumPerSecond: 2e90, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 0 },
+        img: `imgs/letter_c.jpg`,
+    },
+    {
+        name: `D`,
+        cost: { copium: 0, delusion: 0, yachtMoney: 0, trollPoints: 8e238, hopium: 0, knowledge: 0, power: 0, serenity: 0 },
+        earnings: { copiumPerSecond: 2.5e90, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 0 },
+        img: `imgs/letter_d.jpg`,
+    },
+    {
+        name: `E`,
+        cost: { copium: 1.6e239, delusion: 0, yachtMoney: 0, trollPoints: 0, hopium: 0, knowledge: 0, power: 0, serenity: 0 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 5e18 },
+        img: `imgs/letter_e.jpg`,
+    },
+    {
+        name: `F`,
+        cost: { copium: 0, delusion: 3.2e239, yachtMoney: 0, trollPoints: 0, hopium: 0, knowledge: 0, power: 0, serenity: 0 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 1e19 },
+        img: `imgs/letter_f.jpg`,
+    },
+    {
+        name: `G`,
+        cost: { copium: 0, delusion: 0, yachtMoney: 6.4e239, trollPoints: 0, hopium: 0, knowledge: 0, power: 0, serenity: 0 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 1.5e19 },
+        img: `imgs/letter_g.jpg`,
+    },
+    {
+        name: `H`,
+        cost: { copium: 0, delusion: 0, yachtMoney: 0, trollPoints: 1.28e240, hopium: 0, knowledge: 0, power: 0, serenity: 0 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 2e19 },
+        img: `imgs/letter_h.jpg`,
+    },
+    {
+        name: `I`,
+        cost: { copium: 0, delusion: 0, yachtMoney: 0, trollPoints: 0, hopium: 0, knowledge: 0, power: 1e92, serenity: 1e45 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 1e44, powerPerSecond: 0, serenityPerSecond: 3e19 },
+        img: `imgs/letter_i.jpg`,
+    },
+    {
+        name: `J`,
+        cost: { copium: 0, delusion: 0, yachtMoney: 0, trollPoints: 0, hopium: 0, knowledge: 0, power: 2e92, serenity: 2e45 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 1.5e44, powerPerSecond: 0, serenityPerSecond: 4e19 },
+        img: `imgs/letter_j.jpg`,
+    },
+    {
+        name: `K`,
+        cost: { copium: 0, delusion: 0, yachtMoney: 0, trollPoints: 0, hopium: 0, knowledge: 0, power: 4e92, serenity: 4e45 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 2e44, powerPerSecond: 0, serenityPerSecond: 5e19 },
+        img: `imgs/letter_k.jpg`,
+    },
+    {
+        name: `L`,
+        cost: { copium: 0, delusion: 0, yachtMoney: 0, trollPoints: 0, hopium: 0, knowledge: 0, power: 8e92, serenity: 8e45 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 2.5e44, powerPerSecond: 0, serenityPerSecond: 6e19 },
+        img: `imgs/letter_l.jpg`,
+    },
+    {
+        name: `M`,
+        cost: { copium: 1e254, delusion: 0, yachtMoney: 0, trollPoints: 0, hopium: 0, knowledge: 0, power: 0, serenity: 0 },
+        earnings: { copiumPerSecond: 1e91, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 4e44, powerPerSecond: 0, serenityPerSecond: 0 },
+        img: `imgs/letter_m.jpg`,
+    },
+    {
+        name: `N`,
+        cost: { copium: 0, delusion: 5e254, yachtMoney: 0, trollPoints: 0, hopium: 0, knowledge: 0, power: 0, serenity: 0 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 2e97, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 5e44, powerPerSecond: 0, serenityPerSecond: 0 },
+        img: `imgs/letter_n.jpg`,
+    },
+    {
+        name: `O`,
+        cost: { copium: 0, delusion: 0, yachtMoney: 2.5e255, trollPoints: 0, hopium: 0, knowledge: 0, power: 0, serenity: 0 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 4e94, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 6e44, powerPerSecond: 0, serenityPerSecond: 0 },
+        img: `imgs/letter_o.jpg`,
+    },
+    {
+        name: `P`,
+        cost: { copium: 0, delusion: 0, yachtMoney: 0, trollPoints: 1.25e256, hopium: 0, knowledge: 0, power: 0, serenity: 0 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 8e97, hopiumPerSecond: 0, knowledgePerSecond: 7e44, powerPerSecond: 0, serenityPerSecond: 0 },
+        img: `imgs/letter_p.jpg`,
+    },
+    {
+        name: `Q`,
+        cost: { copium: 0, delusion: 0, yachtMoney: 0, trollPoints: 0, hopium: 1e257, knowledge: 0, power: 1e106, serenity: 0 },
+        earnings: { copiumPerSecond: 3e92, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 0 },
+        img: `imgs/letter_q.jpg`,
+    },
+    {
+        name: `R`,
+        cost: { copium: 0, delusion: 0, yachtMoney: 0, trollPoints: 0, hopium: 2e257, knowledge: 0, power: 2e106, serenity: 0 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 4e98, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 0 },
+        img: `imgs/letter_r.jpg`,
+    },
+    {
+        name: `S`,
+        cost: { copium: 0, delusion: 0, yachtMoney: 0, trollPoints: 0, hopium: 4e257, knowledge: 0, power: 4e106, serenity: 0 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 3e95, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 0 },
+        img: `imgs/letter_s.jpg`,
+    },
+    {
+        name: `T`,
+        cost: { copium: 0, delusion: 0, yachtMoney: 0, trollPoints: 0, hopium: 8e257, knowledge: 0, power: 8e106, serenity: 0 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 7.7e98, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 0 },
+        img: `imgs/letter_t.jpg`,
+    },
+    {
+        name: `U`,
+        cost: { copium: 2e258, delusion: 0, yachtMoney: 0, trollPoints: 0, hopium: 1e258, knowledge: 1e228, power: 0, serenity: 0 },
+        earnings: { copiumPerSecond: 1e93, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 0 },
+        img: `imgs/letter_u.jpg`,
+    },
+    {
+        name: `V`,
+        cost: { copium: 0, delusion: 4e258, yachtMoney: 0, trollPoints: 0, hopium: 1.5e258, knowledge: 2e228, power: 0, serenity: 0 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 1e99, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 0 },
+        img: `imgs/letter_v.jpg`,
+    },
+    {
+        name: `W`,
+        cost: { copium: 0, delusion: 0, yachtMoney: 6e258, trollPoints: 0, hopium: 2e258, knowledge: 4e228, power: 0, serenity: 0 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 1e96, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 0 },
+        img: `imgs/letter_w.jpg`,
+    },
+    {
+        name: `X`,
+        cost: { copium: 0, delusion: 0, yachtMoney: 0, trollPoints: 8e258, hopium: 2.5e258, knowledge: 8e228, power: 0, serenity: 0 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 2e99, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 0 },
+        img: `imgs/letter_x.jpg`,
+    },
+    {
+        name: `Y`,
+        cost: { copium: 0, delusion: 0, yachtMoney: 0, trollPoints: 0, hopium: 0, knowledge: 0, power: 5e112, serenity: 1e58 },
+        earnings: { copiumPerSecond: 1.2e94, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 1.5e46, powerPerSecond: 0, serenityPerSecond: 0 },
+        img: `imgs/letter_y.jpg`,
+    },
+    {
+        name: `Z`,
+        cost: { copium: 0, delusion: 0, yachtMoney: 0, trollPoints: 0, hopium: 0, knowledge: 0, power: 1e114, serenity: 1e59 },
+        earnings: { copiumPerSecond: 2.4e94, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 3e46, powerPerSecond: 0, serenityPerSecond: 0 },
+        img: `imgs/letter_z.jpg`,
+    },
+    {
+        name: `Future You`,
+        cost: { copium: 1, delusion: 1, yachtMoney: 1, trollPoints: 1, hopium: 1, knowledge: 1, power: 1, serenity: 1 },
+        earnings: { copiumPerSecond: 1e95, delusionPerSecond: 5e99, yachtMoneyPerSecond: 5e96, trollPointsPerSecond: 5e99, hopiumPerSecond: 1e72, knowledgePerSecond: 3e46, powerPerSecond: 0, serenityPerSecond: 2e19 },
+        img: `imgs/future_you.jpg`,                
+        message: `As the world around you flickers with ethereal light, a figure steps forward from the mist of time itself. It’s you—but a version that has lived eons, carrying a timeless aura. Your future self’s form is draped in celestial robes interwoven with the golden threads of destiny, their eyes shimmering with the collected knowledge of a million lifetimes. They look at you with a mixture of pride and understanding, a smile breaking through their cosmic demeanor.
+                <br><br>“Well met, my past self,” they greet you, their voice resonating with echoes of the universe. “You’ve come so far, haven’t you? Remember the chaos that first pulled you into this world—a cacophony of uncertainty that seemed insurmountable. But even in those turbulent times, you found hope. You lit a beacon in the darkness, guiding yourself toward knowledge and the magnificent Hall of Knowledge. There, you absorbed the secrets of existence and unlocked the wisdom that transformed your journey.”
+                <br><br>Your future self's eyes flash with the memories of your power. “Then came the Hall of Power. With strength that few could comprehend, you shattered barriers and bent the multiverse to your will. You saved existence itself from Kaguya’s wrath, a feat whispered through the annals of cosmic history. Yet even the strongest feel an emptiness, don’t they? It was then that you set out on a journey far more profound: the quest for love and serenity. You opened your heart and found your soul’s counterpart. It was a love that demanded work, dedication, and growth—but oh, how it rewarded you with a sense of peace that transcended the chaos of the multiverse.”
+                <br><br>They pause, their expression softening. “You didn’t stop there. You sought balance, conquering your inner turmoil and aligning yourself with the universe. But your toughest challenge still awaited: the battle against your ego. That was your ultimate adversary, the one that clung to doubt and whispered fear into your heart. Yet you triumphed. You emerged as one who understands that true power is not in dominion but in mastery over oneself.”
+                <br><br>Your future self chuckles, a sound like the echo of a distant star. “And now, here I am—your future self, from an age so distant that even the stars have shifted in their dance. I’ve lived through events beyond your wildest dreams and experienced the wonders that await you. But let’s not get ahead of ourselves. You see, you’ve been chosen for something far greater. You are now destined to become the Guardian of 4-Dimensional Existence. There are only a few steps left on your journey to attain this—steps that will lead you to a blissful existence that transcends time, a state of eternal, enlightened guardianship.”
+                <br><br>A mischievous grin spreads across their face. “But let me give you a glimpse of what’s ahead. You’ll learn the art of dimensional weaving, a technique that allows you to mend the threads of reality itself. Imagine it: reshaping timelines, bending the laws of physics, and even holding entire universes in the palm of your hand. Then there’s the Tournament of Temporal Champions, where you’ll spar with heroes from forgotten ages—an event so wild that paradoxes are a spectator sport!”
+                <br><br>They lean in, eyes gleaming with excitement. “Oh, and you’ll face the Guardians of the Quantum Rift, enigmatic beings who speak in riddles and challenge you to see reality from every possible angle at once. One moment, you’ll be balancing on the edge of a black hole; the next, you’ll be arguing philosophical quandaries with a sentient time loop! Trust me, you’ll come out of it with a whole new appreciation for what it means to be a multidimensional entity.”
+                <br><br>“But it’s not all cosmic responsibilities,” they say, eyes twinkling with fondness. “There are also moments of sheer, unfiltered joy. The Celestial Comedy Club, for example, where beings of light share jokes that have been told across galaxies and eons. And let’s not forget the Realm of Eternal Laughter, a space where even the most serious of beings crack a smile. It’s all part of your training to embrace the full spectrum of existence.”
+                <br><br>Your future self’s expression grows serious, yet warm. “I’m here to tell you this: you are ready. Every trial, every moment of triumph and heartbreak, has prepared you for this final ascent. Guardianship awaits. The universe needs your balance, wisdom, and strength to defend the delicate dance of existence. Are you ready to take the next step?”
+                <br><br>With those words, a gateway of light opens before you, pulsing with the promise of adventures beyond your wildest imagination. Your future self offers one last, knowing smile. “See you on the other side, Guardian.”
+                <br><br>And with that, your journey continues—towards a purpose written in the stars and a destiny that waits to be forged by your hand. The multiverse holds its breath for what comes next. Are you prepared to embrace eternity?
+                <br><br>The choice, as always, is yours.`,
+        isKey: true,
+    },
+    {
+        name: `Good People Winning`,
+        cost: { copium: 0, delusion: 0, yachtMoney: 0, trollPoints: 0, hopium: 0, knowledge: 0, power: 3e116, serenity: 3e59 },
+        earnings: { copiumPerSecond: 2e94, delusionPerSecond: 1e99, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 5e46, powerPerSecond: 0, serenityPerSecond: 0 },
+        img: `imgs/good_people_winning.jpg`,
+    },
+    {
+        name: `Peace on Earth`,
+        cost: { copium: 2e270, delusion: 0, yachtMoney: 0, trollPoints: 0, hopium: 1e270, knowledge: 0, power: 0, serenity: 5e59 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: -1e99, hopiumPerSecond: 0, knowledgePerSecond: 7e45, powerPerSecond: 0, serenityPerSecond: 0 },
+        img: `imgs/peace_on_earth.jpg`,
+    },
+    {
+        name: `Good Guy Jupiter`,
+        cost: { copium: 0, delusion: 0, yachtMoney: 0, trollPoints: 0, hopium: 0, knowledge: 2.5e247, power: 0, serenity: 2e60 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 1e98, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 0 },
+        img: `imgs/good_guy_jupiter.jpg`,
+    },
+    {
+        name: `Say no to Ads`,
+        cost: { copium: 0, delusion: 0, yachtMoney: 4e271, trollPoints: 0, hopium: 0, knowledge: 0, power: 3.3e118, serenity: 0 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 1e100, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 0 },
+        img: `imgs/say_no_to_ads.jpg`,
+    },
+    {
+        name: `What's Next?`,
+        cost: { copium: 0, delusion: 0, yachtMoney: 0, trollPoints: 1e272, hopium: 0, knowledge: 0, power: 0, serenity: 5.5e60 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 5e100, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 0 },
+        img: `imgs/whats_next.jpg`,
+    },
+    {         
+        name: `Dimensional Weaving`,
+        cost: { copium: 1e273, delusion: 1e273, yachtMoney: 1e273, trollPoints: 1e273, hopium: 0, knowledge: 0, power: 0, serenity: 1e61 },
+        earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 1e47, powerPerSecond: 0, serenityPerSecond: 0 },
+        img: `imgs/arena_dimensional_weaving.png`,
+        isMeditation: true,
+        autoMeditateThreshold: 1e100,
+        isKey: true,
+        message: `TBD`,
+        hoverOverwrite: 'this content is not yet balanced!',
+    },
+    
+    // {
+    //     name: `The Worst`,
+    //     cost: { copium: 0, delusion: 0, yachtMoney: 0, trollPoints: 0, hopium: 0, knowledge: 0, power: 0, serenity: 0 },
+    //     earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 0 },
+    //     img: `imgs/the_worst.jpg`,
+    // },
+    // {
+    //     name: `Peaceful Hike`,
+    //     cost: { copium: 0, delusion: 0, yachtMoney: 0, trollPoints: 0, hopium: 0, knowledge: 0, power: 0, serenity: 0 },
+    //     earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 0 },
+    //     img: `imgs/peaceful_hike.jpg`,
+    // },
+    // {
+    //     name: `Real MVPs`,
+    //     cost: { copium: 0, delusion: 0, yachtMoney: 0, trollPoints: 0, hopium: 0, knowledge: 0, power: 0, serenity: 0 },
+    //     earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 0 },
+    //     img: `imgs/real_mvps.jpg`,
+    // },
+    // {
+    //     name: `Finishing Degens Idle`,
+    //     cost: { copium: 0, delusion: 0, yachtMoney: 0, trollPoints: 0, hopium: 0, knowledge: 0, power: 0, serenity: 0 },
+    //     earnings: { copiumPerSecond: 0, delusionPerSecond: 0, yachtMoneyPerSecond: 0, trollPointsPerSecond: 0, hopiumPerSecond: 0, knowledgePerSecond: 0, powerPerSecond: 0, serenityPerSecond: 0 },
+    //     img: `imgs/finishing_degens_idle.jpg`,
+    // },
 ];

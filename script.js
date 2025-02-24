@@ -48,6 +48,8 @@ let purchasedUpgrades = []; // Array for maintaining order and accessing propert
 let purchasedUpgradesSet = new Set(); // Set for fast lookups
 let availableUpgrades = [];
 
+let isAutoSaveEnabled = false;
+
 let godModeLevel = 0;
 let godModeMultiplier = 1;
 let puGodLevel = 0;
@@ -75,6 +77,7 @@ let largestEmbrace = 0;
 
 let altruisticEmbraceSkill = false;
 let masterOfBargainsSkill = false;
+let stoicEmbraceSkill = false;
 
 let currentNumberFormat = 'Mixed';
 
@@ -125,6 +128,8 @@ let hopefulBeginningSkill = false;
 let autoFightSkill = false;
 let autoFightEnabled = false;
 let autoMeditateSkill = false;
+let tearsOfJoySkill = false;
+let minMaxingLoveSkill = false;
 let infinitePrestigeSkill = false;
 let crunchKnowledgeSkill = false;
 let stellarMeditationSkill = false;
@@ -147,10 +152,13 @@ let masterOfTimeSkill = false;
 let loveSizeMattersSkill = false;
 let loveIsEverythingSkill = false;
 let etherealReflectionSkill = false;
+let sereneExtortionSkill = false;
+let pricyTranquilitySkill = false;
 let resonanceOfLoveSkill = false;
 let hopiumTradeSkill = false;
 let tranquilityOverdriveSkill = false;
 let autoTradeHopiumIntervalId = null;
+let autoTradeHopiumEnabled = false;
 let equilibriumOfHopeSkill = false;
 let temporalDragReduction = 1;
 let lookPastDistractions = 0;
@@ -172,7 +180,7 @@ let autoPrestigeThreshold = null;
 let autoAscendThreshold = null;
 let autoTranscendThreshold = null;
 
-let numAscensionUpgrades = 1;
+let numAscensionUpgrades = 2;
 let numPUAscensionUpgrades = 2;
 
 let improvedTradeRatio = false;
@@ -208,6 +216,9 @@ let stellarCookieSkill = false;
 
 let stellarMeditationMult = 1;
 
+let balanceCheckMultiplier = 1;
+let suppressBalanceSkills = false;
+
 let currentTimeouts = [];  // Array to store all active timeout IDs
 let cookieIntervalId;
 
@@ -228,10 +239,20 @@ let warpTimeDuration = 0; // X minutes of warp
 let warpTimeRemaining = 0; // Track remaining warp time
 let warpTimeInterval = null;
 
-let enableQuickMode = false;
+let enableQuickModePrestige = false;
+let enableQuickModeAscend = false;
+let enableQuickModeTranscend = false;
+let enableQuickModeBigCrunch = false;
+let enableQuickModeInfiniteEmbrace = false;
+let enableQuickModeMiniGameSkip = false;
+
 let enableButtonAnimations = true;
 
 let resourceGenerationDisabled = false;
+
+let noGimmicksUsed;
+
+let messageShownUpgrades;
 
 // Global object to manage prevent event occuring at the same time
 let eventProgression = {
@@ -240,7 +261,13 @@ let eventProgression = {
 }
 
 function calculateBaseKnowledge() {
-    return knowledgePerSecond * totalMultiplier * (crunchKnowledgeSkill ? bigCrunchMultiplier**(2/3) : bigCrunchMultiplier**(1/2)) * knowledgeInfusionMultiplier * ((faithFueledKnowledgeSkill && hopium > 1e10) ? Math.log10(hopium)/10 : 1);
+    let baseKnowledge = knowledgePerSecond * totalMultiplier * (crunchKnowledgeSkill ? bigCrunchMultiplier**(2/3) : bigCrunchMultiplier**(1/2)) * knowledgeInfusionMultiplier * ((faithFueledKnowledgeSkill && hopium > 1e10) ? Math.log10(hopium)/10 : 1) * balanceHallMultipliers.get('Knowledge').currentMultiplier * balanceCheckMultiplier;
+
+    if(balanceHallSkills.get("Love Matters").unlocked && lovePoints > 1000 && !suppressBalanceSkills) {
+        baseKnowledge *= (lovePoints / 1000);
+    }
+
+    return baseKnowledge;
 }
 
 function calculateEffectiveKnowledge() {
@@ -268,10 +295,18 @@ function calculateBasePower() {
     let basePower = (moneyIsPowerTooSkill ?
         (Math.max(knowledge, 0) ** (1/3) / 1e12) * (1 + (Math.max(yachtMoney, 0) ** (1/30) / 100))
         : Math.max(knowledge, 0) ** (1/3) / 1e12)
-        * powerSurgeMultiplier * devMultiplier * stellarHarvestMult * stellarMeditationMult * achievementMultiplier * powerInfusionMultiplier * cosmicGamekeeperMultiplier;
+        * powerSurgeMultiplier * devMultiplier * stellarHarvestMult * stellarMeditationMult * achievementMultiplier * powerInfusionMultiplier * cosmicGamekeeperMultiplier * balanceHallMultipliers.get('Power').currentMultiplier * balanceCheckMultiplier;
 
     if (powerIsPowerSkill) {
         basePower *= 1.1 ** (powerHallSkills.filter(skill => skill.unlocked).length);
+    }
+
+    if(balanceHallSkills.get("Love Matters").unlocked && lovePoints > 1000 && !suppressBalanceSkills) {
+        basePower *= (lovePoints / 1000);
+    }
+
+    if (balanceHallSkills.get("Balance is Power").unlocked && !suppressBalanceSkills) {
+        basePower *= (5 ** (Array.from(balanceHallSkills.values()).filter(skill => skill.unlocked).length))
     }
 
     return basePower;
@@ -305,23 +340,29 @@ function updateEffectiveMultipliers() {
 
     const loveMultiplier = loveIsEverythingSkill ? (serenity > 1.1 ? Math.log(serenity) / Math.log(1.1) : 1) : 1;
 
-    effectiveCopiumPerSecond = copiumPerSecond * totalMultiplier * amplifierMultiplier * copiumSurgeMultiplier * basicResourceBoost * beaconOfSevenSunsMult * loveMultiplier * loveSizeMattersMultiplier;
-    effectiveDelusionPerSecond = delusionPerSecond * totalMultiplier * amplifierMultiplier * delusionSurgeMultiplier * basicResourceBoost * loveMultiplier;
-    effectiveYachtMoneyPerSecond = yachtMoneyPerSecond * totalMultiplier * amplifierMultiplier * yachtMoneySurgeMultiplier * basicResourceBoost * loveMultiplier * loveSizeMattersMultiplier;
-    effectiveTrollPointsPerSecond = trollPointsPerSecond * totalMultiplier * amplifierMultiplier * trollPointsSurgeMultiplier * basicResourceBoost * loveMultiplier;
+    effectiveCopiumPerSecond = copiumPerSecond * totalMultiplier * amplifierMultiplier * copiumSurgeMultiplier * basicResourceBoost * beaconOfSevenSunsMult * loveMultiplier * loveSizeMattersMultiplier * balanceHallMultipliers.get('Copium').currentMultiplier;
+    effectiveDelusionPerSecond = delusionPerSecond * totalMultiplier * amplifierMultiplier * delusionSurgeMultiplier * basicResourceBoost * loveMultiplier * balanceHallMultipliers.get('Delusion').currentMultiplier;
+    effectiveYachtMoneyPerSecond = yachtMoneyPerSecond * totalMultiplier * amplifierMultiplier * yachtMoneySurgeMultiplier * basicResourceBoost * loveMultiplier * loveSizeMattersMultiplier * balanceHallMultipliers.get('Yacht Money').currentMultiplier;
+    effectiveTrollPointsPerSecond = trollPointsPerSecond * totalMultiplier * amplifierMultiplier * trollPointsSurgeMultiplier * basicResourceBoost * loveMultiplier * balanceHallMultipliers.get('Troll Points').currentMultiplier;
 
-    effectiveHopiumPerSecond = hopiumPerSecond * totalMultiplier * beaconOfSevenSunsMult;
+    effectiveHopiumPerSecond = hopiumPerSecond * totalMultiplier * beaconOfSevenSunsMult * balanceHallMultipliers.get('Hopium').currentMultiplier * balanceCheckMultiplier;
     if (serenityFlowSkill && serenity > 1) {
         effectiveHopiumPerSecond *= Math.sqrt(serenity);
     }
 
-    effectiveKnowledgePerSecond = calculateEffectiveKnowledge();
+    effectiveKnowledgePerSecond = tearsOfJoySkill ? calculateBaseKnowledge() : calculateEffectiveKnowledge();
 
     if (powerUnlocked){
-        effectivePowerPerSecond = calculateEffectivePower();
+        effectivePowerPerSecond = tearsOfJoySkill ? calculateBasePower() : calculateEffectivePower();
     }
 
-    effectiveSerenityPerSecond = serenityPerSecond * achievementMultiplier * serenityBoostMultiplier * cosmicGamekeeperMultiplier;
+    const sereneFutureMultiplier = (balanceHallSkills.get("Serene Future").unlocked && !suppressBalanceSkills) ? 1.03 ** purchasedUpgrades.length : 1;
+
+    effectiveSerenityPerSecond = serenityPerSecond * achievementMultiplier * devMultiplier * serenityBoostMultiplier * cosmicGamekeeperMultiplier * balanceHallMultipliers.get('Serenity').currentMultiplier * balanceCheckMultiplier * sereneFutureMultiplier;
+
+    if(balanceHallSkills.get("Love Matters").unlocked && lovePoints > 1000 && !suppressBalanceSkills) {
+        effectiveSerenityPerSecond *= (lovePoints / 1000);
+    }
 
     // Define an array of objects for the resources and their corresponding flags
     const serenityGainResources = [
@@ -342,12 +383,15 @@ function updateEffectiveMultipliers() {
         effectiveSerenityPerSecond *= Math.max(1, Math.log2(lovePoints));
     }
 
+    if (minMaxingLoveSkill){
+        effectiveSerenityPerSecond *= 1.25;
+    }
 }
 
 let cookieClicks = 0;
 
 // Function to handle cookie click
-function cookieCollectAllResources() {
+function cookieCollectAllResources(isManualClick=true) {
     if (cookieBoost){
         copium += Math.max(cookieClickMultiplier * totalMultiplier, effectiveCopiumPerSecond/2);
         delusion += Math.max(cookieClickMultiplier * totalMultiplier, effectiveDelusionPerSecond/2);
@@ -370,7 +414,7 @@ function cookieCollectAllResources() {
     if(cookieClicks >= 500 && cookieClicks <= 505){
         unlockAchievement('Fatigued Finger');
     }
-    if (!achievementsMap.get('Warped Cookie').isUnlocked && !cookieIntervalId){
+    if (!achievementsMap.get('Warped Cookie').isUnlocked && isManualClick){
         warpedCookieSequence += 'C';
         manageWarpedCookieSequence();
     }
@@ -392,6 +436,9 @@ let collectClicks = {
     trollPoints: 0
 };
 
+const resourceClicksWinningSequence = 'CDYDTYCCDDYTTD';
+let resourceClicksSequence = '';
+
 // Function to collect a specific resource and update the game state
 function collectResource(resource) {
     // Increase the appropriate resource by the totalMultiplier
@@ -399,6 +446,21 @@ function collectResource(resource) {
     if (resource === 'delusion') delusion += totalMultiplier;
     if (resource === 'yachtMoney') yachtMoney += totalMultiplier;
     if (resource === 'trollPoints') trollPoints += totalMultiplier;
+
+    if (!achievementsMap.get('Creative Dreams').isUnlocked){
+        if (resource === 'copium') resourceClicksSequence += 'C';
+        if (resource === 'delusion') resourceClicksSequence += 'D';
+        if (resource === 'yachtMoney') resourceClicksSequence += 'Y';
+        if (resource === 'trollPoints') resourceClicksSequence += 'T';
+
+        if (resourceClicksSequence.length > resourceClicksWinningSequence.length) {
+            resourceClicksSequence = resourceClicksSequence.slice(-resourceClicksWinningSequence.length); // Keep only the last n characters
+        }
+        if (resourceClicksSequence === resourceClicksWinningSequence) {
+            unlockAchievement('Creative Dreams');
+            resourceClicksSequence = ""; // Optionally reset the sequence after unlocking the achievement
+        }
+    }
 
     // Track the resource click if cookieKnowledgeable is true
     if (cookieKnowledgeable) {
@@ -453,8 +515,12 @@ function loadGameState() {
     bigCrunchPower = parseFloat(localStorage.getItem('bigCrunchPower')) || 1e-7;
     bigCrunchMultiplier = parseFloat(localStorage.getItem('bigCrunchMultiplier')) || 1;
 
-    crunchTimer = parseFloat(localStorage.getItem('crunchTimer')) || 9999;
-    embraceTimer = parseFloat(localStorage.getItem('embraceTimer')) || 9999;
+    crunchTimer = parseFloat(localStorage.getItem('crunchTimer'));
+    crunchTimer = (crunchTimer === null || isNaN(crunchTimer)) ? 9999 : crunchTimer;
+    
+    embraceTimer = parseFloat(localStorage.getItem('embraceTimer'));
+    embraceTimer = (embraceTimer === null || isNaN(embraceTimer)) ? 9999 : embraceTimer;
+    
 
     // Load the first time prestige button available flag
     firstTimePrestigeButtonAvailable = JSON.parse(localStorage.getItem('firstTimePrestigeButtonAvailable')) || true;
@@ -469,12 +535,17 @@ function loadGameState() {
     autoBigCrunchThreshold = !isNaN(parseFloat(localStorage.getItem('autoBigCrunchThreshold'))) ? parseFloat(localStorage.getItem('autoBigCrunchThreshold')) : null;
 
     // Retrieve quick mode
-    enableQuickMode = localStorage.getItem('enableQuickMode') === 'true';
-
+    enableQuickModePrestige = JSON.parse(localStorage.getItem('enableQuickModePrestige')) || false;
+    enableQuickModeAscend = JSON.parse(localStorage.getItem('enableQuickModeAscend')) || false;
+    enableQuickModeTranscend = JSON.parse(localStorage.getItem('enableQuickModeTranscend')) || false;
+    enableQuickModeBigCrunch = JSON.parse(localStorage.getItem('enableQuickModeBigCrunch')) || false;
+    enableQuickModeInfiniteEmbrace = JSON.parse(localStorage.getItem('enableQuickModeInfiniteEmbrace')) || false;
+    enableQuickModeMiniGameSkip = JSON.parse(localStorage.getItem('enableQuickModeMiniGameSkip')) || false;
+    
     // Retrieve animation preferences
     manageButtonAnimations(localStorage.getItem('enableButtonAnimations') == null ? true : localStorage.getItem('enableButtonAnimations') === 'true');
 
-    defaultBuyMarkerState = localStorage.getItem('defaultBuyMarkerState') === 'true';
+    defaultBuyMarkerState = JSON.parse(localStorage.getItem('defaultBuyMarkerState')) || false;
 
     // read multibuyUpgradesButtonsUnlocked from localstorage
     multibuyUpgradesButtonsUnlocked = JSON.parse(localStorage.getItem('multibuyUpgradesButtonsUnlocked')) || false;
@@ -494,6 +565,16 @@ function loadGameState() {
     numLuckyBoxes = parseFloat(localStorage.getItem('numLuckyBoxes')) || 0;
     numSoftCaps = parseFloat(localStorage.getItem('numSoftCaps')) || 0;
 
+    numSpeedFailures = parseFloat(localStorage.getItem('numSpeedFailures')) || 0;
+    numSpeedWins = parseFloat(localStorage.getItem('numSpeedWins')) || 0;
+    numConsecutiveSpeedFailures = parseFloat(localStorage.getItem('numConsecutiveSpeedFailures')) || 0;
+    numMemoryFailures = parseFloat(localStorage.getItem('numMemoryFailures')) || 0;
+    numMemoryWins = parseFloat(localStorage.getItem('numMemoryWins')) || 0;
+    numConsecutiveMemoryFailures = parseFloat(localStorage.getItem('numConsecutiveMemoryFailures')) || 0;
+    numMathFailures = parseFloat(localStorage.getItem('numMathFailures')) || 0;
+    numMathWins = parseFloat(localStorage.getItem('numMathWins')) || 0;
+    numConsecutiveMathFailures = parseFloat(localStorage.getItem('numConsecutiveMathFailures')) || 0;
+
     numLoveHallFreeRespecs = localStorage.getItem('numLoveHallFreeRespecs') !== null ? parseFloat(localStorage.getItem('numLoveHallFreeRespecs')) : 1;
 
     consecutiveClicks = parseInt(localStorage.getItem('consecutiveClicks')) || 0;
@@ -502,12 +583,7 @@ function loadGameState() {
     serenityUnlocked = JSON.parse(localStorage.getItem('serenityUnlocked')) || false;
     document.getElementById('serenity-container').style.display = serenityUnlocked ? 'block' : 'none';
 
-    loveHallUnlocked = JSON.parse(localStorage.getItem('loveHallUnlocked')) || false;
-    // fix for some users experiencing error
-    let loveHallButton = document.getElementById('loveHallButton');
-    if (loveHallButton) {
-        loveHallButton.style.display = loveHallUnlocked ? 'flex' : 'none';
-    }
+    twinRealmsSequence = localStorage.getItem('twinRealmsSequence') || '';
 
     // Retrieve and parse all upgrades with the isGodMode property from local storage
     const savedUpgrades = JSON.parse(localStorage.getItem('upgrades')) || [];
@@ -526,6 +602,11 @@ function loadGameState() {
     godModeMultiplier = calculateGodModeMultiplier(godModeLevel);
     puGodLevel = upgrades.filter(upgrade => upgrade.isPUGodMode).length;
     puGodMultiplier = calculatePUGodModeMultiplier(puGodLevel);
+
+    balanceCheckMultiplier = JSON.parse(localStorage.getItem('balanceCheckMultiplier')) || 1;
+    suppressBalanceSkills = JSON.parse(localStorage.getItem('suppressBalanceSkills')) || false;
+
+    autoTradeHopiumEnabled = JSON.parse(localStorage.getItem('autoTradeHopiumEnabled')) || false;
 
     // Load the state of the Cookie Clicker button
     const cookieButtonVisible = JSON.parse(localStorage.getItem('cookieButtonVisible'));
@@ -555,6 +636,31 @@ function loadGameState() {
         });
     }
 
+    const savedMultipliers = localStorage.getItem('balanceHallMultipliers');
+    // If there are saved multipliers, parse and set them
+    if (savedMultipliers) {
+        const multipliers = JSON.parse(savedMultipliers);
+        
+        multipliers && Object.keys(multipliers).forEach(name => {
+            if (balanceHallMultipliers.has(name)) {
+                balanceHallMultipliers.get(name).currentMultiplier = multipliers[name];
+            }
+        });
+    }
+
+    const savedBalanceHallSkills = JSON.parse(localStorage.getItem('balanceHallSkills')) || {};
+    // Iterate through saved skills and update `balanceHallSkills` Map
+    Object.entries(savedBalanceHallSkills).forEach(([skillName, savedSkill]) => {
+        const skill = balanceHallSkills.get(skillName);
+        if (skill) {
+            skill.unlocked = savedSkill.unlocked;
+            if (skill.unlocked) {
+                unlockBalanceHallSkill(skillName, true); // Call with duringLoad set to true
+                console.log(`unlockBalanceHallSkill(${skillName})`);
+            }
+        }
+    });
+
     const savedLoveHallSkills = JSON.parse(localStorage.getItem('loveHallSkills')) || [];
     if (Array.isArray(savedLoveHallSkills)) {
         savedLoveHallSkills.forEach(savedSkill => {
@@ -568,6 +674,22 @@ function loadGameState() {
             }
         });
     }
+
+    loveHallUnlocked = JSON.parse(localStorage.getItem('loveHallUnlocked')) || false;
+    // fix for some users experiencing error
+    let loveHallButton = document.getElementById('loveHallButton');
+    if (loveHallButton) {
+        if (loveHallUnlocked) {
+            loveHallButton.style.display = 'flex';
+        } else {
+            loveHallButton.style.display = 'none';
+        }
+    }
+    
+    if (!loveHallUnlocked && savedLoveHallSkills.some(skill => skill.unlocked)) {
+        unlockHallofLove();
+    }
+
     // Load unlocked skills
     const savedLibrarySkills = JSON.parse(localStorage.getItem('librarySkills')) || [];
     if (Array.isArray(savedLibrarySkills)) {
@@ -611,6 +733,8 @@ function loadGameState() {
         resumeWarpTime(warpTimeRemaining);
     }
 
+    messageShownUpgrades = new Set(JSON.parse(localStorage.getItem('messageShownUpgrades')) || []);
+
     // Map the saved purchased upgrade names to the actual upgrade objects
     purchasedUpgrades = savedPurchasedUpgrades.map(savedUpgradeName => upgrades.find(up => up.name === savedUpgradeName)).filter(Boolean);
 
@@ -633,10 +757,8 @@ function loadGameState() {
         }
     });
 
-    // load the state of the createBackupOnImportCheckbox and set the checkbox per the value
-    const createBackupOnImportCheckbox = document.getElementById('createBackupOnImportCheckbox');
-    createBackupOnImportCheckbox.checked = JSON.parse(localStorage.getItem('createBackupOnImportCheckbox')) || false;
-
+    isAutoSaveEnabled = JSON.parse(localStorage.getItem('isAutoSaveEnabled')) || false;
+    
     updateTradeRatio();
     updateTradeButtonText();
 
@@ -663,6 +785,16 @@ function loadGameState() {
 
     // Generate idle resources based on the elapsed time
     generateIdleResources(elapsedSeconds);
+
+    if (balanceHallSkills.get("Quality of Life").unlocked){
+        clearInterval(cookieIntervalId);
+        const cookieButton = document.getElementById('cookieButton');
+        cookieButton.classList.remove('spinning');
+        cookieButton.classList.add('spinning');
+        cookieIntervalId = setInterval(() => {
+            cookieCollectAllResources(false);
+        }, 100); // 100 milliseconds = 0.1 seconds
+    }
 
     // Update the display and the upgrade list, and unlock any available mini-games
     updateDisplay();
@@ -722,9 +854,6 @@ function saveGameState() {
     // Save the purchased upgrades
     localStorage.setItem('purchasedUpgrades', JSON.stringify(purchasedUpgrades.map(upgrade => upgrade.name)));
 
-    // Save the first time prestige button available flag
-    localStorage.setItem('firstTimePrestigeButtonAvailable', firstTimePrestigeButtonAvailable);
-
     // Save the state of the Cookie Clicker button
     localStorage.setItem('cookieButtonVisible', document.getElementById('cookieButton').style.display === 'block');
     localStorage.setItem('timeWarpButtonVisible', warpButton.style.display === 'block');
@@ -737,7 +866,13 @@ function saveGameState() {
     localStorage.setItem('autoTranscendThreshold', autoTranscendThreshold);
     localStorage.setItem('autoBigCrunchThreshold', autoBigCrunchThreshold);
 
-    localStorage.setItem('enableQuickMode', enableQuickMode);
+    localStorage.setItem('enableQuickModePrestige', enableQuickModePrestige);
+    localStorage.setItem('enableQuickModeAscend', enableQuickModeAscend);
+    localStorage.setItem('enableQuickModeTranscend', enableQuickModeTranscend);
+    localStorage.setItem('enableQuickModeBigCrunch', enableQuickModeBigCrunch);
+    localStorage.setItem('enableQuickModeInfiniteEmbrace', enableQuickModeInfiniteEmbrace);
+    localStorage.setItem('enableQuickModeMiniGameSkip', enableQuickModeMiniGameSkip);
+    
     localStorage.setItem('enableButtonAnimations', enableButtonAnimations);
 
     localStorage.setItem('defaultBuyMarkerState', defaultBuyMarkerState);
@@ -750,6 +885,8 @@ function saveGameState() {
 
     localStorage.setItem('accumulatedWarpTime', accumulatedWarpTime);
     localStorage.setItem('warpTimeRemaining', warpTimeRemaining); // Save remaining warp time
+
+    localStorage.setItem('messageShownUpgrades', JSON.stringify(Array.from(messageShownUpgrades)));
  
 
     // Save unlocked library skills
@@ -770,6 +907,28 @@ function saveGameState() {
         localStorage.setItem('loveHallSkills', JSON.stringify(unlockedLoveHallSkills));
     }
 
+    const multipliers = {};
+    // Extract currentMultiplier values
+    balanceHallMultipliers.forEach((resource, name) => {
+        multipliers[name] = resource.currentMultiplier;
+    });
+    // Save as JSON string
+    localStorage.setItem('balanceHallMultipliers', JSON.stringify(multipliers));
+    
+    localStorage.setItem('suppressBalanceSkills', suppressBalanceSkills);
+    
+    localStorage.setItem('autoTradeHopiumEnabled', autoTradeHopiumEnabled);
+
+    // Create a plain object from the Map to save only unlocked skills
+    const unlockedBalanceHallSkills = {};
+    balanceHallSkills.forEach((skill, skillName) => {
+        if (skill.unlocked) {
+            unlockedBalanceHallSkills[skillName] = { unlocked: skill.unlocked };
+        }
+    });
+    localStorage.setItem('balanceHallSkills', JSON.stringify(unlockedBalanceHallSkills));
+
+
     // Save unlocked achievements
     const unlockedAchievements = [];
     achievementsMap.forEach(achievement => {
@@ -783,9 +942,6 @@ function saveGameState() {
     Object.keys(switchStates).forEach(upgradeName => {
         localStorage.setItem(`switchState-${upgradeName}`, JSON.stringify(switchStates[upgradeName]));
     });
-
-    //save the state of createBackupOnImportCheckbox checkbox
-    localStorage.setItem('createBackupOnImportCheckbox', document.getElementById('createBackupOnImportCheckbox').checked)
 
 }
 
@@ -813,7 +969,7 @@ function showTooltip(event, earnings, isGodMode, isPUGodMode, isFight, isMeditat
     let earningsClass = isGodMode ? 'godmode-earnings' : '';
     earningsClass = isPUGodMode ? 'pu-godmode-earnings' : earningsClass;
 
-    if (hoverOverwrite) {
+    if (hoverOverwrite && !isGodMode && !isPUGodMode) {
         tooltip.innerHTML = `
         <div>
             <div class="upgrade-earnings ${earningsClass}">
@@ -825,7 +981,7 @@ function showTooltip(event, earnings, isGodMode, isPUGodMode, isFight, isMeditat
         tooltip.innerHTML = `
             <div>
                 <div class="upgrade-earnings ${earningsClass}">
-                    ${formatCostOrEarnings(earnings, isGodMode, isPUGodMode, isFight, isMeditation)} <!-- Formatted earnings -->
+                    ${formatEarnings(earnings, isGodMode, isPUGodMode, isFight, isMeditation)} <!-- Formatted earnings -->
                 </div>
             </div>
         `;
@@ -881,23 +1037,28 @@ function generateResources() {
     serenity += effectiveSerenityPerSecond / 2;
 
     if (powerUnlocked){
-        effectivePowerPerSecond = calculateEffectivePower();
+        effectivePowerPerSecond = tearsOfJoySkill ? calculateBasePower() : calculateEffectivePower();
     }
 
     // Check if delusion drops below negative 1 trillion to start generating Knowledge
     if ((delusion < -1e12 || knowledgeGenerationSkill) && knowledgePerSecond === 0) {
         unlockAchievement('Clarity');
         knowledgePerSecond = 0.000001
-        effectiveKnowledgePerSecond = calculateEffectiveKnowledge();
+        effectiveKnowledgePerSecond = tearsOfJoySkill ? calculateBaseKnowledge() : calculateEffectiveKnowledge();
 
         if (!knowledgeGenerationSkill) {
             showMessageModal('The Age of Knowledge', `As you cross the threshold of -1 trillion delusion, the dense fog of confusion and distorted thoughts begins to lift. A sense of clarity pierces through the haze, revealing a world beyond the familiar chaos. The swirling mists part to unveil a luminous realm, shimmering with the light of hidden truths. For the first time, you feel a profound shift within, as the once insurmountable delusion gives way to the dawning of true knowledge. This newfound awareness pulses with a quiet intensity, each revelation a stepping stone towards deeper understanding. Your journey through the labyrinth of the mind has led to this pivotal moment, where the pursuit of enlightenment begins. Your mind expands, absorbing the essence of ancient wisdom and universal secrets, setting the stage for a transformative quest that transcends the ordinary limits of perception.`, false, false);
         }
     }
 
+    // Generate 0.5 seconds' worth of lovePoints if Everlasting Love is unlocked
+    if (balanceHallSkills.get("Everlasting Love").unlocked) {
+        lovePoints += (balanceHallSkills.get("Surrounded by Love").unlocked) ? largestEmbrace / 7.2 / 2 : largestEmbrace / 3600 / 2; // 0.5 seconds of lovePoints
+    }
+
     crunchTimer += 0.5;
     embraceTimer += 0.5;
-    if (accumulatedWarpTime < warpTimeMax) accumulatedWarpTime += 0.5;
+    if (accumulatedWarpTime < warpTimeMax) accumulatedWarpTime += (balanceHallSkills.get("Temporal Dominion").unlocked ? 2.5 : 0.5);
 
     updateDisplay();
 }
@@ -905,9 +1066,9 @@ function generateResources() {
 async function restartPrestige(){
 
     const confirmTitle = "Are You Sure You Want to Restart this Prestige?"
-    const confirmMessage = `<p>Hold on a second, brave player! You're about to reset your prestige, which will take you all the way back to the beginning (before buying any upgrades).</p>
+    const confirmMessage = `<p>You're about to reset your prestige, which will take you all the way back to the beginning (before buying any upgrades).</p>
                             <p>Your precious prestige progress? It’s going back to square one, but your multiplier will remain intact.</p>
-                            <p><strong>Warning:</strong> This action will reset everything you've earned in this prestige cycle, except for your multiplier. Once you confirm, there's no undoing it. All those hard-earned upgrades? They’ll be gone!</p>
+                            <p><strong>Warning:</strong> Once you confirm, there's no undoing it. All those hard-earned upgrades? They’ll be gone!</p>
                             <p>If you’re certain this is the right move—maybe because your upgrade path took a wrong turn—then go ahead and hit that button. Otherwise, maybe pause and think it over. 😅</p>`;
     if (await showMessageModal(confirmTitle, confirmMessage, true, false)) {
         // Call restartGame with isPrestige flag set to true
@@ -1007,11 +1168,23 @@ async function restartGame(isPrestige = false, forceRestart = false, isInfiniteE
 
                 lovePoints = 0;
 
+                clearInterval(balanceCheckInterval);
+
                 // Reset love hall skills
                 loveHallSkills.forEach(skill => {
                     skill.unlocked = false;
                 });
 
+                // Reset balanceHallMultipliers
+                balanceHallMultipliers.forEach((value, key) => {
+                    value.currentMultiplier = 1;
+                });
+
+                // Reset balanceHallSkills
+                balanceHallSkills.forEach((value, key) => {
+                    value.available = false;
+                    value.unlocked = false;
+                });
 
                 // Hide the cookie button
                 document.getElementById('cookieButton').style.display = 'none';
@@ -1033,6 +1206,7 @@ async function restartGame(isPrestige = false, forceRestart = false, isInfiniteE
 
                 altruisticEmbraceSkill = false;
                 masterOfBargainsSkill = false;
+                stoicEmbraceSkill = false;
                 
                 serenityFlowSkill = false;
                 perfectPUGodModeSkill = false;
@@ -1057,6 +1231,8 @@ async function restartGame(isPrestige = false, forceRestart = false, isInfiniteE
                 autoFightSkill = false;
                 autoFightEnabled = false;
                 autoMeditateSkill = false;
+                tearsOfJoySkill = false;
+                minMaxingLoveSkill = false;
                 infinitePrestigeSkill = false;
                 crunchKnowledgeSkill = false;
                 stellarMeditationSkill = false;
@@ -1079,6 +1255,8 @@ async function restartGame(isPrestige = false, forceRestart = false, isInfiniteE
                 loveSizeMattersSkill = false;
                 loveIsEverythingSkill = false;
                 etherealReflectionSkill = false;
+                sereneExtortionSkill = false;
+                pricyTranquilitySkill = false;
                 resonanceOfLoveSkill = false;
                 hopiumTradeSkill = false;
                 tranquilityOverdriveSkill = false;
@@ -1095,6 +1273,10 @@ async function restartGame(isPrestige = false, forceRestart = false, isInfiniteE
                 accumulatedWarpTime = 0;
                 endWarpTime();
                 warpButton.style.display = 'none';
+
+                messageShownUpgrades = new Set([]);
+
+                exportDates = new Set([]);
 
                 loveHallUnlocked = false;
                 document.getElementById('loveHallButton').style.display = 'none';
@@ -1140,7 +1322,26 @@ async function restartGame(isPrestige = false, forceRestart = false, isInfiniteE
 
                 removeHopiumFromFromResource();
 
+                numMathPortals = 0;
+                numSpeedTaps = 0;
+                numMemorizedDots = 0;
+                numUnluckyBoxes = 0;
+                numLuckyBoxes = 0;
+                numSoftCaps = 0;
+                numSpeedFailures = 0;
+                numSpeedWins = 0
+                numConsecutiveSpeedFailures = 0;
+                numMemoryFailures = 0;
+                numMemoryWins = 0;
+                numConsecutiveMemoryFailures = 0;
+                numMathFailures = 0;
+                numMathWins = 0;
+                numConsecutiveMathFailures = 0;
+
+                suppressBalanceSkills = false;
                 localStorage.clear();
+
+                autoTradeHopiumEnabled = false;
             }
             prestiges = 0;
             epsMultiplier = 1;
@@ -1152,6 +1353,8 @@ async function restartGame(isPrestige = false, forceRestart = false, isInfiniteE
             puGodMultiplier = 1;
             bigCrunchPower = 1e-7;
             bigCrunchMultiplier = 1;
+            
+            balanceCheckMultiplier = 1;
 
             // Reset the isGodMode property for all upgrades
             upgrades.forEach(upgrade => {
@@ -1180,7 +1383,7 @@ async function restartGame(isPrestige = false, forceRestart = false, isInfiniteE
             speedGameSkill = false;
             luckGameSkill = false;
             miniGamerSkill = false;
-            numAscensionUpgrades = 1;
+            numAscensionUpgrades = 2;
             numPUAscensionUpgrades = 2;
             buyMarkersSkill = false;
             improvedTradeRatio = false;
@@ -1264,25 +1467,30 @@ async function restartGame(isPrestige = false, forceRestart = false, isInfiniteE
             cookieButton.classList.add('spinning');
 
             cookieIntervalId = setInterval(() => {
-                cookieCollectAllResources();
+                cookieCollectAllResources(false);
             }, 100); // 100 milliseconds = 0.1 seconds
 
             const thisCookieIntervalId = cookieIntervalId;
 
             // Stop the interval after 15 seconds
-            const timeoutId = setTimeout(() => {
-                if (thisCookieIntervalId === cookieIntervalId) {
-                    clearInterval(thisCookieIntervalId);
-                    cookieIntervalId = null;
+            if (!balanceHallSkills.get("Quality of Life").unlocked) {
+                const timeoutId = setTimeout(() => {
+                    if (thisCookieIntervalId === cookieIntervalId) {
+                        clearInterval(thisCookieIntervalId);
+                        cookieIntervalId = null;
 
-                    // Remove the spinning class to stop the animation
-                    cookieButton.classList.remove('spinning');
-                }
+                        // Remove the spinning class to stop the animation
+                        cookieButton.classList.remove('spinning');
+                    }
 
-            }, 15000); // 15000 milliseconds = 15 seconds
+                }, 15000); // 15000 milliseconds = 15 seconds
 
-            currentTimeouts.push(timeoutId);
+                currentTimeouts.push(timeoutId);
+            }
         }
+
+        
+        document.getElementById('balanceHallButton').style.display = 'none';
 
         // Clear purchased upgrades
         purchasedUpgrades = [];
@@ -1296,6 +1504,8 @@ async function restartGame(isPrestige = false, forceRestart = false, isInfiniteE
 
         enemiesFoughtManually = new Set();
         numBattleGimmicks = new Set();
+
+        noGimmicksUsed = true;
 
         stellarHarvestMult = 1;
         stellarMeditationMult = 1;
@@ -1311,6 +1521,7 @@ async function restartGame(isPrestige = false, forceRestart = false, isInfiniteE
         updateMultipliersDisplay();
         updateEffectiveMultipliers();
         updateUpgradeList();
+        updateNumUpgrades();
         updateDisplay();
     }
 }
@@ -1563,7 +1774,7 @@ function tradeTenPercent() {
 function autoTradeHopium() {
     if (isEventInProgress()) return;
 
-    if (hopiumTradeSkill && equilibriumOfHopeSkill && autoTradeHopiumIntervalId === null) {
+    if (hopiumTradeSkill && equilibriumOfHopeSkill && autoTradeHopiumEnabled && autoTradeHopiumIntervalId === null) {
         autoTradeHopiumIntervalId = setInterval(() => {
             // Get 1% of the current hopium
             const hopiumTradeAmount = hopium * 0.01;
@@ -1703,20 +1914,24 @@ function updateDisplay() {
     updateBigCrunchButton();
     updateInfiniteEmbraceButton();
     updateUpgradeButtons();
-    updateNumUpgrades();
     updateWarpTime();
 }
 
 function updateMultipliersDisplay() {
 
-    earlyAccelerantMult = earlyAccelerantSkill ? 1 + (9 * Math.pow(0.975, purchasedUpgrades.length)) : 1;
+    earlyAccelerantMult = earlyAccelerantSkill ? 1 + (13 * Math.pow(0.975, purchasedUpgrades.length)) : 1;
 
     totalMultiplier = epsMultiplier * godModeMultiplier * puGodMultiplier * bigCrunchMultiplier * achievementMultiplier * devMultiplier * stellarHarvestMult * stellarMeditationMult * cosmicGamekeeperMultiplier * earlyAccelerantMult
 
-    document.getElementById('prestige-multiplier').textContent = `Prestige: x${formatNumber(epsMultiplier)} mult`;
-    document.getElementById('god-mode-display').textContent = `God-Mode Level ${godModeLevel} (x${formatNumber(godModeMultiplier)} mult)`;
-    document.getElementById('pu-god-display').textContent = `PU God Level ${puGodLevel} (x${formatNumber(puGodMultiplier)} mult)`;
-    document.getElementById('big-crunch-display').textContent = `Big Crunch Power ${formatNumber(bigCrunchPower)} (x${formatNumber(bigCrunchMultiplier)} mult + KPSx${formatNumber(crunchKnowledgeSkill ? bigCrunchMultiplier**(2/3) : bigCrunchMultiplier**(1/2))})`;
+    if(balanceHallSkills.get("Love Matters").unlocked && lovePoints > 1000 && !suppressBalanceSkills) {
+        totalMultiplier *= (lovePoints / 1000);
+    }
+
+    document.getElementById('prestige-multiplier').textContent = `Prestige: x${formatNumber(epsMultiplier)}`;
+    document.getElementById('god-mode-display').textContent = `God-Mode Lvl ${godModeLevel} (x${formatNumber(godModeMultiplier)})`;
+    document.getElementById('pu-god-display').textContent = `PU God Lvl ${puGodLevel} (x${formatNumber(puGodMultiplier)})`;
+    document.getElementById('big-crunch-display').innerHTML = `Big Crunch Power ${formatNumber(bigCrunchPower)}<br>(x${formatNumber(bigCrunchMultiplier)} + KPSx${formatNumber(crunchKnowledgeSkill ? bigCrunchMultiplier**(2/3) : bigCrunchMultiplier**(1/2))})`;
+
 
     updateStellarHarvestDisplay();
 }
@@ -1779,7 +1994,7 @@ function canPrestige() {
 async function prestige(skipConfirms = false) {
 
     // Either skipConfirms
-    skipConfirms |= enableQuickMode;
+    skipConfirms |= enableQuickModePrestige;
     if (canPrestige()  && !isEventInProgress()) {
         const newPrestigeMult = calculatePrestigeMultiplier();
         const newPrestigeReq = inversePrestigeSkill
@@ -1803,11 +2018,16 @@ async function prestige(skipConfirms = false) {
                 unlockAchievement('Over 9000');
             }
             if (!skipConfirms) { unlockAchievement('First Prestige'); }
+
+            if(isAutoSaveEnabled && puGodLevel == 0 && bigCrunchMultiplier == 1){
+                exportSave();
+            }
+
             epsMultiplier = newPrestigeMult;
             prestigeRequirement = newPrestigeReq;
 
             // Call restartGame with isPrestige flag set to true
-            restartGame(true);
+            await restartGame(true);
 
             prestiges += 1;
 
@@ -1844,7 +2064,8 @@ function updatePrestigeButton() {
             if (firstTimePrestigeButtonAvailable && godModeLevel < 3 && bigCrunchMultiplier < 2 && lovePoints == 0) {
                 showMessageModal('Prestige Unlocked: Rise Stronger!', 'Congratulations! You have unlocked the first of many prestige layers. This one is straightforward, but it represents something much greater: the beginning of a journey filled with deeper challenges and complexity.<br><br>Prestige isn’t just a reset—it’s a testament to your resilience, symbolizing the strength to rise again, stronger and wiser. While this first step may seem simple, future layers will add layers of strategy and depth that will truly test your skills.<br><br>By choosing Prestige, you’re not just starting over; you’re gaining a powerful multiplier that will enhance everything you do. Each click, each resource, and every upgrade will be boosted, setting the stage for even greater achievements.<br><br>Are you ready to embrace this opportunity? To rebuild with newfound strength and surpass your past progress? Prestige now, and begin your ascent to greatness once more!');
                 firstTimePrestigeButtonAvailable = false; // Set the flag to false after showing the message
-                saveGameState(); // Save the game state to persist the flag
+                // Save the first time prestige button available flag
+                localStorage.setItem('firstTimePrestigeButtonAvailable', firstTimePrestigeButtonAvailable);
             }
             const newMultiplier = calculatePrestigeMultiplier();
             prestigeButton.textContent = `PRESTIGE (x${formatNumber(newMultiplier / epsMultiplier)} MULT)`;
@@ -1904,14 +2125,27 @@ function calculateBigCrunchMultiplier(bcPower = bigCrunchPower) {
 }
 
 function calculateLovePointsGained() {
+
     let baseLovePointsGained = Math.max(0, Math.log10(serenity) * pulseOfAffectionMult);
 
     if (altruisticEmbraceSkill){
         let meditationCount = purchasedUpgrades.filter(upgrade => upgrade.isMeditation && upgrade.name !== "Yin and Yang" && upgrade.name !== "Existentialism").length;
         baseLovePointsGained *= 1.25 ** meditationCount;
+
+        if (stoicEmbraceSkill) {
+            const meditationsAfterStoicism = ["Stoicism", "Deism", "Skepticism", "Buddhism", "Christianity", "Epicureanism", "Agnosticism"];
+            meditationCount = purchasedUpgrades.filter(upgrade => meditationsAfterStoicism.includes(upgrade.name)).length;
+            baseLovePointsGained *= 1.2 ** meditationCount;
+        }
     }
 
-    return baseLovePointsGained + embraceExtraLovePoints;
+    baseLovePointsGained += embraceExtraLovePoints;
+
+    if (lovePoints > 1e6 && baseLovePointsGained < largestEmbrace ) {
+        baseLovePointsGained = 0;
+    }
+
+    return baseLovePointsGained;
 }
 
 
@@ -1930,20 +2164,18 @@ let ascendInProgress = false;
 let tongueTwisterState = 0;
 
 async function ascend(skipConfirms = false) {
-    skipConfirms |= enableQuickMode;
+    skipConfirms |= enableQuickModeAscend;
 
-    // If we can Ascend, and no other event is occuring and we successfully trigger a startEvent
+    // If we can Ascend, and no other event is occurring and we successfully trigger a startEvent
     if (canAscend() && !isEventInProgress() && startEvent("ascend")) {
-        let confirmed = true;
         let selectedUpgrades = null;
         if (!skipConfirms) {
-            const upgradeText = numAscensionUpgrades > 1
-                ? `select up to ${numAscensionUpgrades} upgrades to enhance and increase your God-Mode multiplier proportionally to how many upgrades you select`
-                : "select an upgrade to enhance which will make its gains 10x stronger and also increase your God-Mode multiplier (global 1.25x stacking but diminishing multiplier)";
             selectedUpgrades = await showMessageModal(
                 'God-Mode Ascension',
                 `Raising your God-Mode level requires temporarily folding three dimensions in the space around you to a single point, which will unfortunately reduce your Prestige multiplier to its cube root.<br><br>
-                You can ${upgradeText}.`,
+                You can select up to ${numAscensionUpgrades} upgrades to enhance.<br>
+                Each selected upgrade will have its gains increased by 10x and will also boost your God-Mode multiplier.<br>
+                The multiplier effect scales proportionally, with a global 1.25x stacking but diminishing multiplier.`,
                 true,
                 true
             );
@@ -1953,6 +2185,10 @@ async function ascend(skipConfirms = false) {
         }
 
         if (selectedUpgrades) {
+
+            if(isAutoSaveEnabled && bigCrunchMultiplier  == 1 && lovePoints == 0){
+                exportSave();
+            }
 
             selectedUpgrades.forEach(upgrade => {
                 upgrade.isGodMode = true;
@@ -1983,7 +2219,7 @@ async function ascend(skipConfirms = false) {
                 }
             }
 
-            restartGame(true); // Use the existing restartGame function with prestige mode
+            await restartGame(true); // Use the existing restartGame function with prestige mode
             // Save game state after ascending
             saveGameState();
 
@@ -2002,9 +2238,9 @@ async function ascend(skipConfirms = false) {
 
 
 async function transcend(skipConfirms = false) {
-    skipConfirms |= enableQuickMode;
+    skipConfirms |= enableQuickModeTranscend;
 
-    // If we can Transcend, and no other event is occuring and we successfully trigger a startEvent
+    // If we can Transcend, and no other event is occurring and we successfully trigger a startEvent
     if (canTranscend() && !isEventInProgress() && startEvent("transcend")) {
 
         let selectedUpgrades = null;
@@ -2026,6 +2262,11 @@ async function transcend(skipConfirms = false) {
         }
 
         if (selectedUpgrades) {
+
+            if(isAutoSaveEnabled && powerHallSkills.filter(skill => skill.unlocked).length  == 0 && lovePoints == 0){
+                exportSave();
+            }
+
             selectedUpgrades.forEach(upgrade => {
                 upgrade.isPUGodMode = true;
                 if(tunneledAscensionSkill){
@@ -2047,6 +2288,17 @@ async function transcend(skipConfirms = false) {
                 tongueTwisterState = 3;
                 if (tunneledAscensionSkill) {
                     unlockAchievement('Tongue Twister');
+                    suppressAscendPopup = true;
+                }
+            }
+
+            if (godModeLevel == 0) {
+                if (!achievementsMap.get('Transcendent Leap').isUnlocked) {
+                    unlockAchievement('Transcendent Leap');
+                    suppressAscendPopup = true;
+                }
+                if (!achievementsMap.get('Absolute Leap').isUnlocked && bigCrunchMultiplier == 1) {
+                    unlockAchievement('Absolute Leap');
                     suppressAscendPopup = true;
                 }
             }
@@ -2076,7 +2328,8 @@ async function transcend(skipConfirms = false) {
                 }
             }
 
-            restartGame(true); // Use the existing restartGame function with prestige mode
+            await restartGame(true); // Use the existing restartGame function with prestige mode
+
             // Save game state after transcending
             saveGameState();
 
@@ -2095,7 +2348,7 @@ async function transcend(skipConfirms = false) {
 
 
 async function bigCrunch(skipConfirms = false) {
-    skipConfirms |= enableQuickMode;
+    skipConfirms |= enableQuickModeBigCrunch;
 
     // If we can BigCrunch, and no other event is occuring and we successfully trigger a startEvent
     if (canBigCrunch() && !isEventInProgress() && startEvent("bigcrunch")) {
@@ -2111,6 +2364,10 @@ async function bigCrunch(skipConfirms = false) {
         }
 
         if (confirmed && canBigCrunch()) {
+
+            if(isAutoSaveEnabled && loveHallSkills.filter(skill => skill.unlocked).length == 0){
+                exportSave();
+            }
 
             resourceGenerationDisabled = true;
 
@@ -2131,7 +2388,7 @@ async function bigCrunch(skipConfirms = false) {
 
 
             // Call restartGame with isPrestige flag set to true
-            restartGame(true);
+            await restartGame(true);
 
             epsMultiplier = 1;
             prestigeRequirement = 1000;
@@ -2231,7 +2488,7 @@ async function animateInfiniteEmbraceEffect() {
 
         setTimeout(() => {
             resolve();  // Continue after the animation is complete
-        }, 3000);  // 3-second duration for the shrinking effect
+        }, 1000);  // 3-second duration for the shrinking effect
     });
 }
 
@@ -2246,7 +2503,7 @@ function animateInfiniteEmbraceExpansion() {
             // Remove the mask element after the expansion is complete
             heartImage.parentElement.remove();
             window.location.reload();
-        }, 3000);  // 1.5-second duration for the expansion effect
+        }, 1000);  // 1.5-second duration for the expansion effect
     }
 }
 
@@ -2254,31 +2511,55 @@ function animateInfiniteEmbraceExpansion() {
 
 
 async function infiniteEmbrace(skipConfirms = false, lovePointsOverwrite = false) {
-    skipConfirms |= enableQuickMode;
+    skipConfirms |= enableQuickModeInfiniteEmbrace;
+
+    if (!lovePointsOverwrite && calculateLovePointsGained() == 0) {
+        return;
+    }
 
     // If we can Infinite Embrace, and no other event is occuring and we successfully trigger a startEvent
     if ((lovePointsOverwrite || canInfiniteEmbrace()) && !isEventInProgress() && startEvent("infiniteEmbrace")) {
         let confirmed = true;
 
         if (!skipConfirms) {
-            confirmed = await showMessageModal(
-                'Infinite Embrace Confirmation',
-                `
-                Infinite Embrace is a profound act of injecting more love into the multiverse, ensuring that your next incarnation will be more pleasant and harmonious. By embracing the universe with infinite love, you enhance the very fabric of existence, bringing more warmth and joy to every future cycle.
-                <br><br>
-                In order to complete this sacred ritual, all progress will be reset, including prestiges, god modes, big crunches, the Hall of Knowledge, and the Hall of Power. The only things that remain intact are your achievements and the everlasting Love Points you have gathered.
-                <br><br>
-                You will gain <strong>Love Points, increasing from ${formatNumber(lovePoints)} to ${formatNumber(lovePoints + calculateLovePointsGained())}</strong>. These Love Points can be spent at the Hall of Love, which will remain unlocked across all Infinite Embraces.
-                <br><br>
-                Remember: you never lose your Love Points. They will continue to accumulate across all cycles, fueling your journey through the multiverse.
-                <br><br>
-                Are you sure you want to activate Infinite Embrace and reset your progress to inject love into the multiverse?
-                `,
-                true
-            );
+            if (lovePoints < 1e6) {
+                confirmed = await showMessageModal(
+                    'Infinite Embrace Confirmation',
+                    `
+                    Infinite Embrace is a profound act of injecting more love into the multiverse, ensuring that your next incarnation will be more pleasant and harmonious. By embracing the universe with infinite love, you enhance the very fabric of existence, bringing more warmth and joy to every future cycle.
+                    <br><br>
+                    In order to complete this sacred ritual, all progress will be reset, including prestiges, god modes, big crunches, the Hall of Knowledge, and the Hall of Power. The only things that remain intact are your achievements and the everlasting Love Points you have gathered.
+                    <br><br>
+                    You will gain <strong>Love Points, increasing from ${formatNumber(lovePoints)} to ${formatNumber(lovePoints + calculateLovePointsGained())}</strong>. These Love Points can be spent at the Hall of Love, which will remain unlocked across all Infinite Embraces.
+                    <br><br>
+                    Note: The maximum number of Love Points you can accumulate is 1 Million. You never lose your Love Points - they will continue to accumulate across all cycles, up to this cap, fueling your journey through the multiverse.
+                    <br><br>
+                    Are you sure you want to activate Infinite Embrace and reset your progress to inject love into the multiverse?
+                    `,
+                    true
+                );
+            } else {
+                confirmed = await showMessageModal(
+                    'Infinite Embrace Confirmation',
+                    `
+                    Infinite Embrace is a profound act of injecting more love into the multiverse, ensuring that your next incarnation will be more pleasant and harmonious. By embracing the universe with infinite love, you enhance the very fabric of existence, bringing more warmth and joy to every future cycle.
+                    <br><br>
+                    In order to complete this sacred ritual, all progress will be reset, including prestiges, god modes, big crunches, the Hall of Knowledge, and the Hall of Power. The only things that remain intact are your achievements and the everlasting Love Points you have gathered.
+                    <br><br>
+                    Note: You have reached the maximum number of Love Points you can gain manually - 1 Million. You never lose your Love Points - they will continue to accumulate across all cycles, up to this cap, fueling your journey through the multiverse. However, this reset can still update your Largest Embrace.
+                    <br><br>
+                    Are you sure you want to activate Infinite Embrace and reset your progress to inject love into the multiverse?
+                    `,
+                    true
+                );
+            }
         }
 
         if (confirmed) {
+
+            if(isAutoSaveEnabled && Array.from(balanceHallSkills.values()).filter(skill => skill.unlocked).length < 8){
+                exportSave();
+            }
 
             resourceGenerationDisabled = true;
 
@@ -2287,11 +2568,17 @@ async function infiniteEmbrace(skipConfirms = false, lovePointsOverwrite = false
 
             if (!lovePointsOverwrite) {
                 const lovePointsGained = calculateLovePointsGained();
-                lovePoints += lovePointsGained;
+                
+                if (lovePoints < 1e6) {
+                    lovePoints += lovePointsGained;
+                }
                 if (serenity < 2000) {
                     unlockAchievement('Gentle Embrace');
                 } else if (lovePointsGained > 25) {
                     unlockAchievement('Massive Embrace');
+                    if (lovePointsGained > 618.5 && lovePointsGained < 619.5) {
+                        unlockAchievement('Engagement');
+                    }
                     if (lovePointsGained > largestEmbrace) {
                         largestEmbrace = lovePointsGained;
                         localStorage.setItem('largestEmbrace', largestEmbrace);
@@ -2307,8 +2594,7 @@ async function infiniteEmbrace(skipConfirms = false, lovePointsOverwrite = false
             }
 
             // Call restartGame with isPrestige flag set to true
-            restartGame(true, false, true);
-
+            await restartGame(true, false, true);
 
             embraceTimer = 0;
 
@@ -2328,7 +2614,72 @@ async function infiniteEmbrace(skipConfirms = false, lovePointsOverwrite = false
         // Trigger stop event after process complete (even greater delay to match the embrace animation)
         setTimeout(() => {
             stopEvent("infiniteEmbrace");
-        }, 3000);
+        }, 2000);
+    }
+}
+
+// Function to fade out to black
+function fadeOutEffect() {
+    return new Promise((resolve) => {
+        const body = document.body;
+        body.style.overflow = "hidden"; // Prevent scrolling during the animation
+
+        // Create a black overlay for the fade effect
+        const overlay = document.createElement('div');
+        overlay.style.position = "fixed";
+        overlay.style.top = "0";
+        overlay.style.left = "0";
+        overlay.style.width = "100vw";
+        overlay.style.height = "100vh";
+        overlay.style.backgroundColor = "black";
+        overlay.style.opacity = "0"; // Start fully transparent
+        overlay.style.zIndex = "9999";
+        overlay.style.transition = "opacity 0.6s ease"; // Smooth fade transition
+
+        // Append the overlay to the body
+        body.appendChild(overlay);
+
+        // Start the fade-out effect
+        requestAnimationFrame(() => {
+            overlay.style.opacity = "1"; // Fade to full black
+        });
+
+        // Wait for the fade-out animation to complete
+        setTimeout(() => resolve(overlay), 600); // 0.6-second duration for the fade-out effect
+    });
+}
+
+// Function to fade back in from black
+function fadeInEffect(overlay) {
+    return new Promise((resolve) => {
+        // Start the fade-in effect
+        overlay.style.opacity = "0";
+
+        // Wait for the fade-in animation to complete
+        setTimeout(() => {
+            overlay.remove();
+            document.body.style.overflow = ""; // Restore scrolling
+            resolve();
+        }, 600); // 0.6-second duration for the fade-in effect
+    });
+}
+
+async function balanceReset(){
+    if (!isEventInProgress() && startEvent("balanceReset")) {
+        if(isAutoSaveEnabled){
+            exportSave();
+        }
+
+        let fadeOverlay = await fadeOutEffect();
+        closeBalanceHall();
+        await restartGame(true, false, true);
+        await fadeInEffect(fadeOverlay);
+        saveGameState();
+        window.location.reload();
+
+        setTimeout(() => {
+            stopEvent("balanceReset");
+        }, 1500);
     }
 }
 
@@ -2351,6 +2702,11 @@ async function respecSkills() {
             } else {
                 // Refund original cost if only this skill is unlocked
                 lovePoints += skill.originalCost;
+            }
+
+            // Call the onRespec function if it exists
+            if (skill.onRespec) {
+                skill.onRespec();
             }
 
             skill.unlocked = false; // Reset current skill
@@ -2378,6 +2734,10 @@ async function respecSkills() {
             false
         );
     }
+
+    // Save the game state after respec
+    saveGameState();
+
 }
 
 
@@ -2489,7 +2849,7 @@ function updateWarpTime() {
     }
 
     // Add/remove 'affordable' class based on accumulatedWarpTime
-    if (accumulatedWarpTime >= 3600) {
+    if (accumulatedWarpTime >= 3600 || (masterOfTimeSkill && warpTimeActive)) {
         warpButton.classList.add('affordable');
         warpButton.classList.remove('not-affordable');
     } else {
@@ -2498,8 +2858,11 @@ function updateWarpTime() {
     }
 }
 
+
 const warpedCookieWinningSequence = 'WCCWWCWCCWC';
 let warpedCookieSequence = '';
+
+let brokenTimeMachineClickCount = 0;
 
 warpButton.addEventListener("click", function () {
     
@@ -2517,7 +2880,29 @@ warpButton.addEventListener("click", function () {
         return; // Exit early if warp is active and no other action is needed
     }
 
-    if (accumulatedWarpTime < 3600) return; // Not enough warp time accumulated to start
+    if (accumulatedWarpTime < 3600) {
+        if (!achievementsMap.get('Broken Time Machine').isUnlocked){
+            brokenTimeMachineClickCount += 1;
+            if (brokenTimeMachineClickCount === 88) {
+                // Wait 10 seconds before checking again
+                setTimeout(function() {
+                    // Check if the count is still 88 after 10 seconds
+                    if (brokenTimeMachineClickCount === 88) {
+                        // Unlock the achievement
+                        unlockAchievement('Broken Time Machine');
+                        accumulatedWarpTime = warpTimeMax;
+                        brokenTimeMachineClickCount = 0;
+                    }
+                }, 10000); // 10,000 milliseconds = 10 seconds
+            } else if (brokenTimeMachineClickCount > 88){
+                showPopupTooltip('You went too fast, wait 10 seconds and try again.', 'gray', 2);
+                setTimeout(function() {
+                    brokenTimeMachineClickCount = 0;
+                }, 10000); // 10,000 milliseconds = 10 seconds
+            }
+        }
+        return; // Not enough warp time accumulated to start
+    }
 
     warpTimeActive = true;
     const fullHours = Math.floor(accumulatedWarpTime / 3600); // Only use full hours
@@ -2614,13 +2999,18 @@ function generateIdleResources(elapsedSeconds) {
     hopium += effectiveHopiumPerSecond * elapsedSeconds;
     serenity += effectiveSerenityPerSecond * elapsedSeconds;
 
+    // Check if Everlasting Love is unlocked and increment lovePoints accordingly
+    if (balanceHallSkills.get("Everlasting Love").unlocked) {
+        lovePoints += (balanceHallSkills.get("Surrounded by Love").unlocked) ? (largestEmbrace / 7.2) * elapsedSeconds : (largestEmbrace / 3600) * elapsedSeconds;
+    }
+
     if (elapsedSeconds > 60 * 60 * 24){
         unlockAchievement('Take a Break');
     }
 
     crunchTimer += elapsedSeconds;
     embraceTimer += elapsedSeconds;
-    accumulatedWarpTime = Math.min (accumulatedWarpTime + elapsedSeconds, warpTimeMax);
+    accumulatedWarpTime = Math.min (accumulatedWarpTime + ((balanceHallSkills.get("Temporal Dominion").unlocked ? 5 : 1) * elapsedSeconds), warpTimeMax - (warpTimeRemaining * 60));
 
     const baseKnowledgePerSecond = calculateBaseKnowledge();
 
@@ -2705,6 +3095,11 @@ async function buyUpgrade(encodedUpgradeName, callUpdatesAfterBuying = true, ski
     if (!upgrade) {
         console.error(`Upgrade not found: ${upgradeName}`);
         return;
+    }
+
+    if (upgrade.name == 'Future You' && !purchasedUpgradesSet.has("Your Ego") && !skipEventCheck) {
+        showMessageModal('You must defeat Your Ego first.', `You feel the gaze of an incomprehensibly superior being watching over you—a presence vast and cosmic, yet with a soul that feels uncannily familiar, like a reflection of your own. You sense its desire to connect, to share its wisdom, but there is one obstacle left: your ego. Only by overcoming this final barrier can you open yourself to the truths it holds.`);
+        return
     }
 
     // Destructure the upgrade object to get its properties
@@ -2846,6 +3241,14 @@ async function buyUpgrade(encodedUpgradeName, callUpdatesAfterBuying = true, ski
         purchasedUpgradesSet.add(upgrade.name); // Add to set for fast lookups
 
 
+        if (name === "What's Next?") {
+            showMessageModal(`You've come so far!`,
+                "The journey is nearing its end, as you’ve nearly conquered the Hall of Balance. You've defeated your ego, met your future self, and now only the final step remains: guardianship training. We're closing in on v1.0, where the initial story of Degens Idle will come to a climactic finish! "
+                + "Your support and involvement have been incredible, and if you’re eager to help push Degens Idle even further, we'd love to have you in our growing Discord community. Whether it’s spreading the word, contributing code, adding to the Wiki, or helping fellow players, every bit makes a difference. "
+                + "Congratulations on your journey so far, and thank you for being such an essential part of this adventure. There’s still so much more to experience, and we hope you're as excited as we are!"
+            );
+        }
+
         // Check if the upgrade has an associated achievement and unlock it
         if (upgrade.achievement) {
             unlockAchievement(upgrade.achievement);
@@ -2871,22 +3274,23 @@ async function buyUpgrade(encodedUpgradeName, callUpdatesAfterBuying = true, ski
         }
 
         if (name == "Cosmic Drought") {
-            if (stellarCookieSkill) {
-                clearInterval(cookieIntervalId)
-                cookieIntervalId = null;
-                document.getElementById('cookieButton');
-                cookieButton.classList.remove('spinning');
+            if (!balanceHallSkills.get("Quality of Life").unlocked) {
+                if (stellarCookieSkill) {
+                    clearInterval(cookieIntervalId)
+                    cookieIntervalId = null;
+                    document.getElementById('cookieButton');
+                    cookieButton.classList.remove('spinning');
+                }
+                clearAllTimeouts();
             }
-            clearAllTimeouts();
             stellarHarvestMult = fertileScarcitySkill ? 250 : 1;
             updateMultipliersDisplay();
             unlockAchievement('Cosmic Drought');
         }
 
         // Check if the upgrade message has been shown before
-        const messageShownUpgrades = JSON.parse(localStorage.getItem('messageShownUpgrades')) || [];
-        const isFirstPurchase = !messageShownUpgrades.includes(name);
-
+        const isFirstPurchase = !messageShownUpgrades.has(name);
+        
         // Show a message if the upgrade has one and it's the first purchase
         if (message && isFirstPurchase) {
             if (message.startsWith('imgs/modal_imgs/')) {
@@ -2894,8 +3298,10 @@ async function buyUpgrade(encodedUpgradeName, callUpdatesAfterBuying = true, ski
             } else {
                 showMessageModal(name, message);
             }
-            messageShownUpgrades.push(name);
-            localStorage.setItem('messageShownUpgrades', JSON.stringify(messageShownUpgrades));
+            
+            // Add the name to the Set and store it back in localStorage
+            messageShownUpgrades.add(name);
+            localStorage.setItem('messageShownUpgrades', JSON.stringify(Array.from(messageShownUpgrades)));
         }
 
         // if (name === 'Skepticism') {
@@ -2935,7 +3341,47 @@ async function buyUpgrade(encodedUpgradeName, callUpdatesAfterBuying = true, ski
         } else if (name == 'Perfection doesn\'t exi...') {
             unhideSerenity();
             unlockAchievement('Serenity');
+        } else if (name == 'Birthday Celebration') {
+            if (!purchasedUpgradesSet.has('Happy Birthday to me')) {
+                unlockAchievement('Birthdayception');
+            }
+        } else if (name == `We're All Gamers`) {
+            if (!purchasedUpgradesSet.has(`I don't get this game`)) {
+                unlockAchievement('Perpetual Noob');
+            }
+        } else if (name == `The Rock`) {
+            if (
+                !purchasedUpgradesSet.has(`Captain Degen`) &&
+                !purchasedUpgradesSet.has(`Proceed with Caution`) &&
+                !purchasedUpgradesSet.has(`How stupid was I?`) &&
+                !purchasedUpgradesSet.has(`Impossible`) &&
+                !purchasedUpgradesSet.has(`Helpful Vegeta`) &&
+                !purchasedUpgradesSet.has(`Feel the Pump`) &&
+                !purchasedUpgradesSet.has(`Channel inner Tyson`)
+            ) {
+                showMessageModal('The Rock', 'The Rock sees your squad, says "I will spare you the embarassment", and walks away. ', false, false, './imgs/the_rock_laughing.jpg');
+                unlockAchievement('Bring the Whole Squad');
+            }
+        } else if (name == `The Best Revenge`) {
+            if (
+                !purchasedUpgradesSet.has(`Some of you right now`) &&
+                !purchasedUpgradesSet.has(`Deadlines`) &&
+                !purchasedUpgradesSet.has(`Best Meme`) &&
+                !purchasedUpgradesSet.has(`What to do`)
+            ) {
+                unlockAchievement('Number One');
+            }
+        } else if (name.length == 1 && !achievementsMap.get('Honor').isUnlocked && [0, 1, 2, 3].some(startIndex =>
+            ['G', 'L', 'O', 'R', 'Y'].every((letter, index) =>
+                availableUpgrades[startIndex + index] && availableUpgrades[startIndex + index].name == letter))) {
+                unlockAchievement('Honor');
+        } else if (name == 'S' && !achievementsMap.get('STARBOUND').isUnlocked &&
+            ['D', 'N', 'U', 'O', 'B', 'R', 'A', 'T', 'S'].every((letter, index) =>
+                purchasedUpgrades[purchasedUpgrades.length - 9 + index] &&
+                purchasedUpgrades[purchasedUpgrades.length - 9 + index].name == letter)) {
+            unlockAchievement('STARBOUND');
         }
+        
 
         if (callUpdatesAfterBuying) {
             if (name == 'Degens Idle Dev') {
@@ -2962,6 +3408,7 @@ async function buyUpgrade(encodedUpgradeName, callUpdatesAfterBuying = true, ski
             updateUpgradeList();
             updateMultipliersDisplay();
             updateEffectiveMultipliers();
+            updateNumUpgrades();
             updateDisplay();
             // Save the game state
             saveGameState();
@@ -3001,12 +3448,14 @@ function buyAllUpgrades(limit, pressedButton) {
                     buyUpgrade(encodeName(upgrade.name), false, true);
                     purchasedCount++;
                     incrementStellarHarvest();
+                    noGimmicksUsed = false;
                     if(upgrade.name == 'Saitama' && enemiesFoughtManually.size == 0){
                         unlockAchievement('Make Love, Not War');
                     }
-                } else if (isAffordableUpgrade && autoMeditateConditionCheck(upgrade)) {
+                } else if (isAffordableUpgrade && autoMeditateConditionCheck(upgrade) && firstFightUpgrade) {
                     buyUpgrade(encodeName(upgrade.name), false, true);
-                    upgradeBought = true;
+                    purchasedCount++;
+                    noGimmicksUsed = false;
                     if (stellarMeditationSkill) {
                         stellarMeditationMult *= (zenOfTheStarsSkill ? 1.5 : 1.1);
                     }
@@ -3022,7 +3471,7 @@ function buyAllUpgrades(limit, pressedButton) {
                 }
             }
 
-            if (upgrade.isFight) {firstFightUpgrade = false;}
+            if (upgrade.isFight || upgrade.isMeditation) {firstFightUpgrade = false;}
 
         });
 
@@ -3030,6 +3479,7 @@ function buyAllUpgrades(limit, pressedButton) {
             updateUpgradeList();
             updateMultipliersDisplay();
             updateEffectiveMultipliers();
+            updateNumUpgrades();
             updateDisplay();
             saveGameState();
             showStatusMessage(pressedButton, `Purchased ${purchasedCount} upgrade(s).`, true, timeout=1000);
@@ -3049,37 +3499,54 @@ function autoMeditateConditionCheck(upgrade) {
     return upgrade.isMeditation && purchasedUpgradesSet.has("Cosmic Drought") && autoMeditateSkill && autoFightEnabled && serenity > upgrade.autoMeditateThreshold && (etherealReflectionSkill || (upgrade.isGodMode && upgrade.isPUGodMode));
 }
 
-// Function to format the cost or earnings of an upgrade for display
-function formatCostOrEarnings(costOrEarnings, isGodMode = false, isPUGodMode = false, isFight = false, isMeditation = false) {
-    // Abbreviations for resource per second values
-    const abbreviations = {
-        copiumPerSecond: '<b>C</b>PS',
-        delusionPerSecond: '<b>D</b>PS',
-        yachtMoneyPerSecond: '<b>YM</b>PS',
-        trollPointsPerSecond: '<b>TP</b>PS',
-        hopiumPerSecond: '<b>H</b>PS',
-        knowledgePerSecond: '<b>K</b>PS',
-        powerPerSecond: '<b>P</b>PS',
-        serenityPerSecond: '<b>S</b>PS'
-    };
-
+// Function to format the cost of an upgrade for display
+function formatCost(cost) {
     let result = '';
-    // Iterate over each resource and its value in the costOrEarnings object
-    for (const [resource, value] of Object.entries(costOrEarnings)) {
-        // Only include non-zero values
+    for (const [resource, value] of Object.entries(cost)) {
         if (value !== 0) {
-            // Get the display name using abbreviations or capitalize the resource name
-            const displayName = abbreviations[resource] || resource.charAt(0).toUpperCase() + resource.slice(1);
-            let adjustedValue = (isGodMode && isPUGodMode) ? value * 100 :
-                      (isGodMode || isPUGodMode) ? value * 10 : value;
-            if ((rewardingVictoriesSkill && isFight) || (rewardingMeditationsSkill && isMeditation)) {
-                adjustedValue *= 1.4;
-            }
-            result += `<p>${displayName}: ${formatNumber(adjustedValue)}</p>`; // Format as HTML paragraph
+            const displayName = resource.charAt(0).toUpperCase() + resource.slice(1);
+            const affordable = isResourceAffordable(resource, value);
+            const color = affordable ? 'white' : '#f5b8b3'; // Use red if not affordable
+            result += `<p style="color: ${color}; font-size: 14px;">${displayName}: ${formatNumber(value)}</p>`;
         }
     }
     return result;
 }
+
+const earningsAbbreviations = {
+    copiumPerSecond: '<b>C</b>PS',
+    delusionPerSecond: '<b>D</b>PS',
+    yachtMoneyPerSecond: '<b>YM</b>PS',
+    trollPointsPerSecond: '<b>TP</b>PS',
+    hopiumPerSecond: '<b>H</b>PS',
+    knowledgePerSecond: '<b>K</b>PS',
+    powerPerSecond: '<b>P</b>PS',
+    serenityPerSecond: '<b>S</b>PS'
+};
+
+// Function to format the earnings of an upgrade for display
+function formatEarnings(earnings, isGodMode = false, isPUGodMode = false, isFight = false, isMeditation = false) {
+
+    let result = '';
+    for (const [resource, value] of Object.entries(earnings)) {
+        if (value !== 0) {
+            const displayName = earningsAbbreviations[resource];
+
+            // Adjust the value based on God Mode and PU God Mode
+            let adjustedValue = (isGodMode && isPUGodMode) ? value * 100 :
+                                (isGodMode || isPUGodMode) ? value * 10 : value;
+
+            // Apply additional multipliers for Fight and Meditation skills
+            if ((rewardingVictoriesSkill && isFight) || (rewardingMeditationsSkill && isMeditation)) {
+                adjustedValue *= 1.4;
+            }
+
+            result += `<p style="font-size: 14px;">${displayName}: ${formatNumber(adjustedValue)}</p>`;
+        }
+    }
+    return result;
+}
+
 
 // Define the cheat sequence in terms of toggle names and states
 const devCheatSequence = [
@@ -3097,6 +3564,27 @@ const devCheatSequence = [
 
 // Track the current sequence
 let currentCheatSequence = [];
+
+// List of upgrade names that have isMeditation: true
+const meditationUpgrades = [
+    'Yin and Yang',
+    'Existentialism',
+    'Altruism',
+    'Rastafarianism',
+    'Dualism',
+    'Libertarianism',
+    'Hinduism',
+    'Shinto',
+    'Stoicism',
+    'Deism',
+    'Skepticism',
+    'Buddhism',
+    'Christianity',
+    'Epicureanism',
+    'Agnosticism'
+];
+// Map to track clicked status for each meditation upgrade
+const meditationClickMap = new Map(meditationUpgrades.map(name => [name, false]));
 
 function addPurchasedUpgrade(img, name, earnings, isGodMode = false, isPUGodMode = false, message = null, isFight = false, isMeditation = false) {
     const purchasedList = document.getElementById('purchasedList');
@@ -3122,7 +3610,7 @@ function addPurchasedUpgrade(img, name, earnings, isGodMode = false, isPUGodMode
         <div>
             <p class="upgrade-name">${name}</p>
             <div class="upgrade-earnings">
-                ${formatCostOrEarnings(earnings, isGodMode, isPUGodMode, isFight, isMeditation)}
+                ${formatEarnings(earnings, isGodMode, isPUGodMode, isFight, isMeditation)}
             </div>
         </div>
     `;
@@ -3195,11 +3683,24 @@ function addPurchasedUpgrade(img, name, earnings, isGodMode = false, isPUGodMode
             } else {
                 if (name == `Clickable`){
                     unlockAchievement('Click the Clicker');
+                } else if (name == 'The M Word' && tearsOfJoySkill){
+                    if (calculateEffectivePower() < calculateBasePower() * 0.5 && calculateEffectiveKnowledge() < calculateBaseKnowledge() * 0.5){
+                        unlockAchievement('Prove the Muppet Wrong');
+                    }
+                } else if (isMeditation && !achievementsMap.get('Reflections of Insight').isUnlocked){
+                    meditationClickMap.set(name, true);
+                    if(Array.from(meditationClickMap.values()).every(clicked => clicked)){
+                        unlockAchievement('Reflections of Insight');
+                    }
                 }
 
                 showMessageModal(name, message);
             }
         });
+    }
+
+    if (name === "Balance Apprentice") {
+        document.getElementById('balanceHallButton').style.display = 'flex';
     }
 
     if (buyMarkersSkill && !isFight && !isMeditation) {
@@ -3277,13 +3778,15 @@ function autobuyUpgrades() {
             if (isAffordableUpgrade && autoFightConditionCheck(upgrade) && firstFightUpgrade) {
                 buyUpgrade(encodeName(upgrade.name), false, true);
                 upgradeBought = true;
+                noGimmicksUsed = false;
                 incrementStellarHarvest();
                 if(upgrade.name == 'Saitama' && enemiesFoughtManually.size == 0){
                     unlockAchievement('Make Love, Not War');
                 }
-            } else if (isAffordableUpgrade && autoMeditateConditionCheck(upgrade)) {
+            } else if (isAffordableUpgrade && autoMeditateConditionCheck(upgrade) && firstFightUpgrade) {
                 buyUpgrade(encodeName(upgrade.name), false, true);
                 upgradeBought = true;
+                noGimmicksUsed = false;
                 if (stellarMeditationSkill) {
                     stellarMeditationMult *= (zenOfTheStarsSkill ? 1.5 : 1.1);
                 }
@@ -3292,7 +3795,7 @@ function autobuyUpgrades() {
                 upgradeBought = true;
             }
 
-            if (upgrade.isFight) {firstFightUpgrade = false;}
+            if (upgrade.isFight || upgrade.isMeditation) {firstFightUpgrade = false;}
 
             // Check if it's a key upgrade and stop further key upgrade processing if buyMarkersSkill is false
             if (!buyMarkersSkill && upgrade.isKey) {
@@ -3305,6 +3808,7 @@ function autobuyUpgrades() {
             updateUpgradeList();
             updateMultipliersDisplay();
             updateEffectiveMultipliers();
+            updateNumUpgrades();
             updateDisplay();
         }
 
@@ -3316,67 +3820,69 @@ let decisionTimerId = null;
 
 // Function to update the upgrade list display
 function updateUpgradeList() {
-    // Limit the display to the top 8 upgrades
     let topUpgrades = availableUpgrades.slice(0, 8);
 
-    // Find the first occurrence of any key upgrade in the list
     const truncateIndex = topUpgrades.findIndex(upgrade => upgrade.isKey);
-
-    // Truncate the list if any key upgrade is found
     if (truncateIndex !== -1) {
         topUpgrades = topUpgrades.slice(0, truncateIndex + 1);
     }
 
     const upgradeList = document.getElementById('upgradeList');
-    Events.wipe(upgradeList);
-    upgradeList.innerHTML = ''; // Clear the current upgrade list
+    const existingUpgradeElements = upgradeList.children;
 
+    // Update or create elements only when necessary
+    topUpgrades.forEach((upgrade, index) => {
+        let upgradeElement;
 
-    // Create and append upgrade elements to the upgrade list
-    topUpgrades.forEach(upgrade => {
+        if (index < existingUpgradeElements.length) {
+            upgradeElement = existingUpgradeElements[index];
+        } else {
+            // Create a new upgrade element if it doesn't exist
+            upgradeElement = document.createElement('div');
+            upgradeElement.classList.add('upgrade');
+            upgradeList.appendChild(upgradeElement);
+        }
+
         const encodedName = encodeName(upgrade.name);
-        const upgradeElement = document.createElement('div');
-        upgradeElement.classList.add('upgrade');
         upgradeElement.innerHTML = `
             <button data-upgrade-name="${encodedName}">${upgrade.name}</button>
-            <div class="upgrade-cost">
-                ${formatCostOrEarnings(upgrade.cost)}
-            </div>
+            <div class="upgrade-cost">${formatCost(upgrade.cost)}</div>
         `;
-        upgradeList.appendChild(upgradeElement); // Append the upgrade element to the list
+
+        const button = upgradeElement.querySelector(`button[data-upgrade-name="${encodedName}"]`);
+        if (!button.hasListenerAttached) {
+            button.addEventListener('click', throttle(() => {
+                buyUpgrade(encodedName);
+                hideTooltip();
+            }, 500));
+            button.hasListenerAttached = true; // Custom property to track event listener attachment
+        }
     });
 
-    // Attach event listeners to the new upgrade buttons
-    upgradeList.querySelectorAll('[data-upgrade-name]').forEach(button => {
-        Events.addListener(button, 'click', throttle(() => {
-            const encodedName = button.getAttribute('data-upgrade-name');
-            buyUpgrade(encodedName); // Handle the upgrade purchase
-            hideTooltip();
-        }, 500)); // 500ms delay
-    });
-
-    // Update the upgrade buttons to highlight affordable ones
-    updateUpgradeButtons();
-
-
-    // Check if both 'Decisions, decisions...' and 'More Decisions...' are in the topUpgrades
-    if (topUpgrades.some(upgrade => upgrade.name === 'More Decisions...') && topUpgrades.some(upgrade => upgrade.name === 'Decisions, decisions...')) {
+    if (!achievementsMap.get(`Decisively Indecisive`).isUnlocked && (topUpgrades.some(upgrade => upgrade.name === 'More Decisions...') && topUpgrades.some(upgrade => upgrade.name === 'Decisions, decisions...'))) {
         if (decisionTimerId === null) { // Only start the timer if it hasn't started yet
             decisionTimerId = setTimeout(() => {
                 // Check if both upgrades are still in the list after 5 minutes
                 const currentUpgrades = availableUpgrades.slice(0, 8);
                 const stillHasDecisions = currentUpgrades.some(upgrade => upgrade.name === 'Decisions, decisions...');
                 const stillHasMoreDecisions = currentUpgrades.some(upgrade => upgrade.name === 'More Decisions...');
-
+    
                 if (stillHasDecisions && stillHasMoreDecisions) {
                     unlockAchievement('Decisively Indecisive'); // Unlock the achievement
                 }
-
+    
                 decisionTimerId = null; // Reset the timer ID
             }, 5 * 60 * 1000); // 5 minutes in milliseconds
         }
     }
+        
+
+    // Remove excess elements if there are more than needed
+    while (upgradeList.children.length > topUpgrades.length) {
+        upgradeList.removeChild(upgradeList.lastChild);
+    }
 }
+
 
 
 // Function to handle touch and mouse events for tooltips
@@ -3417,11 +3923,35 @@ function attachTooltipEvents(button, upgrade) {
     });
 }
 
+// Function to check if a specific resource cost is affordable
+function isResourceAffordable(resource, cost) {
+    switch (resource) {
+        case 'copium':
+            return copium >= cost;
+        case 'delusion':
+            return delusion >= cost;
+        case 'yachtMoney':
+            return yachtMoney >= cost;
+        case 'trollPoints':
+            return trollPoints >= cost;
+        case 'hopium':
+            return hopium >= cost;
+        case 'knowledge':
+            return knowledge >= cost;
+        case 'power':
+            return power >= cost;
+        case 'serenity':
+            return serenity >= cost;
+        default:
+            return false;
+    }
+}
+
 // Function to update the appearance of upgrade buttons based on affordability
 function updateUpgradeButtons() {
     let foundAffordableUpgrade = false;
     let topUpgrades = availableUpgrades.slice(0, 8);
-    // Update each available upgrade button
+
     topUpgrades.forEach(upgrade => {
         const encodedName = encodeName(upgrade.name);
         const button = document.querySelector(`button[data-upgrade-name="${encodedName}"]`);
@@ -3429,39 +3959,58 @@ function updateUpgradeButtons() {
             // Check if the upgrade is affordable based on current resources
             if (isAffordable(upgrade.cost)) {
                 foundAffordableUpgrade = true;
-                if (upgrade.isPUGodMode && upgrade.isGodMode) {
-                    button.classList.add('affordable-double-godmode');
-                    button.classList.remove('affordable', 'affordable-godmode', 'affordable-pu-godmode');
-                } else if (upgrade.isPUGodMode) {
-                    button.classList.add('affordable-pu-godmode');
-                    button.classList.remove('affordable', 'affordable-godmode', 'affordable-double-godmode');
-                } else if (upgrade.isGodMode) {
-                    button.classList.add('affordable-godmode');
-                    button.classList.remove('affordable', 'affordable-pu-godmode', 'affordable-double-godmode');
-                } else {
-                    button.classList.add('affordable');
-                    button.classList.remove('affordable-godmode', 'affordable-pu-godmode', 'affordable-double-godmode');
-                }
+                // Manage classes based on God Mode and PU God Mode status
+                button.classList.toggle('affordable-double-godmode', upgrade.isPUGodMode && upgrade.isGodMode);
+                button.classList.toggle('affordable-pu-godmode', upgrade.isPUGodMode && !upgrade.isGodMode);
+                button.classList.toggle('affordable-godmode', upgrade.isGodMode && !upgrade.isPUGodMode);
+                button.classList.toggle('affordable', !upgrade.isGodMode && !upgrade.isPUGodMode);
             } else {
                 button.classList.remove('affordable', 'affordable-godmode', 'affordable-pu-godmode', 'affordable-double-godmode');
             }
 
-            // Attach event listeners for tooltips
-            attachTooltipEvents(button, upgrade);
+            // Update the cost text for the upgrade
+            const costElement = button.nextElementSibling;
+            if (costElement) {
+                costElement.innerHTML = formatCost(upgrade.cost);
+            }
+
+            // Add icons if they are not already present
+            if ((upgrade.isFight || upgrade.name === 'The Rock') && !button.querySelector('.sword-icon')) {
+                const swordIcon = document.createElement('img');
+                swordIcon.src = './imgs/textures/sword_icon.png';
+                swordIcon.classList.add('sword-icon');
+                swordIcon.style.width = '16px';
+                swordIcon.style.marginRight = '5px';
+                button.prepend(swordIcon);
+                button.style.paddingLeft = '10px';
+            }
+
+            if (upgrade.isMeditation && !button.querySelector('.meditation-icon')) {
+                const meditationIcon = document.createElement('img');
+                meditationIcon.src = './imgs/textures/meditation_icon.png';
+                meditationIcon.classList.add('meditation-icon');
+                meditationIcon.style.width = '16px';
+                meditationIcon.style.marginRight = '5px';
+                button.prepend(meditationIcon);
+                button.style.paddingLeft = '10px';
+            }
+
+            // Attach event listeners for tooltips if not already attached
+            if (!button.hasTooltipListener) {
+                attachTooltipEvents(button, upgrade);
+                button.hasTooltipListener = true; // Custom property to track listener attachment
+            }
         }
     });
 
-    // Update buy buttons based on affordable upgrades
+    // Update buy buttons based on the presence of affordable upgrades
     const buySeenButton = document.getElementById('buySeenButton');
     const buyMaxButton = document.getElementById('buyMaxButton');
-    if (foundAffordableUpgrade) {
-        buySeenButton.classList.add('affordable');
-        buyMaxButton.classList.add('affordable');
-    } else {
-        buySeenButton.classList.remove('affordable');
-        buyMaxButton.classList.remove('affordable');
-    }
+    buySeenButton.classList.toggle('affordable', foundAffordableUpgrade);
+    buyMaxButton.classList.toggle('affordable', foundAffordableUpgrade);
 }
+
+
 
 // Function to update the display of amount of upgrades boughts
 function updateNumUpgrades() {
@@ -3589,13 +4138,13 @@ function incrementStellarHarvest() {
         const multiplier = celestialCollectorSkill ? 1.5: 1.3;
         const duration = celestialCollectorSkill ? 600000 : 180000; // 10 minutes (600,000 ms) or 3 minute (180,000 ms)
 
-        if (stellarHarvestMult == 1 && stellarCookieSkill){
+        if (stellarHarvestMult == 1 && stellarCookieSkill && !balanceHallSkills.get("Quality of Life").unlocked){
             clearInterval(cookieIntervalId);
             const cookieButton = document.getElementById('cookieButton');
             cookieButton.classList.remove('spinning');
             cookieButton.classList.add('spinning');
             cookieIntervalId = setInterval(() => {
-                cookieCollectAllResources();
+                cookieCollectAllResources(false);
             }, 100); // 100 milliseconds = 0.1 seconds
         }
 
@@ -3608,23 +4157,25 @@ function incrementStellarHarvest() {
             unlockAchievement('Stellar Harvester');
         }
 
-        // Set a timeout to reset the multiplier after the specified duration
-        const timeoutId = setTimeout(() => {
-            stellarHarvestMult = Math.max(stellarHarvestMult / multiplier, 1);
-            updateMultipliersDisplay();
-            updateEffectiveMultipliers();
+        if(!balanceHallSkills.get("Quality of Life").unlocked){
+            // Set a timeout to reset the multiplier after the specified duration
+            const timeoutId = setTimeout(() => {
+                stellarHarvestMult = Math.max(stellarHarvestMult / multiplier, 1);
+                updateMultipliersDisplay();
+                updateEffectiveMultipliers();
 
-            if (stellarHarvestMult == 1 && stellarCookieSkill){
-                const cookieButton = document.getElementById('cookieButton');
-                cookieButton.classList.remove('spinning');
-                clearInterval(cookieIntervalId);
-                cookieIntervalId = null;
-            }
-            //TODO: use global tooltip to show it decreased
-        }, duration);
+                if (stellarHarvestMult == 1 && stellarCookieSkill){
+                    const cookieButton = document.getElementById('cookieButton');
+                    cookieButton.classList.remove('spinning');
+                    clearInterval(cookieIntervalId);
+                    cookieIntervalId = null;
+                }
+                //TODO: use global tooltip to show it decreased
+            }, duration);
 
-        // Store the timeout ID in the array
-        currentTimeouts.push(timeoutId);
+            // Store the timeout ID in the array
+            currentTimeouts.push(timeoutId);
+        }
     }
 }
 
@@ -3647,43 +4198,43 @@ function toggleDevMultiplier(factor) {
 // Function to ascend and select a random upgrade to set to godmode
 async function devAscend() {
     const top100AvailableUpgrades = availableUpgrades
-        .slice(0, 400)
+        .slice(0, 100)
         .filter(up => !up.isGodMode);
 
-        const nextUpgrade = top100AvailableUpgrades[0];
-        if (nextUpgrade) {
-            nextUpgrade.isGodMode = true;
+    // do this for all upgrades in the top 100
+    for (let i = 0; i < top100AvailableUpgrades.length; i++) {
+        top100AvailableUpgrades[i].isGodMode = true;
         godModeLevel += 1;
-        godModeMultiplier = calculateGodModeMultiplier();
-        epsMultiplier = calculateAscensionEpsMult();
-        prestigeRequirement = calculateMinResource();
-        restartGame(true);
-        saveGameState();
-        updateMultipliersDisplay();
-        updateEffectiveMultipliers();
-        updateDisplay();
     }
+    godModeMultiplier = calculateGodModeMultiplier();
+    epsMultiplier = calculateAscensionEpsMult();
+    prestigeRequirement = calculateMinResource();
+    restartGame(true);
+    saveGameState();
+    updateMultipliersDisplay();
+    updateEffectiveMultipliers();
+    updateDisplay();
 }
 
 // Function to ascend and select a random upgrade to set to godmode
 async function devTranscend() {
     const top100AvailableUpgrades = availableUpgrades
-        .slice(0, 200)
+        .slice(0, 100)
         .filter(up => !up.isPUGodMode);
 
-    const nextUpgrade = top100AvailableUpgrades[0];
-    if (nextUpgrade) {
-        nextUpgrade.isPUGodMode = true;
+    // do this for all upgrades in the top 100
+    for (let i = 0; i < top100AvailableUpgrades.length; i++) {
+        top100AvailableUpgrades[i].isPUGodMode = true;
         puGodLevel += 1;
-        puGodMultiplier = calculatePUGodModeMultiplier();
-        epsMultiplier = calculateAscensionEpsMult();
-        prestigeRequirement = calculateMinResource();
-        restartGame(true);
-        saveGameState();
-        updateMultipliersDisplay();
-        updateEffectiveMultipliers();
-        updateDisplay();
     }
+    puGodMultiplier = calculatePUGodModeMultiplier();
+    epsMultiplier = calculateAscensionEpsMult();
+    prestigeRequirement = calculateMinResource();
+    restartGame(true);
+    saveGameState();
+    updateMultipliersDisplay();
+    updateEffectiveMultipliers();
+    updateDisplay();
 }
 
 // Function to ascend and select a random upgrade to set to godmode
@@ -3778,7 +4329,7 @@ function hotkeyHandler(event) {
                 devIncreasePrestigeMultiplier();
                 break;
         }
-    } else {
+    } else if (!event.ctrlKey) {
         switch (event.key.toLowerCase()) {
             case 'm':
                 if (multibuyUpgradesButtonsUnlocked) {
@@ -3830,7 +4381,7 @@ function hotkeyHandler(event) {
                 }
                 break;
             case 'p':
-                if (prevPrestigeThreshold !== null) {
+                if (autoPrestigeThreshold !== null) {
                     if (autoPrestigeThreshold == 0) {
                         autoPrestigeThreshold = prevPrestigeThreshold;
                         showPopupTooltip(`Auto Prestige Enabled (${formatNumber(autoPrestigeThreshold)})`);
@@ -3967,6 +4518,11 @@ function displayNextModal() {
         };
     } else {
         modalImage.style.display = 'none';
+        // reset refs to images from previous modals
+        modalImage.src = '';
+        modalContent.style.width = '';
+        modalContent.style.maxWidth = '';
+        
     }
 
     modal.style.display = 'block';
@@ -4173,6 +4729,101 @@ function showImmediateMessageModal(title, message) {
     };
 }
 
+class CountdownTimer {
+    constructor() {
+        this.duration = 0;
+        this.remainingTime = 0;
+        this.interval = null;
+
+        // Create DOM elements
+        this.createElements();
+    }
+
+    createElements() {
+        // Create container
+        this.container = document.createElement('div');
+        this.container.className = 'countdown-timer-container';
+
+        // Create progress bar container
+        this.progressBar = document.createElement('div');
+        this.progressBar.className = 'countdown-progress-bar';
+
+        // Create time display
+        this.display = document.createElement('div');
+        this.display.className = 'countdown-time-display';
+        this.display.textContent = '00:00.0';
+
+        // Create progress element
+        this.progress = document.createElement('div');
+        this.progress.className = 'countdown-progress';
+
+        // Assemble the elements
+        this.progressBar.appendChild(this.progress);
+        this.container.appendChild(this.progressBar);
+        this.container.appendChild(this.display);
+    }
+
+    // Method to append timer to a specific element or body
+    appendTo(element = document.body) {
+        element.appendChild(this.container);
+    }
+
+    start(duration) {
+        // Reset and show the timer
+        this.duration = duration;
+        this.remainingTime = duration;
+        this.progressBar.style.display = 'block';
+        this.progress.style.width = '100%';
+
+        const startTime = Date.now();
+        const endTime = startTime + duration * 1000;
+
+        // Clear any existing interval
+        if (this.interval) {
+            clearInterval(this.interval);
+        }
+
+        this.interval = setInterval(() => {
+            const now = Date.now();
+            this.remainingTime = (endTime - now) / 1000;
+
+            if (this.remainingTime <= 0) {
+                this.remainingTime = 0;
+                clearInterval(this.interval);
+            }
+
+            this.updateDisplay();
+            this.updateProgress();
+            this.updateColor();
+        }, 100);
+    }
+
+    updateDisplay() {
+        const minutes = Math.floor(this.remainingTime / 60);
+        const seconds = Math.floor(this.remainingTime % 60);
+        const tenths = Math.floor((this.remainingTime * 10) % 10);
+
+        this.display.textContent = `${String(minutes).padStart(
+            2,
+            '0'
+        )}:${String(seconds).padStart(2, '0')}.${tenths}`;
+    }
+
+    updateProgress() {
+        const percentage = (this.remainingTime / this.duration) * 100;
+        this.progress.style.width = `${percentage}%`;
+    }
+
+    updateColor() {
+        this.progress.classList.remove('countdown-warning', 'countdown-danger');
+        if (this.remainingTime <= 1) {
+            this.progress.classList.add('countdown-danger');
+        } else if (this.remainingTime <= 2) {
+            this.progress.classList.add('countdown-warning');
+        }
+    }
+}
+
 let currentPopupTooltipTimeoutId = null;
 
 function showPopupTooltip(message, color = 'gray', durationSeconds = 2) {
@@ -4206,24 +4857,34 @@ function closeResourceToolTip(name) {
 }
 
 document.querySelectorAll('.resource-value').forEach(function (element) {
-    const resourceId = element.id;  // Directly use element.id
+    const resourceId = element.id; // Directly use element.id
 
-    element.addEventListener('mouseenter', function (event) {
-        // close any open tips before opening the new one
+    element.addEventListener('mouseenter', function () {
+        // Close any open tooltips before opening the new one
         for (const openTip of resourceToolTips.keys()) {
             closeResourceToolTip(openTip);
         }
 
         const tip = document.createElement('div');
         tip.className = 'resource-gain-tooltip';
-        tip.innerHTML = calculateTooltip(resourceId);  // Get tooltip content
+        tip.innerHTML = calculateTooltip(resourceId); // Get tooltip content
 
         document.body.appendChild(tip);
         resourceToolTips.set(resourceId, tip);
 
         const rect = element.getBoundingClientRect();
-        tip.style.top = `${rect.bottom + window.scrollY + 28}px`;  // Add a slight margin below
-        tip.style.left = `${rect.left + (rect.width / 2)}px`;
+        let topPosition = rect.bottom + window.scrollY + 28; // Default position below the element
+
+        // Check if the tooltip would overflow the bottom of the viewport
+        const tooltipRect = tip.getBoundingClientRect();
+        const spaceBelow = window.innerHeight - rect.bottom;
+        if (tooltipRect.height + 40 > spaceBelow) {
+            // Move the tooltip up just enough to fit within the viewport
+            topPosition = rect.bottom + window.scrollY + spaceBelow - tooltipRect.height - 10; // 10px buffer
+        }
+
+        tip.style.top = `${topPosition}px`;
+        tip.style.left = `${rect.left + rect.width / 2}px`;
     });
 
     // Hide tooltip when moving away
@@ -4240,47 +4901,100 @@ document.querySelectorAll('.resource-value').forEach(function (element) {
 
 
 
-
 function calculateTooltip(resourceId) {
     let tooltip = '';
-    let baseValue, basePerSecond;
+    let baseValue, currentAmount, basePerSecond, gainPerSecond;
 
     switch (resourceId) {
         case 'copium':
             baseValue = 'Copium';
+            currentAmount = copium;
             basePerSecond = copiumPerSecond;
+            gainPerSecond = effectiveCopiumPerSecond;
             break;
         case 'delusion':
             baseValue = 'Delusion';
+            currentAmount = delusion;
             basePerSecond = delusionPerSecond;
+            gainPerSecond = effectiveDelusionPerSecond;
             break;
         case 'yachtMoney':
             baseValue = 'Yacht Money';
+            currentAmount = yachtMoney;
             basePerSecond = yachtMoneyPerSecond;
+            gainPerSecond = effectiveYachtMoneyPerSecond;
             break;
         case 'trollPoints':
             baseValue = 'Troll Points';
+            currentAmount = trollPoints;
             basePerSecond = trollPointsPerSecond;
+            gainPerSecond = effectiveTrollPointsPerSecond;
             break;
         case 'hopium':
             baseValue = 'Hopium';
+            currentAmount = hopium;
             basePerSecond = hopiumPerSecond;
+            gainPerSecond = effectiveHopiumPerSecond;
             break;
         case 'knowledge':
             baseValue = 'Knowledge';
+            currentAmount = knowledge;
             basePerSecond = knowledgePerSecond;
+            gainPerSecond = effectiveKnowledgePerSecond;
             break;
         case 'power':
             baseValue = 'Power';
-            basePerSecond = (Math.max(knowledge, 0) ** (1 / 3)) / 1e12;
+            currentAmount = power;
+            basePerSecond = (Math.max(knowledge, 0) ** (1 / 3)) / 1e12;  // Custom calculation for power base gain
+            gainPerSecond = effectivePowerPerSecond;
             break;
         case 'serenity':
             baseValue = 'Serenity';
+            currentAmount = serenity;
             basePerSecond = serenityPerSecond;
+            gainPerSecond = effectiveSerenityPerSecond;
             break;
         default:
             return 'Gain calculation based on upgrades and boosts.';
     }
+
+    // Calculate next order of magnitude and time required to reach it
+    let nextOrderOfMagnitude = Math.pow(10, Math.ceil(Math.log10(currentAmount)));
+    let timeUntilNextOrder = (nextOrderOfMagnitude - currentAmount) / (warpTimeActive ? gainPerSecond * 5 : gainPerSecond);
+
+    // Format the time with appropriate units
+    let timeFormatted;
+    if (timeUntilNextOrder < 60) {
+        timeFormatted = `${Math.round(timeUntilNextOrder)} seconds`;
+    } else if (timeUntilNextOrder < 3600) {
+        timeFormatted = `${Math.round(timeUntilNextOrder / 60)} minutes`;
+    } else if (timeUntilNextOrder < 86400) {
+        timeFormatted = `${(timeUntilNextOrder / 3600).toFixed(1)} hours`;
+    } else if (timeUntilNextOrder < 604800) {
+        timeFormatted = `${(timeUntilNextOrder / 86400).toFixed(1)} days`;
+    } else if (timeUntilNextOrder < 2592000) { // 4.5 weeks in seconds
+        timeFormatted = `${(timeUntilNextOrder / 604800).toFixed(1)} weeks`;
+    } else if (timeUntilNextOrder < 31536000) { // 12 months in seconds
+        timeFormatted = `${(timeUntilNextOrder / 2592000).toFixed(1)} months`;
+    } else if (timeUntilNextOrder < 315360000) { // 10 years in seconds
+        timeFormatted = `${(timeUntilNextOrder / 31536000).toFixed(1)} years`;
+    } else if (timeUntilNextOrder < 3153600000) { // 10 decades in seconds
+        timeFormatted = `${(timeUntilNextOrder / 315360000).toFixed(1)} decades`;
+    } else if (timeUntilNextOrder < 31536000000) { // 10 centuries in seconds
+        timeFormatted = `${(timeUntilNextOrder / 3153600000).toFixed(1)} centuries`;
+    } else if (timeUntilNextOrder < 3.1536e16) { // 1 million millennia in seconds
+        timeFormatted = `${(timeUntilNextOrder / 3.1536e10).toFixed(1)} millennia`;
+    } else if (gainPerSecond > 0){
+        timeFormatted = `${(timeUntilNextOrder / 3.1536e16).toFixed(1)} eons`;
+        unlockAchievement(`Now that's a time wall!`);
+    } else {
+        timeFormatted = 'infinity';
+    }
+
+    // Add the time until the next order of magnitude to the tooltip
+    tooltip += `<b>Time until ${formatNumber(nextOrderOfMagnitude)}:</b> ~${timeFormatted}<br><br>`;
+
+    
 
     if (resourceId !== 'power'){
         // Base gain display
@@ -4353,7 +5067,7 @@ function calculateTooltip(resourceId) {
     }
 
     // Stellar Harvest Multiplier (for all resources, including Power, but not Serenity)
-    if (stellarMeditationMult !== 1) {
+    if (resourceId !== 'serenity' && stellarMeditationMult !== 1) {
         tooltip += `<span style="color:#ADD8E6">x${formatNumber(stellarMeditationMult)} (Stellar Meditation)</span><br>`;
     }
 
@@ -4455,9 +5169,11 @@ function calculateTooltip(resourceId) {
         }
 
         // Diminishing multiplier for Knowledge
-        const diminishingMultiplier = calculateEffectiveKnowledge() / calculateBaseKnowledge();
-        if (diminishingMultiplier < 1) {
-            tooltip += `<span style="color:#DC143C">x${formatNumber(diminishingMultiplier)} (Diminishing Returns)</span><br>`;
+        if(!tearsOfJoySkill) {
+            const diminishingMultiplier = calculateEffectiveKnowledge() / calculateBaseKnowledge();
+            if (diminishingMultiplier < 1) {
+                tooltip += `<span style="color:#DC143C">x${formatNumber(diminishingMultiplier)} (Diminishing Returns)</span><br>`;
+            }
         }
     }
 
@@ -4466,10 +5182,38 @@ function calculateTooltip(resourceId) {
             tooltip += `<span style="color:#9F2B68">x${formatNumber(powerInfusionMultiplier)} (Power Infusion)</span><br>`;
         }
         // Diminishing multiplier for Power
-        const diminishingMultiplier = calculateEffectivePower() / calculateBasePower();
-        if (diminishingMultiplier < 1) {
-            tooltip += `<span style="color:#DC143C">x${formatNumber(diminishingMultiplier)} (Diminishing Returns)</span><br>`;  // Crimson Red
+        if (!tearsOfJoySkill) {
+            const diminishingMultiplier = calculateEffectivePower() / calculateBasePower();
+            if (diminishingMultiplier < 1) {
+                tooltip += `<span style="color:#DC143C">x${formatNumber(diminishingMultiplier)} (Diminishing Returns)</span><br>`;  // Crimson Red
+            }
         }
+    }
+
+    // Check if the Balance Multiplier for this resource is greater than 1
+    const balanceMultiplier = balanceHallMultipliers.get(baseValue)?.currentMultiplier || 1;
+    if (balanceMultiplier > 1) {
+        tooltip += `<span style="color:#FFD700">x${formatNumber(balanceMultiplier)} (Balance)</span><br>`;
+    }
+
+    if (balanceHallSkills.get("Love Matters").unlocked && lovePoints > 1000 && !suppressBalanceSkills) {
+        tooltip += `<span style="color:#E37383">x${formatNumber(lovePoints / 1000)} (Love Points)</span><br>`;
+    }
+
+    if (balanceHallSkills.get("Balance Check").unlocked && (resourceId == 'hopium' || resourceId == 'knowledge' || resourceId == 'power' || resourceId == 'serenity')) {
+        tooltip += `<span style="color:#b0c4de">x${formatNumber(balanceCheckMultiplier)} (Balance Check)</span><br>`;
+    }
+
+    if (resourceId === 'power' && balanceHallSkills.get("Balance is Power").unlocked && !suppressBalanceSkills) {
+        tooltip += `<span style="color:#FAFAD2">x${formatNumber((5 ** (Array.from(balanceHallSkills.values()).filter(skill => skill.unlocked).length)))} (Balance is Power)</span><br>`;
+    }
+
+    if (resourceId === 'serenity' && balanceHallSkills.get("Serene Future").unlocked && purchasedUpgrades.length > 0 && !suppressBalanceSkills) {
+        tooltip += `<span style="color:#FFEFD5">x${formatNumber(1.03 ** purchasedUpgrades.length)} (Serene Future)</span><br>`;
+    }
+
+    if (resourceId === 'serenity' && minMaxingLoveSkill) {
+        tooltip += `<span style="color:#880808">x1.25 (Min-Maxing Love)</span><br>`;
     }
 
     return tooltip;
@@ -4525,19 +5269,10 @@ function manageButtonAnimations(enabled) {
 let delusionToggleTimes = [];
 let hopiumToggleTimes = [];
 
-// Expose functions to the global scope for use in the HTML
-window.prestige = prestige;
-window.updateDisplay = updateDisplay;
-window.updateUpgradeButtons = updateUpgradeButtons;
-window.updateUpgradeList = updateUpgradeList;
-window.collectResource = collectResource;
-window.generateResources = generateResources;
-window.buyUpgrade = buyUpgrade;
-
 // Add event listeners after the DOM content is fully loaded
 document.addEventListener('DOMContentLoaded', () => {
     // Add event listener for the cookie button to collect all resources
-    document.getElementById('cookieButton').addEventListener('click', throttle(cookieCollectAllResources, 70));
+    document.getElementById('cookieButton').addEventListener('click', throttle(() =>cookieCollectAllResources(true), 70));
 
     // Add event listeners for resource collection buttons
     document.getElementById('collectCopiumButton').addEventListener('click', () => { collectResource('copium'); });
@@ -4562,20 +5297,20 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('restartPrestige').addEventListener('click', () => restartPrestige());
 
 
-    // Add event listener for the ascend button with throttling
-    document.getElementById('prestigeButton').addEventListener('click', () => throttle(prestige(), 500));
+    // Add event listener for the prestige button with throttling
+    document.getElementById('prestigeButton').addEventListener('click', throttle(() => prestige(), 500));
 
     // Add event listener for the ascend button with throttling
-    document.getElementById('ascendButton').addEventListener('click', () => throttle(ascend(), 500));
+    document.getElementById('ascendButton').addEventListener('click', throttle(() => ascend(), 500));
 
     // Add event listener for the transcend button with throttling
-    document.getElementById('transcendButton').addEventListener('click', () => throttle(transcend(), 500));
+    document.getElementById('transcendButton').addEventListener('click', throttle(() => transcend(), 500));
 
-    // Add event listener for the transcend button with throttling
-    document.getElementById('bigCrunchButton').addEventListener('click', () => throttle(bigCrunch(), 500));
+    // Add event listener for the big crunch button with throttling
+    document.getElementById('bigCrunchButton').addEventListener('click', throttle(() => bigCrunch(), 500));
 
-    // Add event listener for the transcend button with throttling
-    document.getElementById('infiniteEmbraceButton').addEventListener('click', () => throttle(infiniteEmbrace(), 500));
+    // Add event listener for the infinite embrace button with throttling
+    document.getElementById('infiniteEmbraceButton').addEventListener('click', throttle(() => infiniteEmbrace(), 500));
 
     // Add event listener for the buy all upgrades button
     document.getElementById('buySeenButton').addEventListener('click', function() { buyAllUpgrades(8, this);});
@@ -4673,8 +5408,23 @@ document.addEventListener('DOMContentLoaded', () => {
     currentNumberFormat = JSON.parse(localStorage.getItem('currentNumberFormat')) || 'Mixed';
     document.getElementById('numberFormatButton').textContent = `Number Format: ${currentNumberFormat}`;
 
-    document.getElementById('enableQuickMode').addEventListener('change', function() {
-        enableQuickMode = this.checked;
+    document.getElementById('enableQuickModePrestige').addEventListener('change', function() {
+        enableQuickModePrestige = this.checked;
+    });
+    document.getElementById('enableQuickModeAscend').addEventListener('change', function() {
+        enableQuickModeAscend = this.checked;
+    });
+    document.getElementById('enableQuickModeTranscend').addEventListener('change', function() {
+        enableQuickModeTranscend = this.checked;
+    });
+    document.getElementById('enableQuickModeBigCrunch').addEventListener('change', function() {
+        enableQuickModeBigCrunch = this.checked;
+    });
+    document.getElementById('enableQuickModeInfiniteEmbrace').addEventListener('change', function() {
+        enableQuickModeInfiniteEmbrace = this.checked;
+    });
+    document.getElementById('enableQuickModeMiniGameSkip').addEventListener('change', function() {
+        enableQuickModeMiniGameSkip = this.checked;
     });
 
     document.getElementById('enableButtonAnimations').addEventListener('change', function() {
@@ -4698,6 +5448,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Load the game state from local storage
     loadGameState();
 
+    noGimmicksUsed = purchasedUpgrades.length == 0;
+
     updateMultipliersDisplay();
     // Initialize effective multipliers
     updateEffectiveMultipliers();
@@ -4706,38 +5458,41 @@ document.addEventListener('DOMContentLoaded', () => {
     // Update the list of available upgrades
     updateUpgradeList();
     // Update the display with the current game state
+    updateNumUpgrades();
     updateDisplay();
+
+    setupMiniGameTooltips();
     // Save the game state when the window is about to be unloaded
     window.addEventListener('beforeunload', saveGameState);
 
-    let spentLovePoints = 0;
-    loveHallSkills.forEach(skill => {
-        if (skill.unlocked) {
-            const pairSkill = loveHallSkills.find(s => s.pair === skill.pair && s.name !== skill.name);
-            const levelMultiplier = getLevelMultiplier(skill.level);
+    // let spentLovePoints = 0;
+    // loveHallSkills.forEach(skill => {
+    //     if (skill.unlocked) {
+    //         const pairSkill = loveHallSkills.find(s => s.pair === skill.pair && s.name !== skill.name);
+    //         const levelMultiplier = getLevelMultiplier(skill.level);
 
-            // If both skills in the pair are unlocked
-            if (pairSkill && pairSkill.unlocked) {
-                // Refund original cost for the first skill
-                spentLovePoints += 0.5 * skill.originalCost;
+    //         // If both skills in the pair are unlocked
+    //         if (pairSkill && pairSkill.unlocked) {
+    //             // Refund original cost for the first skill
+    //             spentLovePoints += 0.5 * skill.originalCost;
                 
-                // Refund the increased cost for the paired skill (multiplied cost)
-                spentLovePoints += 0.5 * pairSkill.originalCost * levelMultiplier;
+    //             // Refund the increased cost for the paired skill (multiplied cost)
+    //             spentLovePoints += 0.5 * pairSkill.originalCost * levelMultiplier;
                 
-            } else {
-                // Refund original cost if only this skill is unlocked
-                spentLovePoints += skill.originalCost;
-            }
-        }
-    });
-    if (spentLovePoints + lovePoints > totalLoveHallSkillsCost + 5000){
+    //         } else {
+    //             // Refund original cost if only this skill is unlocked
+    //             spentLovePoints += skill.originalCost;
+    //         }
+    //     }
+    // });
+    // if (spentLovePoints + lovePoints > totalLoveHallSkillsCost + 1e8){
         
-        lovePoints -= ((spentLovePoints + lovePoints) - (totalLoveHallSkillsCost + 5000));
-        showMessageModal('The Journey Continues',
-            "You've reached an impressive milestone! With all Hall of Love skills unlocked and over 5000 Love Points stockpiled, you're among the few who have completed all current content. To maintain a balanced gameplay experience as we prepare future updates, Love Points are currently capped at 5000. "
-            + "In the meantime, feel free to go achievement hunting if you're missing any, or join us on Discord to share your feedback and stay connected with the community. "
-            + "Congratulations on your progress, and thank you for being part of this incredible journey—there's more exciting content on the horizon!"
-        );
-    }
+    //     lovePoints -= ((spentLovePoints + lovePoints) - (totalLoveHallSkillsCost + 100000));
+    //     showMessageModal('The Journey Continues',
+    //         "You've reached an impressive milestone! With all Hall of Love skills unlocked and over 100K Love Points stockpiled, you're among the few who have completed all current content. To maintain a balanced gameplay experience as we prepare future updates, Love Points are currently capped at 100K. "
+    //         + "In the meantime, feel free to go achievement hunting if you're missing any, or join us on Discord to share your feedback and stay connected with the community. "
+    //         + "Congratulations on your progress, and thank you for being part of this incredible journey—there's more exciting content on the horizon!"
+    //     );
+    // }
 
 });

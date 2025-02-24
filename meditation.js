@@ -20,6 +20,7 @@ let deismDoubled = false;
 let fullFocusPreserved = true;
 
 let skepticismRandomnessFactor = 3;
+let isSkepticismUnwinnable = false;
 
 let respawnFactor;
 let livesPerBall;
@@ -107,7 +108,7 @@ const meditationChallenges = {
         arenaSize: 400,
         ballSize: 55,
         ballSizeDelta: 15,
-        velocity: 3.5,
+        velocity: 3.55,
         wind: 2,
         respawnFactor: 1,
         livesPerBall: 1.2,
@@ -179,34 +180,46 @@ const meditationChallenges = {
         arenaSize: 550,
         ballSize: 400,
         ballSizeDelta: 0,
-        velocity: 56,
+        velocity: 57,
         wind: 0,
         respawnFactor: 0.1,
         livesPerBall: 3,
     },
     "Epicureanism": {
-        duration: 1300,
+        duration: 1150,
         focus: 1000,
         ballCount: 20,
         arenaSize: 600,
         ballSize: 600,
         ballSizeDelta: 20,
-        velocity: 88,
+        velocity: 90,
         wind: 10,
         respawnFactor: 5.9,
         livesPerBall: 1,
     },
     "Agnosticism": {
-        duration: 2000,
+        duration: 1800,
         focus: 1,
         ballCount: 1,
-        arenaSize: 364,
+        arenaSize: 382,
         ballSize: 800,
         ballSizeDelta: 0,
         velocity: 88,
         wind: 0,
         respawnFactor: 1,
         livesPerBall: 101,
+    },
+    "Dimensional Weaving": {
+        duration: 1e7,
+        focus: 50,
+        ballCount: 100,
+        arenaSize: 500,
+        ballSize: 28000,
+        ballSizeDelta: 10,
+        velocity: 1000,
+        wind: 0,
+        respawnFactor: 0.1,
+        livesPerBall: 1,
     },
 };
 
@@ -219,7 +232,7 @@ function startMeditationGame(challengeName, backgroundImage, stageNumber = 1, pr
         currentChallengeName = challengeName;
         // Use the calculateTimerReduction function to adjust the duration
         meditationTimer = (challenge.duration - studyAcceleratorReduction) * calculateTimerReduction(yachtMoney);
-        
+
         meditationFocus = preservedFocus !== null ? preservedFocus : challenge.focus + Math.max(0, Math.floor(Math.log10(serenity))); // Preserve focus if passed
         ballCount = Math.max(1, challenge.ballCount - calculateBallCountReduction()); // Hopium reduces ball count
         arenaSize = Math.floor((spaceContinuumStretchSkill ? challenge.arenaSize * 1.1 : challenge.arenaSize) * stageArenaSizeChange);
@@ -244,7 +257,14 @@ function startMeditationGame(challengeName, backgroundImage, stageNumber = 1, pr
 
         let arenaMessage = '';
         let fontColor = 'green';
-        let fontSize = '24px';
+        let fontSize = '20px';
+
+        isSkepticismUnwinnable = false;
+        if (stageVelocityIncrease > 3 && stageArenaSizeChange < 0.67 && stageExtraLivesPerBall > 2) {
+            unlockAchievement('Unwinnable');
+            isSkepticismUnwinnable = true;
+        }
+
 
         if (currentChallengeName === 'Dualism' && ballCount == 1) {
             ballCount = 2;
@@ -254,38 +274,62 @@ function startMeditationGame(challengeName, backgroundImage, stageNumber = 1, pr
             respawnTime += 500;
             livesPerBall = Math.max(livesPerBall - 1, 1);
             arenaMessage = 'The Bunny helps you by making balls respawn 0.5s faster and reduces focus loss by 1 per ball.';
+            noGimmicksUsed = false;
             fontColor = '#C04000';
-            fontSize = '38px';
+            fontSize = '26px';
         } else if (currentChallengeName === 'Christianity' && !purchasedUpgradesSet.has("Christian Logic")) {
             unlockAchievement('Theological Reasoning');
             livesPerBall = Math.max(livesPerBall - 1, 1);
             baseVelocity *= 0.9;
-            arenaMessage = 'Through appying logic, you lose 1 less life per ball and reduce ball velocity by 10%.';
-            fontSize = '32px';
-        } else if (currentChallengeName === 'Epicureanism' && !purchasedUpgradesSet.has("First Pizza Meme") && !purchasedUpgradesSet.has("Second Pizza Meme")) {
-            unlockAchievement('Slice of Euphoria');
-            ballCount = Math.max(ballCount - 2, 1);
-            respawnFactor += 1;
-            arenaMessage = 'Pizzas remove 2 balls and increase the respawn time by 1 second';
-            fontColor = 'purple';
-            fontSize = '38px';
+            arenaMessage = 'Through applying logic, you lose 1 less life per ball and reduce ball velocity by 10%.';
+            noGimmicksUsed = false;
+            fontSize = '22px';
+        } else if (currentChallengeName === 'Epicureanism') {
+            if (!purchasedUpgradesSet.has("First Pizza Meme") && !purchasedUpgradesSet.has("Second Pizza Meme")){
+                unlockAchievement('Slice of Euphoria');
+                ballCount = Math.max(ballCount - 2, 1);
+                respawnFactor += 1;
+                respawnTime = 100;
+                respawnTime = calculateRespawnTime();
+                arenaMessage = 'Pizzas remove 2 balls and increase the respawn time by 1 second';
+                noGimmicksUsed = false;
+                fontColor = 'purple';
+                fontSize = '24px';
+            }
+            if (respawnTime / 1000 > meditationTimer) {
+                unlockAchievement('Where did everybody go?');
+                console.log(`Respawn Time: ${respawnTime / 1000}, Meditation Timer: ${meditationTimer}`);
+            }
         } else if (currentChallengeName === 'Skepticism' && purchasedUpgradesSet.has("Religious Books") && stageNumber === 2) {
             unlockAchievement('Cured Skepticism');
             skepticismRandomnessFactor = 2.5;
             arenaMessage = 'Religious books help you find order in chaos, reducing randomness.';
-        }else if (currentChallengeName === 'Agnosticism') {
+            noGimmicksUsed = false;
+        } else if (currentChallengeName === 'Agnosticism') {
             const isWisdomPattern = ['W', 'I', 'S', 'D', 'O', 'M'].every((letter, index) =>
                 availableUpgrades[index] && availableUpgrades[index].name.startsWith(letter)
             );
-            
+
             // Do something if the pattern matches "WISDOM"
             if (isWisdomPattern) {
                 unlockAchievement('Apply Wisdom');
                 turnRadius *= 1.3;
-                arenaMessage = 'Wisdom improves your turn radius by 30%.';
-                fontSize = '34px';
+                arenaMessage = 'WISDOM improves your turn radius by 30%.';
+                noGimmicksUsed = false;
+                fontSize = '26px';
             }
 
+            const isInsightPattern = ['I', 'N', 'S', 'I', 'G', 'H', 'T'].every((letter, index) =>
+                availableUpgrades[index] && availableUpgrades[index].name.startsWith(letter)
+            );
+            // Do something if the pattern matches "WISDOM"
+            if (isInsightPattern) {
+                unlockAchievement('Wisdom, not Insight');
+            }
+
+        } else if (currentChallengeName === "Dimensional Weaving") {
+            gravityStrength /= 10;
+            turnRadius /= 10;
         }
 
         // Show the meditation overlay
@@ -305,17 +349,21 @@ function startMeditationGame(challengeName, backgroundImage, stageNumber = 1, pr
         setupMeditationArena(stageNumber);
 
         if (arenaMessage !== '') {
-            showArenaMessage(arenaMessage, fontColor, fontSize).then(() => {
-                meditationInterval = setInterval(() => {
-                    updateMeditationGame(resolve, stageNumber);
-                }, 25); // Update every 25ms for smooth animation
-            });
-        } else {
-            meditationInterval = setInterval(() => {
-                updateMeditationGame(resolve, stageNumber);
-            }, 25); // Update every 25ms for smooth animation
-        }
+            showArenaMessage(arenaMessage, fontColor, fontSize);
+        } else if (challengeName == 'Deism' && stageNumber == 2) {
+            showArenaMessage('Not So Fast');
+        } else if (challengeName == 'Skepticism' && stageNumber == 2) {
+            showArenaMessage('Experience Randomness');
+        } 
+
+
+
         
+
+        meditationInterval = setInterval(() => {
+            updateMeditationGame(resolve, stageNumber);
+        }, 25); // Update every 25ms for smooth animation
+
     });
 }
 
@@ -360,7 +408,7 @@ const pastelColors = [
 function createBall(index, stageNumber) {
     const ball = document.createElement('div');
     ball.classList.add('meditation-ball');
- 
+
     // Add random variation within the delta range
     const thisBallSize = Math.max(Math.round(ballSize + (Math.random() * 2 * ballSizeDelta - ballSizeDelta)), 15);
 
@@ -383,7 +431,9 @@ function createBall(index, stageNumber) {
         if (currentChallengeName === 'Buddhism') {
             // Choose a random color from the pastelColors array
             const randomColor = pastelColors[Math.floor(Math.random() * pastelColors.length)];
-            ball.style.backgroundColor = randomColor; // Set the background color to the random pastel color          
+            ball.style.backgroundColor = randomColor; // Set the background color to the random pastel color
+        } else if (currentChallengeName === "Dimensional Weaving") {
+            ball.style.backgroundColor = ["white", "black"][Math.floor(Math.random() * 2)];
         } else{
             ball.style.backgroundColor = 'orange'; // Assuming blue or any other color for stage 1
         }
@@ -410,7 +460,7 @@ function createBall(index, stageNumber) {
 function updateMeditationInfo() {
     document.getElementById('meditationChallengeName').innerText = currentChallengeName;
     document.getElementById('meditationTimer').innerText = meditationTimer.toFixed(1);
-    document.getElementById('meditationFocus').innerText = formatNumber(meditationFocus);
+    document.getElementById('meditationFocus').innerHTML = formatNumber(meditationFocus);
     document.getElementById('meditationBallCount').innerText = ballCount;
     document.getElementById('meditationBallSize').innerText = ballSize; // Ball size (diameter)
     document.getElementById('meditationArenaSize').innerText = arenaSize;
@@ -456,16 +506,15 @@ function updateMeditationGame(resolve, stageNumber) {
         if (currentChallengeName === 'Deism' && stageNumber === 1) {
             // Flash "Not So Fast" message and then restart the game
             clearInterval(meditationInterval); // Stop the current game loop
-            showArenaMessage('Not So Fast').then(() => {
-                startMeditationGame(currentChallengeName, document.getElementById('arena').style.backgroundImage, 2, meditationFocus, 2).then(resolve);
-            });
+            if(ballCount > (meditationChallenges['Deism'].ballCount - calculateBallCountReduction())){
+                unlockAchievement('Where did the other ball go?');
+            }
+            startMeditationGame(currentChallengeName, document.getElementById('arena').style.backgroundImage, 2, meditationFocus, 2).then(resolve);
             return;
         } else if (currentChallengeName === 'Skepticism' && stageNumber === 1) {
             // Flash "Not So Fast" message and then restart the game
             clearInterval(meditationInterval); // Stop the current game loop
-            showArenaMessage('Experience Randomness').then(() => {
-                startMeditationGame(currentChallengeName, document.getElementById('arena').style.backgroundImage, 2, meditationFocus, 1 + (Math.random() * skepticismRandomnessFactor), parseFloat(((Math.floor(Math.random() * 60) + 40) / 100).toFixed(2)), parseFloat((Math.random() * (skepticismRandomnessFactor - 0.01) + 0.01).toFixed(2))).then(resolve);
-            });
+            startMeditationGame(currentChallengeName, document.getElementById('arena').style.backgroundImage, 2, meditationFocus, 1 + (Math.random() * skepticismRandomnessFactor), parseFloat(((Math.floor(Math.random() * 60) + 40) / 100).toFixed(2)), parseFloat((Math.random() * (skepticismRandomnessFactor - 0.01) + 0.01).toFixed(2))).then(resolve);
             return;
         } else {
             clearInterval(meditationInterval);
@@ -475,6 +524,25 @@ function updateMeditationGame(resolve, stageNumber) {
             if (fullFocusPreserved ) {
                 if (currentChallengeName === 'Altruism') { unlockAchievement('The Giver'); }
                 else if (currentChallengeName === 'Rastafarianism') { unlockAchievement('Tamed Lion'); }
+            }
+            if (isSkepticismUnwinnable) {
+                unlockAchievement('Win the Unwinnable');
+            }
+            if (currentChallengeName === 'Dualism' && ballSize > 154 && ballCount == 3 && yachtMoney < 0) {
+                unlockAchievement('Trinitism');
+            }
+            if (currentChallengeName === 'Agnosticism') {
+                if (noGimmicksUsed) {
+                    unlockAchievement('Obie Trice');
+                }
+                if (["Study Accelerator", "Stellar Meditation", "Altruistic Embrace", "Steady Focus", "Rewarding Meditations", "Master of Elements", "Space Continuum Stretch", "Look Past Distractions", "Intrinsic Meditation"]
+                    .every(skillName => !loveHallSkills.find(skill => skill.name === skillName)?.unlocked)) {
+
+                    unlockAchievement('Meditation Maniac');
+                }
+            }
+            if (currentChallengeName === 'Christianity' && godModeLevel == 0 && puGodLevel == 0) {
+                unlockAchievement('First Commandment');
             }
             return;
         }
@@ -515,7 +583,7 @@ function moveBalls() {
     balls.forEach((ball) => {
         // Calculate the angle toward the center of the arena
         const angleToCenter = Math.atan2((arenaSize / 2) - ball.y, (arenaSize / 2) - ball.x);
-        
+
         // Calculate the difference between current direction and angle to center
         let angleDifference = angleToCenter - ball.direction;
 
@@ -534,11 +602,11 @@ function moveBalls() {
         // Apply gravitational pull toward the center
         const deltaXToCenter = (arenaSize / 2) - ball.x;
         const deltaYToCenter = (arenaSize / 2) - ball.y;
-        
+
         // Normalize the pull to be small and proportional
         const pullX = gravityStrength * (deltaXToCenter / arenaSize / 4);
         const pullY = gravityStrength * (deltaYToCenter / arenaSize / 4);
-        
+
         // Adjust ball velocity based on the gravitational pull
         const deltaX = ball.velocity * Math.cos(ball.direction) + pullX + windSpeed * windX;
         const deltaY = ball.velocity * Math.sin(ball.direction) + pullY + windSpeed * windY;
@@ -771,7 +839,7 @@ function calculateTimerReduction() {
 
 // Function to calculate respawn time based on trollPoints
 function calculateRespawnTime() {
-    if (yachtMoney < 0) {return respawnTime;}
+    if (trollPoints < 0) {return respawnTime;}
     // Calculate the scaling factor: double the respawn time for every 20-log interval after 100
     let scalingFactor = Math.pow(2, Math.max(0, (Math.log10(trollPoints) - 100) / 20));
 
@@ -797,10 +865,10 @@ function calculateVelocityReduction() {
     } else {
         // Calculate the number of 20-OOM intervals past 1e75
         let intervals = (Math.log10(knowledge) - 75) / 20;
-        
+
         // Calculate the reduction factor by halving for each 20-OOM interval
         let reductionFactor = Math.pow(0.5, intervals);
-        
+
         return reductionFactor * temporalDragReduction;
     }
 }
@@ -819,7 +887,7 @@ function calculateGravity() {
 function scaleArena() {
     const arena = document.getElementById('arena');
     const meditationWrapper = document.getElementById('meditationWrapper');
-    
+
     if (arena && meditationWrapper) {
         const screenWidth = window.innerWidth;
         const screenHeight = window.innerHeight;
@@ -844,26 +912,22 @@ function scaleArena() {
     }
 }
 
-function showArenaMessage(messageContent, fontColor = 'red', fontSize = '48px') {
+function showArenaMessage(messageContent, fontColor = 'red', fontSize = '32px') {
     return new Promise((resolve) => {
-        const arena = document.getElementById('arena');
         const message = document.createElement('div');
+        message.classList.add('arena-message');
         message.innerText = messageContent;
-        message.style.position = 'absolute';
-        message.style.top = '50%';
-        message.style.left = '50%';
-        message.style.transform = 'translate(-50%, -50%)';
         message.style.color = fontColor;
         message.style.fontSize = fontSize;
-        message.style.fontWeight = 'bold';
-        message.style.zIndex = '1000'; // Make sure it appears on top
-        message.style.textAlign = 'center';
+        message.style.backgroundColor = 'rgba(0, 0, 0, 0.3)'; // Transparent dark gray background
+        message.style.padding = '10px'; // Add some padding for better appearance
+        message.style.borderRadius = '5px'; // Optional: rounded corners
 
-        arena.appendChild(message);
+        document.getElementById('arena').appendChild(message);
 
         setTimeout(() => {
-            arena.removeChild(message);
+            message.remove();
             resolve();
-        }, 1000); // Display message for 1 second
+        }, 2000); // Display message for 1 second
     });
 }

@@ -7,21 +7,21 @@ const librarySkills = [
     { name: 'Knowledgeable Cookie', cost: 9e45, description: 'Boosted cookie clicks generate knowledge at 1/4 earnings rate.', unlocked: false, level: 'History' },
 
     { name: 'Cure for Delusion', cost: 5, description: 'Unlock ability to toggle whether delusion gain is positive or negative.', unlocked: false, level: 'Science' },
-    { name: 'Luck is Rigged', cost: 777, description: 'Remove 1 unlucky box. Makes lucky boxes better (25%-125% instead of 10%-100%) and unlocky boxes less bad (5%-50% instead of 5%-70%).', unlocked: false, level: 'Science' },
-    { name: "I Can't Math", cost: 9000, description: 'Math Game timer increased from 12s to 20s, # portals reduced from 14 to 11, and reward is doubled.', unlocked: false, level: 'Science' },
+    { name: 'Luck is Rigged', cost: 777, description: 'Remove 1 unlucky box. Makes lucky boxes better (25%-125% instead of 10%-100%) and unlucky boxes less bad (5%-40% instead of 5%-55%).', unlocked: false, level: 'Science' },
+    { name: "I Can't Math", cost: 9000, description: 'Math Game timer increased from 12s to 20s, # portals reduced from 15 to 12, and reward is doubled.', unlocked: false, level: 'Science' },
     { name: "Short Term Memory", cost: 80000, description: 'Memory Game sequence length reduced to (3-6) instead of (4-7) and reward is tripled.', unlocked: false, level: 'Science' },
     { name: "Click Speed Demon", cost: 1600000, description: 'Dots in Speed Game get slightly larger and reward is tripled.', unlocked: false, level: 'Science' },
     { name: 'Mini Gamer', cost: 7.5e23, description: 'All mini game cooldowns are reduced by 50%.', unlocked: false, level: 'Science' },
 
     { name: 'Prestige Base', cost: 5000, description: 'Increase Base prestige multiplier from 1.5 to 1.75. Huuge.', unlocked: false, level: 'Nonlinear Partial Differential Equations' },
     { name: '2D Ascension', cost: 230000, description: 'Learn how to ascend God Mode Levels while only folding the space around you into two dimensions. Mathematically, instead of prestige changing to x**(1/3), it changes to x**(2/3).', unlocked: false, level: 'Nonlinear Partial Differential Equations' },
-    { name: 'Less Diminishing God-Mode', cost: 1e14, description: 'Decrease diminishing returns at higher God-Mode levels. Mathematically, instead of diminishing at 97.5%, the multiplier dimninishes at 98.5%. (This is big at high god-mode levels)', unlocked: false, level: 'Nonlinear Partial Differential Equations' },
-    { name: 'Much Less Diminishing Parallel God-Mode', cost: 2e35, description: 'Greatly decrease diminishing returns at higher Parallel Universe God-Mode levels. Mathematically, multiplier dimninishes at 99.0% instead of 97.5%. (Incredibly OP at higher PU God Mode levels)', unlocked: false, level: 'Nonlinear Partial Differential Equations' },
-    { name: 'Linear Ascension', cost: 2e43, description: 'Learn how to ascend God Mode without folding dimensions. Prestige mulitplier only goes down by a factor of 2.', unlocked: false, level: 'Nonlinear Partial Differential Equations' },
-    { name: 'Perfect God-Mode', cost: 2e57, description: 'Make God-Mode better than PU God-Mode. Dimishes at 99.2%. (You must already know this is huge)', unlocked: false, level: 'Nonlinear Partial Differential Equations' },
+    { name: 'Less Diminishing God-Mode', cost: 1e14, description: 'Decrease diminishing returns at higher God-Mode levels. Mathematically, instead of diminishing at 97.5%, the multiplier diminishes at 98.5%. (This is big at high god-mode levels)', unlocked: false, level: 'Nonlinear Partial Differential Equations' },
+    { name: 'Much Less Diminishing Parallel God-Mode', cost: 2e35, description: 'Greatly decrease diminishing returns at higher Parallel Universe God-Mode levels. Mathematically, multiplier diminishes at 99.0% instead of 97.5%. (Incredibly OP at higher PU God Mode levels)', unlocked: false, level: 'Nonlinear Partial Differential Equations' },
+    { name: 'Linear Ascension', cost: 2e43, description: 'Learn how to ascend God Mode without folding dimensions. Prestige multiplier only goes down by a factor of 2.', unlocked: false, level: 'Nonlinear Partial Differential Equations' },
+    { name: 'Perfect God-Mode', cost: 2e57, description: 'Make God-Mode better than PU God-Mode. Diminishes at 99.2%. (You must already know this is huge)', unlocked: false, level: 'Nonlinear Partial Differential Equations' },
 
     { name: 'Buy Markers', cost: 2, description: 'Purchased Upgrades will now have a switch indicating whether or not they should be bought using "Buy Seen" and "Buy All" buttons. (Can toggle all in Automation Settings) ', unlocked: false, level: 'Artificial Intelligence' },
-    { name: 'Double Ascension', cost: 20, description: 'Gain up to 2 God-Mode levels per Ascension. Also select up to 2 upgrades to enhance to God Mode.', unlocked: false, level: 'Artificial Intelligence' },
+    { name: 'Triple Ascension', cost: 30, description: 'Gain up to 3 God-Mode levels per Ascension. Also select up to 3 upgrades to enhance to God Mode.', unlocked: false, level: 'Artificial Intelligence' },
     { name: 'Cookie Clicker Clicker', cost: 350, description: 'After Prestiging or Ascending, automatically click the cookie 10 times per second for 15 seconds.', unlocked: false, level: 'Artificial Intelligence' },
     { name: 'Quadruple Ascension', cost: 4e6, description: 'Gain up to 4 God-Mode levels per Ascension. Also select up to 4 upgrades to enhance to God Mode.', unlocked: false, level: 'Artificial Intelligence' },
     { name: 'Septuple Transcendence', cost: 7e19, description: 'Gain up to 7 Parallel Universe God-Mode levels per Transcendence. Also select up to 7 upgrades to enhance to PU God Mode.', unlocked: false, level: 'Artificial Intelligence' },
@@ -43,6 +43,7 @@ const librarySkills = [
     // Add more skills as needed
 ];
 
+let graphsRevisited = new Set([]);
 
 const librarySkillsContainer = document.getElementById('librarySkills');
 
@@ -103,7 +104,12 @@ function unlockLibrarySkill(skill, duringLoad = false, infoOnly = false) {
                 document.getElementById('toggleDelusionLabel').classList.remove('hidden');
                 // Check the state of delusion and update the switch position accordingly
                 const toggleDelusion = document.getElementById('toggleDelusion');
-                toggleDelusion.checked = delusionPerSecond >= 0;
+                toggleDelusion.checked = true;
+                delusionPerSecond = Math.abs(delusionPerSecond);
+                if (!duringLoad){
+                    updateEffectiveMultipliers();
+                    updateDisplay();
+                }
                 break;
 
             case 'Luck is Rigged':
@@ -129,21 +135,24 @@ function unlockLibrarySkill(skill, duringLoad = false, infoOnly = false) {
             case 'Prestige Base':
                 prestigeBaseValue = enlightenedPrestigeSkill ? 1.775 : 1.75;
                 if (!duringLoad && (lovePoints == 0 || infoOnly)) {
-                    showMessageModal('Prestige Base', 'For you math nerds out there, the formula for prestige multiplier is <strong>base^(log10(minResource/1000)+1)</strong>.<br><br>Graph shows the Prestige Multiplier scaling with 1.5 base vs 1.75 base. This difference becomes huge later in the game. When your min resource is at 1Qi that is already 10x difference and only increases exponentially form there!', false, false, 'imgs/graphs/prestige_base.png')
+                    showMessageModal('Prestige Base', 'For you math nerds out there, the formula for prestige multiplier is <strong>base^(log10(minResource/1000)+1)</strong>.<br><br>Graph shows the Prestige Multiplier scaling with 1.5 base vs 1.75 base. This difference becomes huge later in the game. When your min resource is at 1Qi that is already 10x difference and only increases exponentially form there!', false, false, 'imgs/graphs/prestige_base.png');
+                    graphsRevisited.add('Prestige Base');
                 }
                 break;
 
             case '2D Ascension':
                 twoDimensionalAscensionSkill = true;
                 if (!duringLoad && (lovePoints == 0 || infoOnly)) {
-                    showMessageModal('2D Ascension', 'Cube root was rough! Now you at least get some prestige mult left after ascending.', false, false, 'imgs/graphs/2d_ascension.png')
+                    showMessageModal('2D Ascension', 'Cube root was rough! Now you at least get some prestige mult left after ascending.', false, false, 'imgs/graphs/2d_ascension.png');
+                    graphsRevisited.add('2D Ascension');
                 }
                 break;
 
             case 'Less Diminishing God-Mode':
                 lessDiminishingGodModeSkill = true;
                 if (!duringLoad && (lovePoints == 0 || infoOnly)) {
-                    showMessageModal('Less Diminishing God-Mode', `Here's another nerdy equation: <strong>GodModeMultiplier = &prod;<sub>i=0</sub><sup>gmLevel - 1</sup> &#40;1 + 0.25 &times; diminishFactor<sup>i</sup>&#41</strong><br><br>Graph shows the God-Mode Multiplier scaling when diminishing at 97.5% vs 98.5%. As you can see, at higher God-Mode levels this makes a huge difference! The multiplier is already 2 orders of magnitude greater at God-Mode Level 150.`, false, false, 'imgs/graphs/gm_diminishing.png')
+                    showMessageModal('Less Diminishing God-Mode', `Here's another nerdy equation: <strong>GodModeMultiplier = &prod;<sub>i=0</sub><sup>gmLevel - 1</sup> &#40;1 + 0.25 &times; diminishFactor<sup>i</sup>&#41</strong><br><br>Graph shows the God-Mode Multiplier scaling when diminishing at 97.5% vs 98.5%. As you can see, at higher God-Mode levels this makes a huge difference! The multiplier is already 2 orders of magnitude greater at God-Mode Level 150.`, false, false, 'imgs/graphs/gm_diminishing.png');
+                    graphsRevisited.add('Less Diminishing God-Mode');
                 }
                 godModeMultiplier = calculateGodModeMultiplier(godModeLevel);
                 updateMultipliersDisplay();
@@ -154,7 +163,8 @@ function unlockLibrarySkill(skill, duringLoad = false, infoOnly = false) {
                 lessDiminishingPUGodModeSkill = true;
                 puGodMultiplier = calculatePUGodModeMultiplier(puGodLevel);
                 if (!duringLoad && (lovePoints == 0 || infoOnly)) {
-                    showMessageModal('Much Less Diminishing Parallel God-Mode', 'Parallel God-Mode uses the same equation: <strong>GodModeMultiplier = &prod;<sub>i=0</sub><sup>gmLevel - 1</sup> &#40;1 + 0.25 &times; diminishFactor<sup>i</sup>&#41</strong><br><br>In the quantum entangled universe, you discover that there is less interference, allowing you to scale the diminishing returns much more effectively. Graph shows the Parallel Universe God-Mode Multiplier scaling when diminishing at 97.5% (original) vs 98.5% (Optimized God-Mode) vs 99.0% (Optimized Parallel God-Mode). As you can see, at higher Parallel Universe God-Mode levels this is quite insane! The multiplier is almost 6 orders of magnitude greater at PU God-Mode Level 250.', false, false, 'imgs/graphs/pugm_diminishing.png')
+                    showMessageModal('Much Less Diminishing Parallel God-Mode', 'Parallel God-Mode uses the same equation: <strong>GodModeMultiplier = &prod;<sub>i=0</sub><sup>gmLevel - 1</sup> &#40;1 + 0.25 &times; diminishFactor<sup>i</sup>&#41</strong><br><br>In the quantum entangled universe, you discover that there is less interference, allowing you to scale the diminishing returns much more effectively. Graph shows the Parallel Universe God-Mode Multiplier scaling when diminishing at 97.5% (original) vs 98.5% (Optimized God-Mode) vs 99.0% (Optimized Parallel God-Mode). As you can see, at higher Parallel Universe God-Mode levels this is quite insane! The multiplier is almost 6 orders of magnitude greater at PU God-Mode Level 250.', false, false, 'imgs/graphs/pugm_diminishing.png');
+                    graphsRevisited.add('Much Less Diminishing Parallel God-Mode');
                     updateMultipliersDisplay();
                     updateEffectiveMultipliers();
                 }
@@ -163,7 +173,8 @@ function unlockLibrarySkill(skill, duringLoad = false, infoOnly = false) {
             case 'Linear Ascension':
                 linearAscensionSkill = true;
                 if (!duringLoad && (lovePoints == 0 || infoOnly)) {
-                    showMessageModal('Linear Ascension', 'Ahh, the difference that exponential vs linear makes.', false, false, 'imgs/graphs/linear_ascension.png')
+                    showMessageModal('Linear Ascension', 'Ahh, the difference that exponential vs linear makes.', false, false, 'imgs/graphs/linear_ascension.png');
+                    graphsRevisited.add('Linear Ascension');
                 }
                 break;
 
@@ -180,6 +191,7 @@ function unlockLibrarySkill(skill, duringLoad = false, infoOnly = false) {
                         false,
                         'imgs/graphs/perfect_gm_diminishing.png'
                     );
+                    graphsRevisited.add('Perfect God-Mode');
                 }
                 godModeMultiplier = calculateGodModeMultiplier(godModeLevel);
                 updateMultipliersDisplay();
@@ -190,9 +202,9 @@ function unlockLibrarySkill(skill, duringLoad = false, infoOnly = false) {
                 cookieAutoClicker = true;
                 break;
 
-            case 'Double Ascension':
+            case 'Triple Ascension':
                 unlockAchievement('Now we are Progressing');
-                numAscensionUpgrades = Math.max(numAscensionUpgrades, 2);
+                numAscensionUpgrades = Math.max(numAscensionUpgrades, 3);
                 break;
 
             case 'Buy Markers':
@@ -225,7 +237,8 @@ function unlockLibrarySkill(skill, duringLoad = false, infoOnly = false) {
             case 'Knowledge is Power':
                 unhidePower();
                 if (!duringLoad && (lovePoints == 0 || infoOnly)) {
-                    showMessageModal('Knowledge is Power', 'The Power equation is <strong>Power per Second = (knowledge)<sup>1/3</sup> / 10<sup>12</sup></strong>.', false, false, 'imgs/graphs/power_per_second_eq.png')
+                    showMessageModal('Knowledge is Power', 'The Power equation is <strong>Power per Second = (knowledge)<sup>1/3</sup> / 10<sup>12</sup></strong>.', false, false, 'imgs/graphs/power_per_second_eq.png');
+                    graphsRevisited.add('Knowledge is Power');
                 }
                 break;
 
@@ -244,7 +257,8 @@ function unlockLibrarySkill(skill, duringLoad = false, infoOnly = false) {
             case 'Money is Power, too':
                 moneyIsPowerTooSkill = true;
                 if (!duringLoad && (lovePoints == 0 || infoOnly)) {
-                    showMessageModal('Money is Power, too', 'The Power equation becomes <strong>Power per Second = (Knowledge<sup>1/3</sup> / 10<sup>12</sup>) * (1 + (YachtMoney<sup>1/30</sup> / 100))</strong>. Any increase to power generation is valuable!', false, false, 'imgs/graphs/power_per_second_eq2.png')
+                    showMessageModal('Money is Power, too', 'The Power equation becomes <strong>Power per Second = (Knowledge<sup>1/3</sup> / 10<sup>12</sup>) * (1 + (YachtMoney<sup>1/30</sup> / 100))</strong>. Any increase to power generation is valuable!', false, false, 'imgs/graphs/power_per_second_eq2.png');
+                    graphsRevisited.add('Money is Power, too');
                 }
                 break;
 
@@ -289,14 +303,14 @@ function unlockLibrarySkill(skill, duringLoad = false, infoOnly = false) {
         }
 
         if (!duringLoad) {
-            updateSkillDisplay();
+            updateLibrarySkillDisplay();
         }
     }
 }
 
 
 
-function updateSkillDisplay() {
+function updateLibrarySkillDisplay() {
     librarySkills.forEach(skill => {
         const skillDiv = document.querySelector(`.libraryskill[data-skill-name="${skill.name}"]`);
         if (skillDiv) {
@@ -415,7 +429,14 @@ function initializeSkills() {
                     showStatusMessage(skillDiv, 'Insufficient Knowledge to unlock this skill.', false);
                     //document.addEventListener('click', outsideLibraryClickListener);
                 } else if (skill.unlocked) {
+                    const prevGraphsRevisitedLength = graphsRevisited.size;
                     unlockLibrarySkill(skill, false, true);  //only to show message again
+                    if (graphsRevisited.size == 8) {
+                        unlockAchievement('I like graphs!')
+                    } else if (graphsRevisited.size == prevGraphsRevisitedLength) {
+                        graphsRevisited = new Set([]);
+                    }
+
                 }
             });
             skillRow.appendChild(skillDiv);
@@ -426,12 +447,26 @@ function initializeSkills() {
     });
 }
 
+
+const hallVisitsWinningSequence = 'KPLBPLLPBPBL';
+let hallVisitsSequence = '';
+
+function checkHallVisitsSequence(){
+    if (hallVisitsSequence.length > hallVisitsWinningSequence.length) {
+        hallVisitsSequence = hallVisitsSequence.slice(-hallVisitsWinningSequence.length); // Keep only the last n characters
+    }
+    if (hallVisitsSequence === hallVisitsWinningSequence) {
+        unlockAchievement('Do as dev #3 says');
+        hallVisitsSequence = ""; // Optionally reset the sequence after unlocking the achievement
+    }
+}
+
 function openLibrary() {
     unlockAchievement('Hall of Knowledge');
-    if (purchasedUpgradesSet.has('The Library')) {
+    if (purchasedUpgradesSet.has('The Library') || librarySkills.some(skill => skill.unlocked)) {
         const libraryOverlay = document.getElementById('libraryOverlay');
         libraryOverlay.style.display = 'flex';
-        updateSkillDisplay();
+        updateLibrarySkillDisplay();
 
         if(crunchTimer < 10){
             unlockAchievement('Skipping Grades');
@@ -439,6 +474,11 @@ function openLibrary() {
 
         openLibraryHallTimestamp= crunchTimer;
         checkFastCommuter();
+
+        if (!achievementsMap.get('Do as dev #3 says').isUnlocked && purchasedUpgradesSet.has('Degens Idle Dev #3')){
+            hallVisitsSequence += 'K';
+            checkHallVisitsSequence();
+        }
 
         // Prevent overlay from closing when clicking inside the content
         const libraryContent = document.querySelector('.library-overlay-content');
@@ -499,5 +539,5 @@ function resetLibrarySkills() {
     initializeSkills(); // Reinitialize the skills in the UI
 
     // Update the skill display to reflect the reset state
-    updateSkillDisplay();
+    updateLibrarySkillDisplay();
 }

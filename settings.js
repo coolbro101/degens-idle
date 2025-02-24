@@ -6,19 +6,20 @@ function openSettings() {
 
     const settingsOverlay = document.getElementById('settingsOverlay');
     settingsOverlay.style.display = 'flex';
+
+    // load the state of the autoSaveCheckbox and set the checkbox per the value
+    const autoSaveCheckbox = document.getElementById('autoSaveCheckbox');
+    autoSaveCheckbox.checked = JSON.parse(localStorage.getItem('isAutoSaveEnabled')) || false;
     
     unlockAchievement('Settings');
+
+    assAssSequence += 'S';
+    checkAssAssSequence();
 
     // Add a temporary event listener to close the overlay when clicking outside of it
     setTimeout(() => {
         document.addEventListener('click', outsideClickListener);
     }, 0);
-
-    // EnableQuickMode : Use a timeout to ensure the checkbox is fully rendered before setting its state
-    setTimeout(() => {
-        const enableQuickModeSwitch = document.getElementById('enableQuickMode');
-        enableQuickModeSwitch.checked = enableQuickMode;
-    }, 0); // Adjust timeout if necessary
 
     // EnableButtonAnimations : Use a timeout to ensure the checkbox is fully rendered before setting its state
     setTimeout(() => {
@@ -32,6 +33,25 @@ function closeSettings() {
     const settingsOverlay = document.getElementById('settingsOverlay');
     settingsOverlay.style.display = 'none';
     document.removeEventListener('click', outsideClickListener);
+}
+
+const assAssWinningSequence = 'ASSASSASSASSASS';
+let assAssSequence = '123456789012345';
+
+function checkAssAssSequence(){
+    assAssSequence = assAssSequence.slice(-assAssWinningSequence.length); // Keep only the last n characters
+    if (assAssSequence === assAssWinningSequence) {
+        unlockAchievement('Big Sean - Dance');
+        assAssSequence = '123456789012345';
+    } else if (assAssSequence.slice(-12) === assAssWinningSequence.slice(-12)) {
+        showPopupTooltip('♫ ASS ♪ ASS ♪ ASS ♪ ASS ♫', 'black', 1);
+    } else if (assAssSequence.slice(-9) === assAssWinningSequence.slice(-9)) {
+        showPopupTooltip('♫ ASS ♪ ASS ♪ ASS ♫', 'black', 1);
+    } else if (assAssSequence.slice(-6) === assAssWinningSequence.slice(-6)) {
+        showPopupTooltip('♫ ASS ♪ ASS ♫', 'black', 1);
+    } else if (!achievementsMap.get('Big Sean - Dance').isUnlocked &&assAssSequence.slice(-3) === assAssWinningSequence.slice(-3)) {
+        showPopupTooltip('♫ ♪ ASS ♪ ♫', 'black', 1);
+    } 
 }
 
 // Function to open the donation overlay
@@ -53,7 +73,7 @@ function closeDonation() {
 // Function to handle clicks outside the overlay
 function outsideClickListener(event) {
     const settingsContent = document.querySelector('.settings-overlay-content');
-    
+
     if (!settingsContent.contains(event.target)) {
         closeSettings();
     }
@@ -62,24 +82,73 @@ function outsideClickListener(event) {
 // Function to handle clicks outside the overlay
 function outsideDonationClickListener(event) {
     const donationContent = document.querySelector('.donation-overlay-content');
-    
+
     if (!donationContent.contains(event.target)) {
         closeDonation();
     }
 }
 
+// Add an event listener for the 'change' event
+autoSaveCheckbox.addEventListener("change", function () {
+    // Update the variable based on the checkbox state
+    isAutoSaveEnabled = autoSaveCheckbox.checked;
+    console.log("Auto Save Enabled:", isAutoSaveEnabled); // For debugging
+    //save the state of autoSaveCheckbox checkbox
+    localStorage.setItem('isAutoSaveEnabled', isAutoSaveEnabled);
+});
+
 // Initialize a Set to store unique export dates
 let exportDates = new Set(JSON.parse(localStorage.getItem('exportDates')) || []); // Ensure it's a Set
 
-function exportSave(fname='degens_idle_save.json') {
-    const currentDate = new Date().toISOString().split('T')[0]; // Get current date in YYYY-MM-DD format
+function exportSave() {
+    // Get the current date and time in local time (YYYY-MM-DD_HH-MM)
+    const now = new Date();
+    const currentDateTime = now.toLocaleString("en-GB", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit"
+    }).replace(/[/,]/g, "-").replace(/, /g, "_").replace(/:/g, ".").replace(" ", "");
+
+    // Determine the filename based on the conditions
+    let fname;
+    const balanceSkillsUnlocked = Array.from(balanceHallSkills.values()).filter(skill => skill.unlocked).length;
+    const loveSkillsUnlocked = loveHallSkills.filter(skill => skill.unlocked).length;
+    const powerSkillsUnlocked = powerHallSkills.filter(skill => skill.unlocked).length;
+    const librarySkillsUnlocked = librarySkills.filter(skill => skill.unlocked).length;
+    const achievementsUnlocked = Array.from(achievementsMap.values()).filter(achievement => achievement.isUnlocked).length;
+
+    if (balanceSkillsUnlocked > 0) {
+        fname = `degens_idle_${currentDateTime}_HoB-${balanceSkillsUnlocked}_LP-${formatNumber(lovePoints)}_Ach-${achievementsUnlocked}`;
+    } else if (loveSkillsUnlocked > 0) {
+        fname = `degens_idle_${currentDateTime}_HoL-${loveSkillsUnlocked}_LP-${formatNumber(lovePoints)}_Ach-${achievementsUnlocked}`;
+    } else if (powerSkillsUnlocked > 0) {
+        fname = `degens_idle_${currentDateTime}_HoP-${powerSkillsUnlocked}_HoK-${librarySkillsUnlocked}_BCM-${formatNumber(bigCrunchMultiplier)}_Ach-${achievementsUnlocked}`;
+    } else if (bigCrunchMultiplier > 1) {
+        fname = `degens_idle_${currentDateTime}_HoK-${librarySkillsUnlocked}_BCM-${formatNumber(bigCrunchMultiplier)}_Ach-${achievementsUnlocked}`;
+    } else if (puGodLevel > 0) {
+        fname = `degens_idle_${currentDateTime}_PUG-${puGodLevel}_GM-${godModeLevel}_Ach-${achievementsUnlocked}`;
+    } else {
+        fname = `degens_idle_${currentDateTime}_GM-${godModeLevel}_Pres-${formatNumber(epsMultiplier)}_Ach-${achievementsUnlocked}`;
+    }
+
+    const currentDate = now.toISOString().split('T')[0]; // Get current date in YYYY-MM-DD format
     const previousNumExportDates = exportDates.size; // Store the previous size of the Set
     exportDates.add(currentDate);
-    if (exportDates.size == 50) {
+
+    if (exportDates.size >= 7 && !achievementsMap.get('One Week of Saving').isUnlocked) {
+        unlockAchievement('One Week of Saving');
+    } else if (exportDates.size >= 14 && !achievementsMap.get('Two Weeks of Saving').isUnlocked) {
+        unlockAchievement('Two Weeks of Saving');
+    } else if (exportDates.size >= 30 && !achievementsMap.get('One Month of Saving').isUnlocked) {
+        unlockAchievement('One Month of Saving');
+    } else if (exportDates.size >= 50 && !achievementsMap.get('Fifty Days of Saving').isUnlocked) {
         unlockAchievement('Fifty Days of Saving');
     } else if (exportDates.size > previousNumExportDates) {
         showPopupTooltip(`Days with save exports: ${exportDates.size}`);
     }
+
     localStorage.setItem('exportDates', JSON.stringify([...exportDates]));
 
     unlockAchievement('Better Safe Than Sorry');
@@ -90,27 +159,20 @@ function exportSave(fname='degens_idle_save.json') {
     // Create a Blob and trigger download
     const blob = new Blob([allData], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
-    
+
     // Create a link element to download the file
     const a = document.createElement('a');
     a.href = url;
-    a.download = fname; // Name of the exported file
+    a.download = fname + '.json'; // Use the dynamic filename with date and time
     document.body.appendChild(a);
     a.click();
-    
+
     // Clean up the DOM elements
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 }
 
 function importSave(event) {
-    // Get the checkbox status
-    const createBackupOnImport = document.getElementById('createBackupOnImportCheckbox').checked;
-
-    // Create a backup if the checkbox is checked
-    if (createBackupOnImport) {
-        exportSave('backup_degens_idle_save.json');
-    }
 
     // Restart the game and chain the rest of the logic
     restartGame(false, true).then(() => {
@@ -145,6 +207,83 @@ function importSave(event) {
 }
 
 
+// Function to compress and copy the save data to clipboard
+function copySave() {
+    const currentDate = new Date().toISOString().split('T')[0];
+    const previousNumExportDates = exportDates.size;
+    exportDates.add(currentDate);
+
+    if (exportDates.size >= 7 && !achievementsMap.get('One Week of Saving').isUnlocked) {
+        unlockAchievement('One Week of Saving');
+    } else if (exportDates.size >= 14 && !achievementsMap.get('Two Weeks of Saving').isUnlocked) {
+        unlockAchievement('Two Weeks of Saving');
+    } else if (exportDates.size >= 30 && !achievementsMap.get('One Month of Saving').isUnlocked) {
+        unlockAchievement('One Month of Saving');
+    } else if (exportDates.size >= 50 && !achievementsMap.get('Fifty Days of Saving').isUnlocked) {
+        unlockAchievement('Fifty Days of Saving');
+    } else if (exportDates.size > previousNumExportDates) {
+        showPopupTooltip(`Days with save exports: ${exportDates.size}`);
+    }
+
+
+    localStorage.setItem('exportDates', JSON.stringify([...exportDates]));
+
+    // Get all localStorage data and stringify it
+    const allData = JSON.stringify(localStorage);
+
+    // Compress the data using LZ-String and convert it to Base64
+    const compressedData = LZString.compressToBase64(allData);
+
+    // Copy compressed data to clipboard
+    navigator.clipboard.writeText(compressedData).then(() => {
+        showPopupTooltip('Save copied to clipboard!', 'green', 1.5);
+        unlockAchievement('Magical Text');
+    }).catch(err => {
+        showPopupTooltip('Failed to copy save!', 'red', 1.5);
+    });
+}
+
+// Function to paste the compressed save data, decompress it, and load it into the game
+function pasteSave() {
+    // Prompt the user to input their pasted save string
+    const compressedInput = prompt("Please paste your compressed save string:");
+
+    if (!compressedInput) {
+        return; // Exit if no input provided
+    }
+
+    try {
+        // Decompress the data using LZ-String
+        const decompressedData = LZString.decompressFromBase64(compressedInput);
+
+        if (!decompressedData) {
+            throw new Error("Invalid compressed data");
+        }
+
+        const importedData = JSON.parse(decompressedData);
+
+        // Restart the game and then apply the imported data
+        restartGame(false, true).then(() => {
+            // Clear current localStorage and load the imported data
+            localStorage.clear();
+            for (const key in importedData) {
+                if (importedData.hasOwnProperty(key)) {
+                    localStorage.setItem(key, importedData[key]);
+                }
+            }
+
+            // Call loadGameState to apply the imported game state
+            loadGameState();
+
+            // Refresh the page to ensure the game state is properly loaded (optional)
+            window.location.reload();
+        });
+    } catch (err) {
+        showPopupTooltip('Failed to import save: Invalid data!', 'red', 1.5);
+        unlockAchievement('Invalid Data');
+    }
+}
+
 
 
 
@@ -172,6 +311,17 @@ document.getElementById('importSaveButton').addEventListener('click', function()
 // Add event listener for file input change
 document.getElementById('importFileInput').addEventListener('change', importSave);
 
+// Add event listener for Copy Save button
+document.getElementById('copySaveButton').addEventListener('click', function() {
+    copySave();  // Call the copySave function when the button is clicked
+});
+
+// Add event listener for Paste Save (formerly Input Save) button
+document.getElementById('pasteSaveButton').addEventListener('click', function() {
+    pasteSave();  // Call the pasteSave function when the button is clicked
+});
+
+
 // Add event listener for Import Save button
 document.getElementById('howToPlayButton').addEventListener('click', function() {
     closeSettings();
@@ -179,6 +329,10 @@ document.getElementById('howToPlayButton').addEventListener('click', function() 
     showMessageModal('How to Play', '', false, false, 'imgs/modal_imgs/howtoplay.png');
 });
 
+document.getElementById('wikiButton').addEventListener('click', function() {
+    unlockAchievement('Visit Wiki');
+    window.open('https://degens-idle.fandom.com/wiki/Degens_Idle_Wiki', '_blank');
+});
 
 // Add event listener for Discord button
 document.getElementById('discordButton').addEventListener('click', function() {
@@ -189,14 +343,14 @@ document.getElementById('discordButton').addEventListener('click', function() {
 // Add event listeners for donation buttons
 document.getElementById('donateSmallButton').addEventListener('click', function() {
     unlockAchievement('Buy Me a Coffee');
-    window.open('https://buymeacoffee.com/ssiatkowski', '_blank'); 
+    window.open('https://buymeacoffee.com/ssiatkowski', '_blank');
 });
 document.getElementById('donateMediumButton').addEventListener('click', function() {
     window.open('https://account.venmo.com/payment-link?audience=public&amount=7&note=Keep%20improving%20Degens%20Idle&recipients=%2CSebastian-Siatkowski&txn=pay', '_blank'); // Replace with your Venmo link
 });
 document.getElementById('donateLargeButton').addEventListener('click', function() {
     unlockAchievement('PigeonPost');
-    window.open('pigeon.html', '_blank'); 
+    window.open('pigeon.html', '_blank');
 });
 // Add event listener for Feedback button
 document.getElementById('feedbackButton').addEventListener('click', function() {
@@ -208,7 +362,7 @@ function toggleAllBuyMarkers(targetState) {
     purchasedUpgrades.forEach(upgrade => {
         const name = upgrade.name;
         const toggleSwitch = document.getElementById(`toggle-${name}`);
-        
+
         if (!upgrade.isFight && !upgrade.isMeditation) {
             if (toggleSwitch) {
                 toggleSwitch.checked = targetState;
@@ -221,7 +375,7 @@ function toggleAllBuyMarkers(targetState) {
             if (toggleSwitch) {
                 toggleSwitch.checked = false;
                 toggleSwitch.parentElement.style.display = 'none'; // Hide the switch for fight upgrades
-                
+
                 // Update the switch state in the global variable for fight upgrades
                 switchStates[name] = false;
             }
@@ -231,10 +385,61 @@ function toggleAllBuyMarkers(targetState) {
 
 
 
+
 // Open the automation overlay
 document.getElementById('automationButton').addEventListener('click', function() {
     const automationContent = document.getElementById('automationContent');
     const saveButton = document.getElementById('saveAutomationSettingsButton');
+
+    assAssSequence += 'A';
+    checkAssAssSequence();
+
+    // Use a timeout to ensure each checkbox is fully rendered before setting its state
+    setTimeout(() => {
+        // Set up each Quick Mode switch based on corresponding variables
+        const enableQuickModePrestigeSwitch = document.getElementById('enableQuickModePrestige');
+        enableQuickModePrestigeSwitch.checked = enableQuickModePrestige;
+        const quickModePrestigeContainer = document.getElementById('quickModePrestigeContainer');
+        if (epsMultiplier > 1) {
+            quickModePrestigeContainer.style.display = 'block';
+        }
+
+        const enableQuickModeAscendSwitch = document.getElementById('enableQuickModeAscend');
+        enableQuickModeAscendSwitch.checked = enableQuickModeAscend;
+        const quickModeAscendContainer = document.getElementById('quickModeAscendContainer');
+        if (upgrades.some(upgrade => upgrade.isGodMode)) {
+            quickModeAscendContainer.style.display = 'block';
+        }
+
+        const enableQuickModeTranscendSwitch = document.getElementById('enableQuickModeTranscend');
+        enableQuickModeTranscendSwitch.checked = enableQuickModeTranscend;
+        const quickModeTranscendContainer = document.getElementById('quickModeTranscendContainer');
+        if (upgrades.some(upgrade => upgrade.isPUGodMode)) {
+            quickModeTranscendContainer.style.display = 'block';
+        }
+
+        const enableQuickModeBigCrunchSwitch = document.getElementById('enableQuickModeBigCrunch');
+        enableQuickModeBigCrunchSwitch.checked = enableQuickModeBigCrunch;
+        const quickModeBigCrunchContainer = document.getElementById('quickModeBigCrunchContainer');
+        if (bigCrunchMultiplier > 1) {
+            quickModeBigCrunchContainer.style.display = 'block';
+        }
+
+        const enableQuickModeInfiniteEmbraceSwitch = document.getElementById('enableQuickModeInfiniteEmbrace');
+        enableQuickModeInfiniteEmbraceSwitch.checked = enableQuickModeInfiniteEmbrace;
+        const quickModeInfiniteEmbraceContainer = document.getElementById('quickModeInfiniteEmbraceContainer');
+        if (lovePoints > 0) {
+            quickModeInfiniteEmbraceContainer.style.display = 'block';
+        }
+
+        const enableQuickModeMiniGameSkipSwitch = document.getElementById('enableQuickModeMiniGameSkip');
+        enableQuickModeMiniGameSkipSwitch.checked = enableQuickModeMiniGameSkip;
+        const quickModeMiniGameSkipContainer = document.getElementById('quickModeMiniGameSkipContainer');
+        if (pricyTranquilitySkill) {
+            quickModeMiniGameSkipContainer.style.display = 'block';
+        }
+    }, 0); // Adjust timeout if necessary
+
 
     // Clear any existing content in the automationContent section
     Events.wipe(automationContent);
@@ -243,16 +448,17 @@ document.getElementById('automationButton').addEventListener('click', function()
     // Check if all features are locked (none are unlocked)
     const allFeaturesLocked = !autobuyUpgradesSkill && autoPrestigeThreshold === null && !buyMarkersSkill && autoAscendThreshold === null && autoTranscendThreshold === null;
 
+    let content = '';
     // If all features are locked, show the "unlock automation" message
     if (allFeaturesLocked) {
-        automationContent.innerHTML = "<p>You must unlock automation features first.</p>";
+        content += "<p>You have many Automation features yet to be unlocked.</p>";
         saveButton.style.display = 'none'; // Hide the save button
     } else {
         saveButton.style.display = 'inline-block';
 
         // Dynamically add the three-way toggle for Buy Markers if unlocked
         if (buyMarkersSkill) {
-            const toggleHtml = `
+            content += `
                 <div class="three-way-toggle-container" style="margin-bottom: 15px;">
                     <label for="toggleBuyMarkersSwitch" class="three-way-toggle-label">Toggle All Purchased Upgrades Buy Markers</label>
                     <div class="three-way-toggle">
@@ -263,7 +469,6 @@ document.getElementById('automationButton').addEventListener('click', function()
                     </div>
                 </div>
             `;
-            automationContent.innerHTML += toggleHtml;
 
             // Delay the event listener attachment to ensure the elements are fully rendered
             setTimeout(() => {
@@ -294,95 +499,72 @@ document.getElementById('automationButton').addEventListener('click', function()
                 console.log("Three-way toggle event listener attached");
             }, 0); // You can adjust the timeout duration if needed
 
-            const defaultMarkerHtml = `
+            content += `
                 <div style="margin-bottom: 15px;">
                     <label for="defaultBuyMarkerStateSwitch" style="margin-right: 10px;">Default Buy Marker State</label>
                     <label class="switch">
-                        <input type="checkbox" id="defaultBuyMarkerStateSwitch">
+                        <input type="checkbox" id="defaultBuyMarkerStateSwitch" ${defaultBuyMarkerState ? 'checked' : ''}>
                         <span class="slider"></span>
                     </label>
                 </div>
             `;
-            automationContent.innerHTML += defaultMarkerHtml;
-
-            // Use a timeout to ensure the checkbox is fully rendered before setting its state
-            setTimeout(() => {
-                const defaultBuyMarkerStateSwitch = document.getElementById('defaultBuyMarkerStateSwitch');
-                defaultBuyMarkerStateSwitch.checked = defaultBuyMarkerState;
-            }, 0);
-
         }
 
         // Dynamically add Auto-Buy Upgrades setting if unlocked, with space and switch
         if (autobuyUpgradesSkill) {
-            const autoBuyHtml = `
+            content += `
                 <div style="margin-bottom: 15px;">
                     <label for="autoBuyUpgradesSwitch" style="margin-right: 10px;">Enable Auto-Buy Upgrades</label>
                     <label class="switch">
-                        <input type="checkbox" id="autoBuyUpgradesSwitch">
+                        <input type="checkbox" id="autoBuyUpgradesSwitch" ${autobuyIntervalId !== null ? 'checked' : ''}>
                         <span class="slider"></span>
                     </label>
                 </div>
             `;
-            automationContent.innerHTML += autoBuyHtml;
-
-            // Use a timeout to ensure the checkbox is fully rendered before setting its state
-            setTimeout(() => {
-                const autoBuyUpgradesSwitch = document.getElementById('autoBuyUpgradesSwitch');
-                autoBuyUpgradesSwitch.checked = (autobuyIntervalId !== null);
-
-                // Debug: Log the current checked state
-                console.log("Checkbox checked state after timeout:", autoBuyUpgradesSwitch.checked);
-            }, 0); // You can adjust the timeout duration if needed
         }
 
         // Dynamically add Auto-Prestige Threshold setting if available
         if (autoPrestigeThreshold !== null) {
-            const autoPrestigeHtml = `
+            content += `
                 <div style="margin-bottom: 15px;">
                     <label for="autoPrestigeThresholdInput">Auto Prestige Threshold:</label>
                     <input type="number" id="autoPrestigeThresholdInput" value="${autoPrestigeThreshold}" step="0.1" style="font-size: 16px;">
                     <span id="prestigeWarning" style="display: none; color: red;">Disable auto prestige</span> <!-- Add the red-line warning -->
                 </div>
             `;
-            automationContent.innerHTML += autoPrestigeHtml;
         }
 
         // Dynamically add Auto-Big Crunch Threshold setting if available
         if (autoBigCrunchThreshold !== null) {
-            const autoBigCrunchHtml = `
+            content += `
                 <div style="margin-bottom: 15px;">
                     <label for="autoBigCrunchThresholdInput">Auto Big Crunch Threshold:</label>
                     <input type="number" id="autoBigCrunchThresholdInput" value="${autoBigCrunchThreshold}" step="0.1" style="font-size: 16px;">
                     <span id="bigCrunchWarning" style="display: none; color: red;">Disable auto big crunch</span> <!-- Add the red-line warning -->
                 </div>
             `;
-            automationContent.innerHTML += autoBigCrunchHtml;
         }
-
 
         // Dynamically add Auto-Ascend Threshold setting if available
         if (autoAscendThreshold !== null) {
-            const autoAscendHtml = `
+            content += `
                 <div style="margin-bottom: 15px;">
                     <label for="autoAscendThresholdInput">Auto Ascend Threshold (0 to ${numAscensionUpgrades}):</label>
                     <input type="number" id="autoAscendThresholdInput" value="${autoAscendThreshold}" min="0" max="${numAscensionUpgrades}" style="font-size: 16px;">
                     <span id="ascendWarning" style="display: none; color: red;">Disable auto ascend</span>
                 </div>
             `;
-            automationContent.innerHTML += autoAscendHtml;
         }
 
         // Dynamically add Auto-Transcend Threshold setting if available
         if (autoTranscendThreshold !== null) {
-            const autoTranscendHtml = `
+            content += `
                 <div style="margin-bottom: 15px;">
                     <label for="autoTranscendThresholdInput">Auto Transcend Threshold (0 to ${numPUAscensionUpgrades}):</label>
                     <input type="number" id="autoTranscendThresholdInput" value="${autoTranscendThreshold}" min="0" max="${numPUAscensionUpgrades}" style="font-size: 16px;">
                     <span id="transcendWarning" style="display: none; color: red;">Disable auto transcend</span>
                 </div>
             `;
-            automationContent.innerHTML += autoTranscendHtml;
         }
 
         // Add listeners to detect when 0 is selected, including when settings are reopened
@@ -475,56 +657,30 @@ document.getElementById('automationButton').addEventListener('click', function()
 
         // Dynamically add Auto-Fighting setting if autoFightSkill is unlocked
         if (autoFightSkill) {
-            let autoFightHtml;
-            if (autoMeditateSkill) {
-                autoFightHtml = `
-                    <div style="margin-bottom: 15px;">
-                        <label for="autoFightSwitch" style="margin-right: 10px;">Enable Auto-Fighting/Meditating</label>
-                        <label class="switch">
-                            <input type="checkbox" id="autoFightSwitch">
-                            <span class="slider"></span>
-                        </label>
-                    </div>
-                `;
-            } else {
-                autoFightHtml = `
-                    <div style="margin-bottom: 15px;">
-                        <label for="autoFightSwitch" style="margin-right: 10px;">Enable Auto-Fighting</label>
-                        <label class="switch">
-                            <input type="checkbox" id="autoFightSwitch">
-                            <span class="slider"></span>
-                        </label>
-                    </div>
-                `;
-            }
-            automationContent.innerHTML += autoFightHtml;
-
-            // Use a timeout to ensure the checkbox is fully rendered before setting its state
-            setTimeout(() => {
-                const autoFightSwitch = document.getElementById('autoFightSwitch');
-                autoFightSwitch.checked = autoFightEnabled; // Assume autoFightIntervalId manages auto-fighting
-            }, 0); // Adjust timeout if necessary
-        }
-
-        
-        // Dynamically add Auto-Fighting setting if autoFightSkill is unlocked
-        if (hopiumTradeSkill && equilibriumOfHopeSkill) {
-            const autoHopiumTradeHtml = `
+            content += `
                 <div style="margin-bottom: 15px;">
-                    <label for="autoHopiumTradeSwitch" style="margin-right: 10px;">Enable Auto Hopium Trade</label>
+                    <label for="autoFightSwitch" style="margin-right: 10px;">${
+                        autoMeditateSkill ? 'Enable Auto-Fighting/Meditating' : 'Enable Auto-Fighting'
+                    }</label>
                     <label class="switch">
-                        <input type="checkbox" id="autoHopiumTradeSwitch">
+                        <input type="checkbox" id="autoFightSwitch" ${autoFightEnabled ? 'checked' : ''}>
                         <span class="slider"></span>
                     </label>
                 </div>
             `;
-            automationContent.innerHTML += autoHopiumTradeHtml;
+        }
 
-            // Use a timeout to ensure the checkbox is fully rendered before setting its state
-            setTimeout(() => {
-                const autoHopiumTradeSwitch = document.getElementById('autoHopiumTradeSwitch');
-                autoHopiumTradeSwitch.checked = autoTradeHopiumIntervalId !== null;
-            }, 0); // Adjust timeout if necessary
+        // Dynamically add Auto-Hopium Trade setting if both Hopium Trade and Equilibrium of Hope are unlocked
+        if (hopiumTradeSkill && equilibriumOfHopeSkill) {
+            content += `
+                <div style="margin-bottom: 15px;">
+                    <label for="autoHopiumTradeSwitch" style="margin-right: 10px;">Enable Auto Hopium Trade</label>
+                    <label class="switch">
+                        <input type="checkbox" id="autoHopiumTradeSwitch" ${autoTradeHopiumIntervalId !== null ? 'checked' : ''}  >
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            `;
         }
 
         // Check if any feature is missing and at least one is unlocked
@@ -532,12 +688,13 @@ document.getElementById('automationButton').addEventListener('click', function()
         const atLeastOneFeatureUnlocked = autobuyUpgradesSkill || autoPrestigeThreshold !== null || buyMarkersSkill || autoAscendThreshold !== null || autoTranscendThreshold === null;
 
         if (someFeaturesMissing && atLeastOneFeatureUnlocked) {
-            automationContent.innerHTML += `
+            content += `
                 <p style="margin-top: 20px; color: #ccc;">
                     You are still missing some automation features. Once unlocked, their settings will appear here.
                 </p>`;
         }
     }
+    automationContent.innerHTML = content;
 
     document.getElementById('automationOverlay').style.display = 'flex';
 
@@ -551,13 +708,18 @@ document.getElementById('automationButton').addEventListener('click', function()
 function outsideAutomationClickListener(event) {
     const automationContent = document.getElementById('automationContent');
     const automationOverlay = document.getElementById('automationOverlay');
-    
+
     // Close the overlay if the click is outside the automation content
     if (!automationContent.contains(event.target)) {
         automationOverlay.style.display = 'none';
         document.removeEventListener('click', outsideAutomationClickListener); // Remove listener after closing
     }
 }
+
+// Prevent clicks inside the overlay content from closing it
+document.querySelector('.automation-overlay-content').addEventListener('click', function(event) {
+    event.stopPropagation(); // Prevent click from propagating to the outside listener
+});
 
 // Save the automation settings and close the overlay
 document.getElementById('saveAutomationSettingsButton').addEventListener('click', function() {
@@ -666,12 +828,14 @@ document.getElementById('saveAutomationSettingsButton').addEventListener('click'
         console.log("Auto-hopium trade switch state at save:", autoHopiumTradeSwitch.checked); // Debug log
 
         if (autoHopiumTradeSwitch.checked) {
+            autoTradeHopiumEnabled = true;
             // Enable auto-buy if it’s not already running
             if (autoTradeHopiumIntervalId === null) {
                 autoTradeHopium();
                 console.log("Auto-hopium trade started"); // Debug log
             }
         } else {
+            autoTradeHopiumEnabled = false;
             // Disable auto-buy if the switch is unchecked
             if (autobuyIntervalId !== null) {
                 clearInterval(autoTradeHopiumIntervalId);
@@ -683,8 +847,9 @@ document.getElementById('saveAutomationSettingsButton').addEventListener('click'
 
     // Close the overlay
     document.getElementById('automationOverlay').style.display = 'none';
+    document.removeEventListener('click', outsideAutomationClickListener); // Remove listener after closing
     showImmediateMessageModal('Automation Settings Saved', 'Your automation settings have been saved successfully.');
-    
+
     unlockAchievement('Automation Optimizer');
 });
 
@@ -695,11 +860,13 @@ document.getElementById('saveAutomationSettingsButton').addEventListener('click'
 // Close the automation overlay (without closing the settings overlay)
 document.getElementById('closeAutomationOverlay').addEventListener('click', function() {
     document.getElementById('automationOverlay').style.display = 'none';
+    document.removeEventListener('click', outsideAutomationClickListener); // Remove listener after closing
 });
 
 // Handle the exit button to close the automation overlay
 document.getElementById('exitAutomationOverlayButton').addEventListener('click', function() {
     document.getElementById('automationOverlay').style.display = 'none';
+    document.removeEventListener('click', outsideAutomationClickListener); // Remove listener after closing
 });
 
 
@@ -733,11 +900,11 @@ document.getElementById('numberFormatButton').addEventListener('click', function
         currentNumberFormat = "Mixed";
     }
     this.textContent = `Number Format: ${currentNumberFormat}`;
-    
+
     localStorage.setItem('currentNumberFormat', JSON.stringify(currentNumberFormat));
 
 
-    if (numberFormatClickCount > 18) {
+    if (numberFormatClickCount > 12) {
         unlockAchievement('Nerdy Career Path');
     } else {
         showPopupTooltip('Number Format Requires Page Reload to Take Full Effect', 'red', 5);

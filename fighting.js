@@ -14,7 +14,7 @@ const enemyStats = {
     },
     "Agent Smith": {
         health: 300,
-        minDamage: 5,
+        minDamage: 7,
         maxDamage: 15,
         attackSpeed: 3,
         defense: 8,
@@ -192,10 +192,10 @@ const enemyStats = {
     "Kaguya": {
         health: 2.22e17,
         minDamage: 2000,
-        maxDamage: 3000,
+        maxDamage: 3300,
         attackSpeed: 22.2,
-        defense: 4e15,
-        critChance: 0.1,
+        defense: 4.2e15,
+        critChance: 0.15,
         critDamage: 1.5,
         dodge: 0.2,
         nonCritDodge: 0.4,
@@ -216,6 +216,20 @@ const enemyStats = {
         stun: 0,
         absorb: 0,
         img: 'imgs/saitama.jpg'
+    },
+    "Your Ego": {
+        health: 2.5e122,
+        minDamage: 2e19,
+        maxDamage: 2e21,
+        attackSpeed: 20,
+        defense: 0,
+        critChance: 0,
+        critDamage: 1,
+        dodge: 0.15,
+        nonCritDodge: 0,
+        stun: 1,
+        absorb: 0,
+        img: 'imgs/your_ego.jpg'
     }
 };
 
@@ -270,6 +284,8 @@ let mysticReboundCount = 0;
 
 let numCookedRabbits = 0;
 
+let yourEgoWins = 0;
+
 // Function to initialize and start the mini-game
 function startFightGame(enemyName, enemyImg) {
     return new Promise((resolve) => {
@@ -301,7 +317,7 @@ function startFightGame(enemyName, enemyImg) {
         firstAttackOfBattle = primeImpactSkill ? true : false;
 
         // Get player stats from resources with rounding up
-        playerMaxHealth = Math.ceil((copium ** (1/20)) * playerHealthMult);
+        playerMaxHealth = (balanceHallSkills.get("Singularity Wielder").unlocked ? Math.ceil((copium ** (1/13))) : Math.ceil((copium ** (1/20))) * playerHealthMult);
         playerHealth = playerMaxHealth;
         playerDefenseBase = delusion > 0 ? Math.ceil((delusion ** (1/12)) / 500) : 0;
         playerDefense = playerDefenseBase;
@@ -318,6 +334,11 @@ function startFightGame(enemyName, enemyImg) {
         playerMinDamage = Math.floor(power * playerMinDamageMult);
         playerBaseMaxDamage = Math.ceil(power * playerMaxDamageMult);
         playerMaxDamage = playerBaseMaxDamage;
+
+        if (balanceHallSkills.get("Singularity Wielder").unlocked) {
+            playerDodgeBase = Math.floor(Math.log10(serenity)) / 100
+            playerStunChance = Math.floor(Math.log10(serenity)) / 100
+        }
 
         playerDodge = playerDodgeBase;
 
@@ -384,7 +405,16 @@ function startFightGame(enemyName, enemyImg) {
             endFight(true); // Pass true to indicate the player forfeited
         };
 
-        if (currEnemyName === "Darth Vader") {
+        if (currEnemyName === "Agent Smith") {
+            if (!purchasedUpgradesSet.has("VR Life")) {
+                playerDodge += 0.25;
+                document.getElementById('playerDodgeStat').innerText = formatNumber(playerDodge * 100) + '%';
+                unlockAchievement('Virtual Dodging');
+                logFight("<span style='color: green; font-weight: bold; font-size: 1.3em';>You figure out this is a VR fight and casually increase your dodge chance by 25%.</span>");
+                numBattleGimmicks.add('VR Dodging');
+                noGimmicksUsed = false;
+            }
+        }else if (currEnemyName === "Darth Vader") {
             if (!purchasedUpgradesSet.has("Unlimited Power") && !purchasedUpgradesSet.has("Still very stupid")) {
                 enemyStunCount = 6;
                 enemyAbsorb = 0.1;
@@ -393,10 +423,12 @@ function startFightGame(enemyName, enemyImg) {
                 logFight("<span style='color: green; font-weight: bold; font-size: 1.3em';>Darth Vader tries to use the force to stun you but Qui-Gon Jinn protects you. Darth Sidious uses force lightning to stun Darth Vader for 6 turns and reduce his damage absorption to 10%.</span>");
                 numBattleGimmicks.add('Qui-Gon Jinn');
                 numBattleGimmicks.add('Sheev');
+                noGimmicksUsed = false;
             } else if (!purchasedUpgradesSet.has("Still very stupid")) {
                 unlockAchievement('Academic Grandmaster');
                 logFight("<span style='color: green; font-weight: bold; font-size: 1.3em';>Darth Vader tries to use the force to stun you but Qui-Gon Jinn protects you. </span>");
                 numBattleGimmicks.add('Qui-Gon Jinn');
+                noGimmicksUsed = false;
             } else if (!purchasedUpgradesSet.has("Unlimited Power")) {
                 enemyStunCount = 6;
                 enemyAbsorb = 0.1;
@@ -405,6 +437,7 @@ function startFightGame(enemyName, enemyImg) {
                 unlockAchievement('Sheev vs Anakin');
                 logFight("<span style='color: green; font-weight: bold; font-size: 1.3em';>Darth Vader uses the force to stun you for 3 turns. Darth Sidious uses force lightning to stun Darth Vader for 6 turns and reduce his damage absorption to 10%.</span>");
                 numBattleGimmicks.add('Sheev');
+                noGimmicksUsed = false;
             } else {
                 playerStunCount = 3;
                 logFight("<span style='color: red; font-weight: bold; font-size: 1.3em';>Darth Vader uses the force to stun you for 3 turns. (if only you could get someone who could use the force to protect you) </span>");
@@ -416,6 +449,7 @@ function startFightGame(enemyName, enemyImg) {
             unlockAchievement('Morale Boost');
             logFight("<span style='color: green; font-weight: bold; font-size: 1.3em';>Though Boromir offers no special powers, his presence as a leader inspires you. His courage and determination lift your spirits, boosting your morale and increasing your max damage by 20%.</span>");
             numBattleGimmicks.add('Boromir');
+            noGimmicksUsed = false;
         } else if (currEnemyName === "Chuck Norris") {
             if (!purchasedUpgradesSet.has("Training Dummy")) {
                 enemyDefense /= 2;
@@ -426,6 +460,7 @@ function startFightGame(enemyName, enemyImg) {
                 unlockAchievement('Chuck Norris Kidney');
                 logFight("<span style='color: green; font-weight: bold; font-size: 1.3em';>You catch Chuck Norris mid-session while he's pummeling the Training Dummy. Seizing the moment, you sneak up and deliver a wrenching gut shot right to his kidney. The impact is so brutal that it cuts his health and defense in half for the rest of the battle, and he is unable to absorb any damage.</span>");
                 numBattleGimmicks.add('Training');
+                noGimmicksUsed = false;
             } else {
                 logFight("<span style='color: red; font-weight: bold; font-size: 1.3em';>Chuck Norris has no distractions and is ready to fight you at full power.</span>");
             }
@@ -435,6 +470,7 @@ function startFightGame(enemyName, enemyImg) {
             unlockAchievement('It Takes One to Know One');
             logFight("<span style='color: green; font-weight: bold; font-size: 1.3em';>In a strange time-travel twist, you face a vastly stronger future Vegeta, with a younger Vegeta by your side. Unable to match his future self’s power, young Vegeta offers crucial advice, raising your critical hit chance by 10% and giving you a chance against the overwhelming foe.</span>");
             numBattleGimmicks.add('Vegeta');
+            noGimmicksUsed = false;
         } else if (currEnemyName === "Kaguya") {
             if (!purchasedUpgradesSet.has("Kung Fu Bunny")) {
                 unlockAchievement('Wrong Sidekick');
@@ -445,6 +481,7 @@ function startFightGame(enemyName, enemyImg) {
                 localStorage.setItem('numCookedRabbits', numCookedRabbits);
                 logFight(`<span style='color: yellow; font-size: 1.2em';>Kaguya notices the bunny beside you, clumsily performing kung fu moves. With a single glance, she pulverizes it, leaving nothing behind. That is ${numCookedRabbits} poor bunn${numCookedRabbits > 1 ? 'ies' : 'y'} you have caused to get fried.</span>`);
                 numBattleGimmicks.add('Bunny');
+                noGimmicksUsed = false;
                 buyUpgrade(encodeName("Kung Fu Bunny"), true, true);
             }
             if (!purchasedUpgradesSet.has("Good Guy Sasuke")) {
@@ -452,6 +489,7 @@ function startFightGame(enemyName, enemyImg) {
                 unlockAchievement('Sidekick');
                 logFight("<span style='color: green; font-weight: bold; font-size: 1.3em';>Sasuke joins your side to stop Kaguya and save the multiverse. Although he is leagues below her, Sasuke will assist by partially countering some of her Sharingan powers with his own.</span>");
                 numBattleGimmicks.add('Sasuke');
+                noGimmicksUsed = false;
             } else {
                 sasukeIsHelping = false;
                 logFight("<span style='color: red; font-weight: bold; font-size: 1.3em';>You stand alone against the biggest evil the world has ever seen.</span>");
@@ -469,55 +507,55 @@ function startFightGame(enemyName, enemyImg) {
         if (currEnemyName === "Saitama") {
             setTimeout(() => {
                 logFight("<span style='color: #b3a125; font-size: 1.2em';>Saitama: Oh, hello there.</span>");
-            }, 500);
+            }, 400);
 
             setTimeout(() => {
                 logFight("<span style='color: #6b8ca4; font-size: 1.2em';>You: What? I can sense your power. You could have stopped her yourself, why didn’t you?</span>");
-            }, 1000);
+            }, 800);
 
             setTimeout(() => {
                 logFight("<span style='color: #b3a125; font-size: 1.2em';>Saitama: It would have been boring.</span>");
-            }, 1500);
+            }, 1200);
 
             setTimeout(() => {
                 logFight("<span style='color: #6b8ca4; font-size: 1.2em';>You: But you were going to let her destroy the multiverse?</span>");
-            }, 2000);
+            }, 1600);
 
             setTimeout(() => {
                 logFight("<span style='color: #b3a125; font-size: 1.2em';>Saitama: There’s no meaning to existence anyway. Everything is boring.</span>");
-            }, 2500);
+            }, 2000);
 
             setTimeout(() => {
                 logFight("<span style='color: #6b8ca4; font-size: 1.2em';>You: What the hell, man? Why so bleak?</span>");
-            }, 3000);
+            }, 2400);
 
             setTimeout(() => {
                 logFight("<span style='color: #b3a125; font-size: 1.2em';>Saitama: I’m bored. I’m gonna go now.</span>");
-            }, 3500);
+            }, 2800);
 
             setTimeout(() => {
                 logFight("<span style='color: #6b8ca4; font-size: 1.2em';>You: No! Stand and fight!</span>");
-            }, 4000);
+            }, 3200);
 
             setTimeout(() => {
                 logFight("<span style='color: #b3a125; font-size: 1.2em';>Saitama: *yawns*</span>");
-            }, 4500);
+            }, 3600);
             // Start the fight loop
             // Add a 0.25-second delay before starting the fight loop
             setTimeout(() => {
                 fightLoop(resolve);
-            }, 5000); // 250 milliseconds = 0.25 seconds
+            }, 4000); // 250 milliseconds = 0.25 seconds
         } else{
             // Start the fight loop
             if (currEnemyName === "Chuck Norris" || currEnemyName === "Kaguya" || currEnemyName === "Darth Vader" || (currEnemyName === "Training Dummy" && !achievementsMap.get('Skip Leg Day').isUnlocked)){
                 setTimeout(() => {
                     fightLoop(resolve);
-                }, 750);
+                }, 600);
             } else {
                 // Add a 0.25-second delay before starting the fight loop
                 setTimeout(() => {
                     fightLoop(resolve);
-                }, 250); // 250 milliseconds = 0.25 seconds
+                }, 200); // 250 milliseconds = 0.25 seconds
             }
         }
 
@@ -647,6 +685,9 @@ function attackEnemy(resolve) {
     if (playerAmaterasuStacks > 0) {
         const amaterasuDamage = Math.floor(playerMaxHealth * 0.002 * playerAmaterasuStacks);
         playerHealth -= amaterasuDamage;
+        if(amaterasuDamage > 0){
+            showFloatingDamage(amaterasuDamage, true, 'black');
+        }
         if(amaterasuDamage >= 8888){
             unlockAchievement('Eternal Flame');
         }
@@ -675,6 +716,9 @@ function attackEnemy(resolve) {
     if (playerTsukuyomiStacks > 0) {
         const selfDamage = Math.min(Math.max(Math.ceil((Math.random() * (playerMaxDamage - playerMinDamage + 1) + playerMinDamage - (playerDefense*1e11)) / 1e12), playerMaxHealth*0.01), playerMaxHealth*0.2);
         playerHealth -= selfDamage;
+        if (selfDamage > 0) {
+            showFloatingDamage(selfDamage, true, '#9370DB');
+        }
         logFight(`<span style='color: #9370DB;'>Tsukuyomi activates! You attack yourself for ${formatNumber(selfDamage)} damage!</span>`);
         playerTsukuyomiStacks--; // Remove one stack
         updateHealthBars();
@@ -692,6 +736,7 @@ function attackEnemy(resolve) {
         buyUpgrade(encodeName("Captain Degen"), true, true);
         numBattleGimmicks.add('Captain');
         numBattleGimmicks.add('Thanos');
+        noGimmicksUsed = false;
     } else {
 
         const baseDamage = Math.floor(Math.random() * (playerMaxDamage - playerMinDamage + 1)) + playerMinDamage;
@@ -754,7 +799,6 @@ function attackEnemy(resolve) {
 
         // Handle absorb mechanics
         if(damage > 0){
-
             let ogDmg = damage;
             damage = Math.max(damage * (1 - enemyAbsorb), 0);
             if (enemyAbsorb > 0) {
@@ -764,6 +808,10 @@ function attackEnemy(resolve) {
 
         // Apply damage to enemy health
         enemyHealth -= Math.max(damage, 0);
+        if (damage > 0) {
+            dmgColor = isCritical ? '#89CFF0' : 'white';
+            showFloatingDamage(damage, false, dmgColor);
+        }
 
         if (damage > 0) {
             playerAttackCount++;
@@ -901,6 +949,7 @@ function attackEnemy(resolve) {
                 unlockAchievement('Outsmart Vegeta SS God');
                 logFight(`<span style='color: #00FF00; font-weight: bold; font-size: 1.3em;'>You outwitted Vegeta SS God! His attempt to absorb your defense fails, and instead, you gain 1,000 base defense!</span>`);
                 numBattleGimmicks.add('SS God');
+                noGimmicksUsed = false;
             }
         }
 
@@ -915,6 +964,7 @@ function attackEnemy(resolve) {
                 unlockAchievement('Outsmart Vegeta SS Eternal');
                 logFight(`<span style='color: #00FF00; font-weight: bold; font-size: 1.3em;'>Vegeta SS Eternal feels your hope, and the extremely fucking powerful magnetic field around him boosts your attack speed by 75%!</span>`);
                 numBattleGimmicks.add('SS Eternal');
+                noGimmicksUsed = false;
             }
         }
 
@@ -931,7 +981,7 @@ function attackEnemy(resolve) {
 
         setTimeout(() => {
             fightLoop(resolve);
-        }, 750);
+        }, 600);
     }
 
     if (currEnemyName === "Kaguya" && enemyHealth <= enemyMaxHealth) {
@@ -1260,8 +1310,8 @@ function attackPlayer(resolve) {
             enemyCritChance = Math.min(enemyCritChance + critIncrease, 1); // Ensure it doesn't exceed 1
             logFight(`<span style='color: #cd853f;'>Saitama cracks his knuckles! His critical chance increases by ${formatNumber(critIncrease * 100)}%.</span>`);
         } else if (rand < 50) { // 10% chance for Squats
-            enemyDefense += 8e15; // Increases defense by 8 Qa
-            logFight(`<span style='color: #b22222;'>Saitama does Squats! His defense increases by 8 quadrilion.</span>`);
+            enemyDefense += 9e15; // Increases defense by 9 Qa
+            logFight(`<span style='color: #b22222;'>Saitama does Squats! His defense increases by 9 quadrillion.</span>`);
         } else if (rand < 60) { // 10% chance for Sit Ups
             const absorbIncrease = 0.0275 * (1 - enemyAbsorb); // Diminishing absorb increase based on remaining potential
             enemyAbsorb = Math.min(enemyAbsorb + absorbIncrease, 0.9999); // Ensure it doesn't exceed 1
@@ -1296,8 +1346,8 @@ function attackPlayer(resolve) {
                 logFight(`<span style='color: #ff8c00;'>Saitama flicks your ear and lowers your crit chance and crit damage by 1%!</span>`);
             }
         } else { // 10% chance for Says Something Stupid
-            playerStunChance = playerStunChance * 0.99;
-            logFight(`<span style='color: #ffa07a;'>Saitama says something stupid! Your stun chance decreases by 1%.</span>`);
+            playerStunChance = playerStunChance * 0.98;
+            logFight(`<span style='color: #ffa07a;'>Saitama says something stupid! Your stun chance decreases by 2%.</span>`);
         }
 
         updateStatsUI();
@@ -1320,6 +1370,10 @@ function attackPlayer(resolve) {
 
     // Apply damage to player health
     playerHealth -= Math.max(damage, 0);
+    if (damage > 0) {
+        dmgColor = isCritical ? 'orange' : 'white';
+        showFloatingDamage(damage, true, dmgColor);
+    }
 
     if(damage > 0 && isCritical && currEnemyName === "Sauron" && playerHealth > 0) {
         unlockAchievement('Tank the Crit');
@@ -1375,6 +1429,54 @@ function attackPlayer(resolve) {
     // Update health bars
     updateHealthBars();
 }
+
+// Function to show floating damage numbers with customizable color
+function showFloatingDamage(damage, isPlayer, color = 'red') {
+    try {
+        // Determine the image container
+        const imageContainer = isPlayer ? document.getElementById('playerImageContainer') : document.getElementById('enemyImageContainer');
+
+        // Check if the container exists
+        if (!imageContainer) {
+            console.error("Image container not found!");
+            return;
+        }
+
+        // Create the damage number element
+        const damageElement = document.createElement('div');
+        damageElement.classList.add('floating-damage');
+        damageElement.innerText = `-${formatNumber(damage)}`;
+        damageElement.style.color = color; // Set the custom color
+
+        // Generate random position within the center of the image
+        const randomX = Math.random() * 58 + 2; // 2% to 60% horizontally
+        const randomY = Math.random() * 68 + 2; // 2% to 70% vertically
+        damageElement.style.left = `${randomX}%`;
+        damageElement.style.top = `${randomY}%`;
+
+        // Append the damage number to the image container
+        imageContainer.appendChild(damageElement);
+
+        // Start the animation
+        setTimeout(() => {
+            damageElement.style.transform = 'translateY(-20px)';
+            damageElement.style.opacity = '0';
+        }, 10);
+
+        // Remove the damage number from the DOM after the animation
+        setTimeout(() => {
+            if (imageContainer.contains(damageElement)) {
+                imageContainer.removeChild(damageElement);
+            }
+        }, 1000); // 1 second
+    } catch (error) {
+        console.error("Error in showFloatingDamage:", error);
+    }
+}
+
+
+
+
 
 let userScrolledRecently = false;
 let isProgrammaticScroll = false;
@@ -1499,11 +1601,23 @@ function endFight(isForfeit = false) {
         logFight("<span style='color: green;'>You Win!</span>");
         overlayWinnerLoserText("Winner", "Dead");
 
+        if (currEnemyName === 'Your Ego') {
+            unlockAchievement('Ego Death');
+        }
+
         incrementStellarHarvest();
 
     } else {
         logFight(`<span style='color: red;'>${currEnemyName} defeated you!</span>`);
         overlayWinnerLoserText("Loser", "Taunting");
+
+        if (currEnemyName === 'Your Ego') {
+            yourEgoWins += 1;
+            if(yourEgoWins >= 50) {
+                unlockAchievement('Check Your Ego');
+            }
+        }
+
     }
 
     fightEnded = true; // Set the flag to true when the fight ends
